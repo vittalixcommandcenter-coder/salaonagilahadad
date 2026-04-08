@@ -7,6 +7,9 @@
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="admin-upload.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <style>
         body { background: #050505; color: #fff; font-family: 'Montserrat', sans-serif; overflow: hidden; }
         .admin-layout { display: grid; grid-template-columns: 280px 1fr; height: 100vh; }
@@ -218,11 +221,52 @@ Finalização de Luxo</textarea>
             event.currentTarget.classList.add('active');
         }
 
-        function saveCMS() {
-            alert("CONFIGURAÇÕES SALVAS COM SUCESSO!\nAs mudanças foram sincronizadas com o Atelier.");
+        lucide.createIcons();
+
+        // Vittalix-HD Integration
+        const supabase = supabase.createClient(
+            'SUPABASE_URL_HERE',
+            'SUPABASE_ANON_KEY_HERE'
+        );
+
+        async function saveCMS() {
+            const fileInput = document.getElementById('course-video-upload');
+            const title = document.getElementById('course-title-input').value;
+            
+            if (fileInput && fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                try {
+                    // Logic for 2GB+ Chunking & Resume
+                    const { sessionKey, fileIds } = await vittalixUpload(file);
+                    
+                    // Save metadata to Supabase
+                    const { error } = await supabase
+                        .from('lessons')
+                        .insert([{ 
+                            title: title, 
+                            telegram_file_ids: fileIds,
+                            course_id: 'loiro' // Exemplo
+                        }]);
+
+                    if (error) throw error;
+
+                    // 4. Final Cleanup: Clear session only after DB success
+                    localStorage.removeItem(sessionKey);
+                    
+                    alert("CONTEÚDO SINCRONIZADO COM SUCESSO!");
+                } catch (err) {
+                    console.error("Vittalix Error:", err);
+                    alert("Erro no upload Vittalix-HD. Verifique o console.");
+                } finally {
+                    const modal = document.getElementById('vittalix-upload-status');
+                    if (modal) modal.remove();
+                }
+            } else {
+                alert("Por favor, selecione um vídeo para upload.");
+            }
         }
 
-        lucide.createIcons();
+
     </script>
 </body>
 </html>

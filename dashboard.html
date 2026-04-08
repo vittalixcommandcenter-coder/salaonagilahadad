@@ -9,7 +9,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:wght@400;700&family=Montserrat:wght@200;400;600&family=Cormorant+Garamond:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="vittalix-player.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+
     <style>
         .lms-wrapper {
             display: grid;
@@ -333,31 +336,34 @@
     </div>
 
     <script>
-        // Lógica de Sincronização
+        // Vittalix-HD: Sincronização Segura
+        const supabase = supabase.createClient(
+            'SUPABASE_URL_HERE',
+            'SUPABASE_ANON_KEY_HERE'
+        );
+
         const params = new URLSearchParams(window.location.search);
-        const course = params.get('course');
-        const h1 = document.getElementById('lesson-title');
-        const video = document.getElementById('course-video');
+        const courseId = params.get('course') || 'loiro';
 
-        if (course === 'loiro') {
-            h1.innerText = "MAESTRIA EM LOIROS";
-            video.src = "assets/aula1.mp4";
-        } else {
-            h1.innerText = "ARQUITETURA DE CORTE";
-            video.src = "assets/aula2.mp4";
+        async function loadCourseContent() {
+            const h1 = document.getElementById('lesson-title');
+            const { data, error } = await supabase
+                .from('lessons')
+                .select('*')
+                .eq('course_id', courseId)
+                .single();
+
+            if (data && !error) {
+                h1.innerText = data.title;
+                // Inicializa o Player Seguro com os chunks do Telegram
+                window.initVittalixSecurePlayer('course-video', data.telegram_file_ids);
+            }
         }
-        video.load();
-
+        
+        loadCourseContent();
         lucide.createIcons();
-
-        // Hamburger menu toggle
-        const hamburger = document.getElementById('nav-hamburger');
-        const navLinks = document.getElementById('nav-links');
-        if (hamburger && navLinks) {
-            hamburger.addEventListener('click', () => { navLinks.classList.toggle('open'); hamburger.classList.toggle('active'); });
-            navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => { navLinks.classList.remove('open'); hamburger.classList.remove('active'); }));
-        }
     </script>
+
 
     <!-- Script Global (Cursor + Animações) -->
     <script src="script.js"></script>
