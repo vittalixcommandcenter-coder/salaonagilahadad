@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galeria de Vídeos | Nagila Hadad Luxury Studio</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Montserrat:wght@100;300;400;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body { background: #000; color: #fff; }
+        .full-gallery-header {
+            padding: 4rem 5%;
+            text-align: center;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+        }
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            color: var(--color-gold-polished);
+            text-decoration: none;
+            font-size: 0.8rem;
+            letter-spacing: 0.2em;
+            margin-bottom: 2rem;
+            transition: opacity 0.3s;
+        }
+        .back-link:hover { opacity: 0.7; }
+        .back-link i { margin-right: 10px; width: 16px; }
+
+        .video-grid-full {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 30px;
+            padding: 6rem 5%;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        .video-card-full {
+            background: #080808;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: transform 0.4s ease;
+        }
+        .video-card-full:hover {
+            transform: translateY(-10px);
+            border-color: var(--color-gold-polished);
+        }
+        .video-card-full video {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            object-fit: contain;
+            background: #000;
+        }
+        .video-card-info {
+            padding: 1.5rem;
+            text-align: center;
+        }
+        .video-card-info h3 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.7rem;
+            letter-spacing: 0.3em;
+            color: var(--color-gold-polished);
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body class="lp-nagila-hadad">
+
+    <header class="full-gallery-header">
+        <a href="index.html" class="back-link"><i data-lucide="arrow-left"></i> VOLTAR PARA O ATELIER</a>
+        <h1 class="section-title">ACERVO CINEMATOGRÁFICO</h1>
+        <p class="section-subtitle">A coleção completa de transformações e arte em movimento.</p>
+    </header>
+
+    <main class="video-grid-full">
+        <div class="video-card-full">
+            <video controls playsinline><source src="assets/videonh2.mp4" type="video/mp4"></video>
+            <div class="video-card-info"><h3>Maestria dos Loiros</h3></div>
+        </div>
+        <div class="video-card-full">
+            <video controls playsinline><source src="assets/videonh.mp4" type="video/mp4"></video>
+            <div class="video-card-info"><h3>Arquitetura de Corte</h3></div>
+        </div>
+        <div class="video-card-full">
+            <video controls playsinline><source src="assets/videonh3.mp4" type="video/mp4"></video>
+            <div class="video-card-info"><h3>Colorimetria Soberana</h3></div>
+        </div>
+        <div class="video-card-full">
+            <video controls playsinline><source src="assets/videonh4.mp4" type="video/mp4"></video>
+            <div class="video-card-info"><h3>Design de Experiência</h3></div>
+        </div>
+        <div class="video-card-full">
+            <video controls playsinline><source src="assets/videonh5.mp4" type="video/mp4"></video>
+            <div class="video-card-info"><h3>Estética em Movimento</h3></div>
+        </div>
+    </main>
+
+    <footer class="footer-bottom" style="padding: 4rem 5%; text-align: center; opacity: 0.5; font-size: 0.7rem;">
+        &copy; 2026 NAGILA HADAD LUXURY STUDIO. TODOS OS DIREITOS RESERVADOS.
+    </footer>
+
+    <script>lucide.createIcons();</script>
+</body>
+</html>

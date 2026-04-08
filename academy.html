@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nagila Academy | Maestria em Educação</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..700&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Montserrat:wght@200;400&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        .academy-page-header {
+            padding: 15vh 5% 4rem 5%;
+            text-align: center;
+        }
+
+        .academy-wrapper {
+            padding: 0 5% 8rem 5%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .academy-hero-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 3.5rem;
+        }
+
+        /* Card customizado para evitar conflito com o global */
+        /* Card customizado com efeito de Profundidade */
+        .edu-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(207, 156, 66, 0.1);
+            border-radius: 24px;
+            overflow: hidden;
+            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            /* Sombra de Profundidade Polida */
+            box-shadow: 
+                0 10px 30px rgba(0, 0, 0, 0.5),
+                0 2px 5px rgba(207, 156, 66, 0.05);
+        }
+
+        .edu-card:hover {
+            border-color: rgba(207, 156, 66, 0.4);
+            background: rgba(255,255,255,0.06);
+            /* Elevação 3D */
+            transform: translateY(-15px) scale(1.02);
+            box-shadow: 
+                0 40px 80px rgba(0, 0, 0, 0.8),
+                0 0 30px rgba(207, 156, 66, 0.15);
+        }
+
+        .edu-media {
+            width: 100%;
+            height: 600px;
+            background: #000;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .edu-video-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .edu-media video {
+            width: 100%; height: 100%;
+            object-fit: contain;
+            border-radius: 24px 24px 0 0;
+            transition: transform 0.8s ease;
+        }
+
+        /* Controles de Vídeo Transparentes */
+        .video-controls-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: all 0.4s ease;
+            z-index: 5;
+        }
+
+        .edu-card:hover .video-controls-overlay {
+            opacity: 1;
+        }
+
+        .control-btn-circle {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            color: var(--color-gold-delicate);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .control-btn-circle:hover {
+            background: var(--grad-gold);
+            color: #000;
+            transform: scale(1.1);
+        }
+
+        .vol-btn-mini {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.5);
+            border: 1px solid rgba(212,175,55,0.2);
+            color: #fff;
+            padding: 8px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .vol-btn-mini:hover {
+            border-color: var(--color-gold-polished);
+            color: var(--color-gold-polished);
+        }
+
+        .edu-info {
+            padding: 2.5rem;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .edu-tag {
+            color: var(--color-champagne);
+            font-size: 0.7rem;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin-bottom: 1.2rem;
+            display: block;
+        }
+
+        .edu-title {
+            font-size: 2.2rem;
+            margin-bottom: 1.2rem;
+            font-family: 'Bodoni Moda', serif;
+        }
+
+        .edu-desc {
+            font-size: 0.95rem;
+            opacity: 0.7;
+            line-height: 1.8;
+            margin-bottom: 2.5rem;
+        }
+
+        .edu-btn-outline {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 1rem 2rem;
+            background: transparent;
+            color: var(--color-gold-polished);
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            border-radius: 4px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.75rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            text-decoration: none;
+            transition: all 0.4s ease;
+            margin-top: auto;
+        }
+
+        .edu-btn-outline:hover {
+            border-color: var(--color-gold-polished);
+            background: rgba(212, 175, 55, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .edu-tag-editorial {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.6rem;
+            letter-spacing: 0.5em;
+            text-transform: uppercase;
+            color: var(--color-gold-delicate);
+            opacity: 0.6;
+            margin-bottom: 0.8rem;
+            display: block;
+        }
+
+
+        .separator-line {
+            width: 100px;
+            height: 1px;
+            background: var(--color-champagne);
+            margin: 2rem auto;
+            opacity: 0.3;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Minimalist Preloader -->
+    <div class="preloader-overlay" id="preloader">
+        <div class="preloader-logo" id="preloader-logo">NAGILA HADAD</div>
+    </div>
+
+
+    <nav class="navbar" id="navbar">
+        <button class="nav-hamburger" id="nav-hamburger" aria-label="Menu">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="index.html#hero" class="hover-target">INÍCIO</a></li>
+            <li><a href="sobre.html" class="hover-target">SOBRE</a></li>
+            <li><a href="index.html#cinema" class="hover-target">VÍDEOS</a></li>
+            <li><a href="index.html#gallery" class="hover-target">GALERIA</a></li>
+            <li><a href="academy.html" class="hover-target">ACADEMY</a></li>
+        </ul>
+
+    </nav>
+
+
+    <header class="academy-page-header reveal">
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; width: 100%; max-width: 1400px; margin: 0 auto;">
+            <div style="text-align: left;">
+                <h1 class="hero-name-front" style="font-size: 3.5rem; letter-spacing: 0.2em; margin-bottom: 0;">NAGILA ACADEMY</h1>
+                <p class="section-subtitle" style="text-align: left; margin-left: 5px;">Excelência em formação capilar.</p>
+            </div>
+            <a href="dashboard.html" class="edu-btn-outline hover-target" style="margin-bottom: 2rem;">
+                <i data-lucide="user"></i> ÁREA DO ALUNO
+            </a>
+        </div>
+        <div class="separator-line"></div>
+    </header>
+
+
+    <div class="academy-wrapper">
+        <section class="academy-hero-grid reveal">
+            <!-- CURSO 1: Architecture -->
+            <div class="edu-card" onmouseover="this.querySelector('video').play()" onmouseout="this.querySelector('video').pause(); this.querySelector('video').currentTime = 0;">
+                <div class="edu-media-16-9">
+                    <video loop playsinline muted class="academy-video-fixed">
+                        <source src="assets/aula1.mp4" type="video/mp4">
+                    </video>
+                    <div class="video-hover-overlay">
+                        <i data-lucide="play" class="hover-play-icon"></i>
+                    </div>
+                </div>
+                <div class="edu-info">
+                    <span class="edu-tag-editorial">MASTERCLASS ONLINE</span>
+                    <h2 class="edu-title" style="font-size: 1.5rem;">Architecture: Blonde Mastery</h2>
+                    <a href="course-lp.html?id=loiro" class="edu-btn-outline hover-target" style="padding: 0.8rem 1.5rem; font-size: 0.7rem;">VER DETALHES</a>
+                </div>
+            </div>
+
+            <!-- CURSO 2: Sculpting -->
+            <div class="edu-card" onmouseover="this.querySelector('video').play()" onmouseout="this.querySelector('video').pause(); this.querySelector('video').currentTime = 0;">
+                <div class="edu-media-16-9">
+                    <video loop playsinline muted class="academy-video-fixed">
+                        <source src="assets/aula2.mp4" type="video/mp4">
+                    </video>
+                    <div class="video-hover-overlay">
+                        <i data-lucide="play" class="hover-play-icon"></i>
+                    </div>
+                </div>
+                <div class="edu-info">
+                    <span class="edu-tag-editorial">WORKSHOP PRESENCIAL</span>
+                    <h2 class="edu-title" style="font-size: 1.5rem;">Sculpting: Precision Cuts</h2>
+                    <a href="course-lp.html?id=corte" class="edu-btn-outline hover-target" style="padding: 0.8rem 1.5rem; font-size: 0.7rem;">VER DETALHES</a>
+                </div>
+            </div>
+
+            <!-- CURSO 3 (Placeholder conforme solicitado para 3 colunas) -->
+            <div class="edu-card" style="opacity: 0.3; border-style: dashed;">
+                <div class="edu-media-16-9" style="display: flex; align-items: center; justify-content: center; background: #080808;">
+                    <i data-lucide="plus" style="width: 40px; height: 40px; color: var(--color-gold-polished);"></i>
+                </div>
+                <div class="edu-info" style="text-align: center;">
+                    <span class="edu-tag-editorial">EM BREVE</span>
+                    <h2 class="edu-title" style="font-size: 1.2rem; opacity: 0.5;">NOVO CURSO EXCLUSIVO</h2>
+                    <p style="font-size: 0.7rem; letter-spacing: 1px;">Aguarde o próximo lançamento.</p>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- Super-Luxury Footer -->
+    <footer class="luxury-footer">
+        <div class="footer-container">
+            <div class="footer-header">
+                <h2 class="footer-logo">NAGILA HADAD</h2>
+                <div class="footer-motto">The Art of Sovereign Beauty</div>
+            </div>
+
+            <div class="footer-main-grid">
+                <div class="footer-col">
+                    <h3>Atelier</h3>
+                    <ul>
+                        <li><a href="index.html">Início</a></li>
+                        <li><a href="sobre.html">Sobre</a></li>
+                        <li><a href="index.html#cinema">Cinema Experience</a></li>
+                        <li><a href="academy.html">Academy Education</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h3>Contato Direto</h3>
+                    <ul>
+                        <li><a href="https://wa.me/5518997055954">+55 (18) 99705-5954</a></li>
+                        <li><a href="mailto:contato@nagilahadad.com">atelier@nagilahadad.com</a></li>
+                        <li>Av. Brasil, 1256 — S.P.</li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h3>Social Mirror</h3>
+                    <div class="social-luxury">
+                        <a href="https://www.instagram.com/nagilahadad/" class="hover-target"><i data-lucide="instagram"></i></a>
+                        <a href="#" class="hover-target"><i data-lucide="facebook"></i></a>
+                        <a href="#" class="hover-target"><i data-lucide="youtube"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <span>&copy; 2026 NAGILA HADAD LUXURY STUDIO.</span>
+                <span>Crafted for Excellence</span>
+                <span>Todos os direitos reservados.</span>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        lucide.createIcons();
+        
+        // Hamburger
+        const hamburger = document.getElementById('nav-hamburger');
+        const navLinks = document.getElementById('nav-links');
+        if (hamburger && navLinks) {
+            hamburger.addEventListener('click', () => { navLinks.classList.toggle('open'); hamburger.classList.toggle('active'); });
+            navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => { navLinks.classList.remove('open'); hamburger.classList.remove('active'); }));
+        }
+
+        // Global Volume set to 20%
+        window.addEventListener('load', () => {
+             document.querySelectorAll('video').forEach(v => {
+                 v.volume = 0.2;
+             });
+        });
+
+        // Audio Unlocker - Sincronizado para evitar cacofonia
+        function unlockAudio() {
+            document.querySelectorAll('video').forEach(v => {
+                v.muted = false;
+                v.volume = 0.2;
+                // Deixamos que o autoplay original ou o scroll controle a reprodução
+            });
+            console.log("Audio Unlocked at Academy (No mass-play)");
+            window.removeEventListener('scroll', unlockAudio);
+            window.removeEventListener('mousedown', unlockAudio);
+            window.removeEventListener('touchstart', unlockAudio);
+        }
+        window.addEventListener('scroll', unlockAudio, { once: true, passive: true });
+        window.addEventListener('mousedown', unlockAudio, { once: true });
+        window.addEventListener('touchstart', unlockAudio, { once: true });
+
+        function buyCourse(courseId) {
+            alert("PAGAMENTO CONFIRMADO! Bem-vinda à Nagila Academy.");
+            window.location.href = `dashboard.html?course=${courseId}`;
+        }
+    </script>
+</body>
+</html>

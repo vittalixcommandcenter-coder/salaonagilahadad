@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Admin | Nagila Hadad CMS</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body { background: #050505; color: #fff; font-family: 'Montserrat', sans-serif; overflow: hidden; }
+        .admin-layout { display: grid; grid-template-columns: 280px 1fr; height: 100vh; }
+        
+        /* Sidebar */
+        .admin-sidebar { 
+            background: #0a0a0a; 
+            border-right: 1px solid rgba(212, 175, 55, 0.1); 
+            padding: 2.5rem;
+            display: flex;
+            flex-direction: column;
+        }
+        .admin-logo { font-size: 1.2rem; font-weight: 700; letter-spacing: 3px; color: var(--color-gold-polished); margin-bottom: 4rem; }
+        
+        .admin-nav { list-style: none; padding: 0; }
+        .admin-nav-item { 
+            padding: 1.2rem; 
+            margin-bottom: 10px; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            display: flex; 
+            align-items: center; 
+            gap: 15px; 
+            transition: all 0.3s;
+            font-size: 0.85rem;
+            opacity: 0.6;
+        }
+        .admin-nav-item:hover, .admin-nav-item.active { background: rgba(212, 175, 55, 0.1); opacity: 1; color: var(--color-gold-polished); }
+        
+        /* Content */
+        .admin-main { padding: 4rem 5%; overflow-y: auto; }
+        .admin-section { display: none; }
+        .admin-section.active { display: block; animation: fadeIn 0.5s ease; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .admin-card { 
+            background: #0f0f0f; 
+            border: 1px solid rgba(255,255,255,0.05); 
+            padding: 2.5rem; 
+            border-radius: 12px; 
+            margin-top: 2rem;
+        }
+        .form-group { margin-bottom: 2rem; }
+        .form-group label { display: block; font-size: 0.75rem; letter-spacing: 2px; color: var(--color-gold-delicate); margin-bottom: 10px; text-transform: uppercase; }
+        .form-group input, .form-group textarea, .form-group select { 
+            width: 100%; 
+            background: #151515; 
+            border: 1px solid rgba(255,255,255,0.1); 
+            padding: 1rem; 
+            color: #fff; 
+            border-radius: 4px;
+            font-family: inherit;
+        }
+        .admin-btn-save { 
+            background: var(--color-gold-polished); 
+            color: #000; 
+            padding: 1rem 3rem; 
+            border: none; 
+            border-radius: 4px; 
+            font-weight: 700; 
+            cursor: pointer; 
+            letter-spacing: 2px;
+            transition: all 0.3s;
+        }
+        .admin-btn-save:hover { background: #fff; transform: translateY(-2px); }
+
+        .table-admin { width: 100%; border-collapse: collapse; margin-top: 2rem; }
+        .table-admin th { text-align: left; padding: 1.5rem; font-size: 0.7rem; letter-spacing: 2px; border-bottom: 2px solid rgba(212,175,55,0.2); }
+        .table-admin td { padding: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+
+    <div class="admin-layout">
+        <aside class="admin-sidebar">
+            <div class="admin-logo">NÁGILA ADMIN</div>
+            <ul class="admin-nav">
+                <li class="admin-nav-item active" onclick="switchSection('courses')"><i data-lucide="book-open"></i> GESTÃO DE CURSOS</li>
+                <li class="admin-nav-item" onclick="switchSection('gallery')"><i data-lucide="image"></i> DESIGN DA HOME</li>
+                <li class="admin-nav-item" onclick="switchSection('students')"><i data-lucide="users"></i> GESTÃO DE ALUNOS</li>
+                <li class="admin-nav-item" onclick="window.location.href='index.html'" style="margin-top: 4rem;"><i data-lucide="external-link"></i> VER SITE</li>
+            </ul>
+        </aside>
+
+        <main class="admin-main">
+            <!-- SEÇÃO CURSOS -->
+            <div id="section-courses" class="admin-section active">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h1 class="section-title" style="margin: 0; font-size: 2rem;">Mestria em Cursos</h1>
+                    <button class="admin-btn-save" onclick="alert('Criar novo curso...')">+ NOVO CURSO</button>
+                </div>
+                
+                <table class="table-admin">
+                    <thead>
+                        <tr>
+                            <th>NOME DO CURSO</th>
+                            <th>STATUS</th>
+                            <th>PREÇO</th>
+                            <th>ALUNOS</th>
+                            <th>AÇÕES</th>
+                        </tr>
+                    </thead>
+                    <tbody id="course-list">
+                        <tr>
+                            <td>Architecture: Blonde Mastery</td>
+                            <td style="color: #4CAF50;">ATIVO</td>
+                            <td>R$ 1.297,00</td>
+                            <td>124</td>
+                            <td><i data-lucide="edit-3"></i></td>
+                        </tr>
+                        <tr>
+                            <td>Sculpting: Precision Cuts</td>
+                            <td style="color: #4CAF50;">ATIVO</td>
+                            <td>R$ 997,00</td>
+                            <td>89</td>
+                            <td><i data-lucide="edit-3"></i></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="admin-card">
+                    <h3 style="color: var(--color-gold-polished); margin-bottom: 2rem;">EDITAR CURSO SELECIONADO</h3>
+                    <div class="form-group">
+                        <label>Título do Curso</label>
+                        <input type="text" id="course-title-input" value="Architecture: Blonde Mastery">
+                    </div>
+                    <div class="form-group">
+                        <label>Capa do Curso (URL da Imagem 16:9)</label>
+                        <input type="text" id="course-cover-input" value="assets/capa-loiros.jpg">
+                    </div>
+                    <div class="form-group">
+                        <label>Vídeo Trailer / VSL (URL MP4)</label>
+                        <input type="text" id="course-trailer-input" value="assets/videonh2.mp4">
+                    </div>
+                    <div class="form-group">
+                        <label>Valor do Investimento</label>
+                        <input type="text" id="course-price-input" value="1297">
+                    </div>
+                    <div class="form-group">
+                        <label>Ementa Completa (Um módulo por linha)</label>
+                        <textarea id="course-syllabus-input" rows="6" style="width: 100%; background: #151515; border: 1px solid rgba(255,255,255,0.1); padding: 1rem; color: #fff; border-radius: 4px;">História e Psicologia das Cores
+Fisiologia da Fibra Capilar
+Técnicas de Descoloração Segura
+Tonalização e Blindagem
+Finalização de Luxo</textarea>
+                    </div>
+                    <button class="admin-btn-save" onclick="saveCMS()">SALVAR ALTERAÇÕES NO CURSO</button>
+                </div>
+
+            </div>
+
+            <!-- SEÇÃO GALERIA -->
+            <div id="section-gallery" class="admin-section">
+                <h1 class="section-title" style="font-size: 2rem;">Design da Home (Galerias)</h1>
+                <p style="opacity: 0.5;">Todas as mídias aqui inseridas usarão 'object-fit: cover' automaticamente.</p>
+                
+                <div class="admin-card">
+                    <h3 style="color: var(--color-gold-polished); margin-bottom: 2rem;">ADICIONAR À GALERIA DE FOTOS</h3>
+                    <div class="form-group">
+                        <label>Arquivo da Foto (Placeholder)</label>
+                        <input type="file">
+                    </div>
+                    <div class="form-group">
+                        <label>Legenda / Alt Text</label>
+                        <input type="text" placeholder="Ex: Transformação Blonde Master">
+                    </div>
+                    <button class="admin-btn-save">CONCLUIR UPLOAD</button>
+                </div>
+
+                <div class="admin-card">
+                    <h3 style="color: var(--color-gold-polished); margin-bottom: 2rem;">VÍDEOS DA CURADORIA</h3>
+                    <div class="form-group">
+                        <label>Slot 01 (Principal)</label>
+                        <input type="text" value="assets/videonh2.mp4">
+                    </div>
+                    <button class="admin-btn-save">SINCRONIZAR VÍDEOS</button>
+                </div>
+            </div>
+
+            <!-- SEÇÃO ALUNOS -->
+            <div id="section-students" class="admin-section">
+                <h1 class="section-title" style="font-size: 2rem;">Gestão de Alunos & Materiais</h1>
+                <div class="admin-card">
+                    <h3 style="color: var(--color-gold-polished); margin-bottom: 2rem;">LOGÍSTICA DE CONTEÚDO</h3>
+                    <div class="form-group">
+                        <label>Selecionar Curso</label>
+                        <select>
+                            <option>Architecture: Blonde Mastery</option>
+                            <option>Sculpting: Precision Cuts</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Upload de Apostila (PDF)</label>
+                        <input type="file">
+                    </div>
+                    <button class="admin-btn-save">DISPONIBILIZAR PARA ALUNOS</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function switchSection(id) {
+            document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.admin-nav-item').forEach(i => i.classList.remove('active'));
+            
+            document.getElementById(`section-${id}`).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        function saveCMS() {
+            alert("CONFIGURAÇÕES SALVAS COM SUCESSO!\nAs mudanças foram sincronizadas com o Atelier.");
+        }
+
+        lucide.createIcons();
+    </script>
+</body>
+</html>

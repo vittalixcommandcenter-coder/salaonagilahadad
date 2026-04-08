@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acesso à Maestria | Nagila Academy</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:wght@400;700&family=Montserrat:wght@200;400;600&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        .checkout-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 100px 5%;
+            background: #050505;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Efeito de fundo luxuoso */
+        .checkout-bg {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at 70% 30%, rgba(212, 175, 55, 0.05), transparent 50%);
+            z-index: 1;
+        }
+
+        .checkout-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(212, 175, 55, 0.15);
+            padding: 4rem;
+            max-width: 550px;
+            width: 100%;
+            border-radius: 15px;
+            backdrop-filter: blur(20px);
+            z-index: 5;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+        }
+
+        .checkout-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .checkout-header h2 {
+            font-family: 'Bodoni Moda', serif;
+            color: var(--color-champagne);
+            font-size: 2.5rem;
+            letter-spacing: 0.2rem;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+        }
+
+        .form-group { margin-bottom: 1.8rem; }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.8rem;
+            font-size: 0.75rem;
+            letter-spacing: 0.15rem;
+            color: var(--color-champagne);
+            text-transform: uppercase;
+            opacity: 0.8;
+        }
+
+        .form-group input {
+            width: 100%;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(212, 175, 55, 0.1);
+            padding: 1.2rem;
+            color: white;
+            font-family: 'Montserrat', sans-serif;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border 0.3s ease;
+        }
+
+        .form-group input:focus {
+            border-color: var(--color-champagne);
+            outline: none;
+        }
+
+        .checkout-btn {
+            width: 100%;
+            background: var(--color-champagne);
+            border: none;
+            padding: 1.5rem;
+            color: var(--color-obsidian);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.2rem;
+            cursor: pointer;
+            border-radius: 8px;
+            margin-top: 2rem;
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            font-size: 1rem;
+        }
+
+        .checkout-btn:hover {
+            background: white;
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(212, 175, 55, 0.3);
+        }
+
+        .secure-footer {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 2.5rem;
+            font-size: 0.7rem;
+            opacity: 0.4;
+            color: var(--color-pearl);
+            text-transform: uppercase;
+            letter-spacing: 0.1rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="checkout-bg"></div>
+    
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <button class="nav-hamburger" id="nav-hamburger" aria-label="Menu">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="index.html#hero" class="hover-target">INÍCIO</a></li>
+            <li><a href="sobre.html" class="hover-target">SOBRE</a></li>
+            <li><a href="index.html#cinema" class="hover-target">VÍDEOS</a></li>
+            <li><a href="index.html#gallery" class="hover-target">GALERIA</a></li>
+            <li><a href="academy.html" class="hover-target">ACADEMY</a></li>
+        </ul>
+    </nav>
+
+    <div class="checkout-page">
+
+        <div class="checkout-card reveal">
+            <div class="checkout-header">
+                <h2>CHECKOUT MESTRIA</h2>
+                <p style="font-family: 'Montserrat', sans-serif; font-weight: 200; font-size: 0.9rem; color: var(--color-pearl);">Ambiente seguro e exclusivo para novos alunos.</p>
+            </div>
+
+            <form id="checkout-form-final">
+                <div class="form-group">
+                    <label>CURSO SELECIONADO</label>
+                    <input type="text" id="course-display" value="CARREGANDO..." readonly>
+                </div>
+                <div class="form-group">
+                    <label>NOME DO PORTADOR</label>
+                    <input type="text" value="GUSTAVO M." readonly>
+                </div>
+                <div class="form-group">
+                    <label>NÚMERO DO CARTÃO</label>
+                    <input type="text" value="**** **** **** 8892" readonly>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div class="form-group">
+                        <label>VALIDADE</label>
+                        <input type="text" value="12/28" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>CVV</label>
+                        <input type="text" value="***" readonly>
+                    </div>
+                </div>
+
+                <button type="submit" class="checkout-btn" id="pay-btn">CONFIRMAR PAGAMENTO</button>
+            </form>
+
+            <div class="secure-footer">
+                <i data-lucide="lock" size="14"></i>
+                CRIPTOGRAFIA DE NÍVEL MILITAR ATIVADA
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // Lógica de Redirecionamento 100% Funcional
+        const params = new URLSearchParams(window.location.search);
+        const courseId = params.get('course') || 'loiro';
+        const display = document.getElementById('course-display');
+
+        if (courseId === 'loiro') display.value = "O CÓDIGO DO LOIRO PERFEITO";
+        else display.value = "ARQUITETURA DE CORTE";
+
+        document.getElementById('checkout-form-final').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('pay-btn');
+            btn.innerHTML = "PROCESSANDO TRANSAÇÃO...";
+            btn.disabled = true;
+            btn.style.opacity = "0.6";
+
+            setTimeout(() => {
+                alert("PAGAMENTO APROVADO! Redirecionando para sua área de estudo...");
+                window.location.href = `dashboard.html?course=${courseId}`;
+            }, 2000);
+        });
+
+        lucide.createIcons();
+    </script>
+</body>
+</html>
+

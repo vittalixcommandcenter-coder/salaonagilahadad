@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfólio Completo | Nagila Hadad Luxury Studio</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Montserrat:wght@100;300;400;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body { background: #000; color: #fff; }
+        .full-gallery-header {
+            padding: 4rem 5%;
+            text-align: center;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+        }
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            color: var(--color-gold-polished);
+            text-decoration: none;
+            font-size: 0.8rem;
+            letter-spacing: 0.2em;
+            margin-bottom: 2rem;
+            transition: opacity 0.3s;
+        }
+        .back-link:hover { opacity: 0.7; }
+        .back-link i { margin-right: 10px; width: 16px; }
+
+        .portfolio-grid-full {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+            padding: 6rem 5%;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        .photo-card-full {
+            position: relative;
+            background: #080808;
+            overflow: hidden;
+            border-radius: 4px;
+            aspect-ratio: 1 / 1;
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        .photo-card-full img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.8s ease;
+        }
+        .photo-card-full:hover {
+            transform: scale(1.02);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.8);
+            z-index: 5;
+        }
+        .photo-card-full:hover img {
+            transform: scale(1.1);
+        }
+        .photo-info-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .photo-card-full:hover .photo-info-overlay { opacity: 1; }
+        .photo-info-text {
+            color: var(--color-gold-polished);
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.6rem;
+            letter-spacing: 0.4em;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body class="lp-nagila-hadad">
+
+    <header class="full-gallery-header">
+        <a href="index.html" class="back-link"><i data-lucide="arrow-left"></i> VOLTAR PARA O ATELIER</a>
+        <h1 class="section-title">PORTFÓLIO DE TRANSFORMAÇÕES</h1>
+        <p class="section-subtitle">Obras de arte esculpidas em fios de ouro.</p>
+    </header>
+
+    <main class="portfolio-grid-full">
+        <!-- Renderizando a coleção principal -->
+        <div class="photo-card-full"><img src="assets/foto1.jpg" alt="Nagila Hadad Portfolio"><div class="photo-info-overlay"><div class="photo-info-text">BLONDE MASTER</div></div></div>
+        <div class="photo-card-full"><img src="assets/foto2.jpg" alt="Nagila Hadad Portfolio"><div class="photo-info-overlay"><div class="photo-info-text">ARCHITECTURAL CUT</div></div></div>
+        <div class="photo-card-full"><img src="assets/foto3.jpg" alt="Nagila Hadad Portfolio"><div class="photo-info-overlay"><div class="photo-info-text">LUXURY GLOW</div></div></div>
+        <div class="photo-card-full"><img src="assets/foto4.jpg" alt="Nagila Hadad Portfolio"><div class="photo-info-overlay"><div class="photo-info-text">GOLDEN WAVES</div></div></div>
+        <div class="photo-card-full"><img src="assets/foto5.jpg" alt="Nagila Hadad Portfolio"><div class="photo-info-overlay"><div class="photo-info-text">SOVEREIGN COLOR</div></div></div>
+        <div class="photo-card-full"><img src="assets/foto6.jpg" alt="Nagila Hadad Portfolio"><div class="photo-info-overlay"><div class="photo-info-text">HAIR ARTISTRY</div></div></div>
+        
+        <!-- Placeholder assets for full gallery feel -->
+        <div class="photo-card-full"><img src="assets/haircut_1.png" alt="Nagila Hadad Portfolio"><div class="photo-info-overlay"><div class="photo-info-text">EDITORIAL STYLE</div></div></div>
+        <div class="photo-card-full"><img src="assets/hero_bg.png" alt="Nagila Hadad Portfolio"><div class="photo-info-overlay"><div class="photo-info-text">ATELIER CORE</div></div></div>
+    </main>
+
+    <footer class="footer-bottom" style="padding: 4rem 5%; text-align: center; opacity: 0.5; font-size: 0.7rem;">
+        &copy; 2026 NAGILA HADAD LUXURY STUDIO. TODOS OS DIREITOS RESERVADOS.
+    </footer>
+
+    <script>lucide.createIcons();</script>
+</body>
+</html>

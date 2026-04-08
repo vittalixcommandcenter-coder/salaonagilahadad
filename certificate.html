@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certificado de Conclusão | Nagila Academy</title>
+
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:wght@400;700&family=Cormorant+Garamond:wght@400;600&family=Montserrat:wght@200;400;600&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            background: #0d0d0d;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 100px 20px 20px 20px; /* Espaço para a navbar */
+        }
+
+
+        .certificate {
+            background: #fdfbf7;
+            width: 1000px;
+            height: 700px;
+            padding: 60px;
+            border: 20px solid #0d0d0d;
+            box-shadow: 0 0 100px rgba(0, 0, 0, 0.5);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            color: #0d0d0d;
+            text-align: center;
+        }
+
+        .certificate-border {
+            position: absolute;
+            inset: 20px;
+            border: 2px solid #d4af37;
+            pointer-events: none;
+        }
+
+        .cert-logo {
+            font-family: 'Bodoni Moda', serif;
+            font-size: 2.5rem;
+            letter-spacing: 0.5rem;
+            color: #0d0d0d;
+        }
+
+        .cert-title {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 200;
+            font-size: 1.2rem;
+            letter-spacing: 0.3rem;
+            margin-top: 20px;
+        }
+
+        .cert-header {
+            font-family: 'Bodoni Moda', serif;
+            font-size: 4rem;
+            margin: 20px 0;
+            color: #8b0015;
+            /* Borgonha */
+        }
+
+        .student-name {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 3.5rem;
+            border-bottom: 1px solid #d4af37;
+            padding: 10px 50px;
+            margin: 30px 0;
+            font-style: italic;
+        }
+
+        .cert-text {
+            font-family: 'Montserrat', sans-serif;
+            max-width: 700px;
+            line-height: 1.8;
+            font-size: 1.1rem;
+        }
+
+        .cert-footer {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-top: 50px;
+        }
+
+        .signature-box {
+            text-align: center;
+            width: 250px;
+        }
+
+        .signature-line {
+            border-top: 1px solid #0d0d0d;
+            margin-bottom: 10px;
+        }
+
+        .signature-name {
+            font-family: 'Bodoni Moda', serif;
+            font-size: 1.2rem;
+            letter-spacing: 0.1rem;
+        }
+
+        .gold-seal {
+            width: 120px;
+            height: 120px;
+            background: #d4af37;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .gold-seal i {
+            color: white;
+            font-size: 3rem;
+        }
+
+        .print-btn {
+            position: absolute;
+            bottom: -60px;
+            background: #d4af37;
+            color: #0d0d0d;
+            border: none;
+            padding: 10px 30px;
+            font-family: 'Montserrat', sans-serif;
+            cursor: pointer;
+            border-radius: 5px;
+            font-weight: 600;
+        }
+
+        @media print {
+            .print-btn {
+                display: none;
+            }
+
+            body {
+                background: white;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <button class="nav-hamburger" id="nav-hamburger" aria-label="Menu">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="index.html#hero" class="hover-target">INÍCIO</a></li>
+            <li><a href="sobre.html" class="hover-target">SOBRE</a></li>
+            <li><a href="index.html#cinema" class="hover-target">VÍDEOS</a></li>
+            <li><a href="index.html#gallery" class="hover-target">GALERIA</a></li>
+            <li><a href="academy.html" class="hover-target">ACADEMY</a></li>
+        </ul>
+    </nav>
+
+    <div class="certificate">
+
+        <div class="certificate-border"></div>
+
+        <div class="cert-logo">NAGILA HADAD</div>
+
+        <div class="cert-title">CERTIFICADO DE CONCLUSÃO</div>
+
+        <div class="cert-header">Mestria em Beleza</div>
+
+        <div class="cert-text">
+            Certificamos que para todos os devidos fins de direito e maestria técnica,
+        </div>
+
+        <div class="student-name">Gustavo M. Marins</div>
+
+        <div class="cert-text">
+            Concluiu com êxito o treinamento avançado em <strong>Arquitetura de Corte e Colorimetria Soberana</strong>,
+            demonstrando excelência técnica e visão artística sob a mentoria de Nagila Hadad.
+        </div>
+
+        <div class="cert-footer">
+            <div class="signature-box">
+                <div class="signature-line"></div>
+                <div class="signature-name">NAGILA HADAD</div>
+                <div style="font-size: 0.7rem; opacity: 0.5;">Mentora & Fundadora</div>
+            </div>
+
+            <div class="gold-seal">
+                <img src="https://img.icons8.com/ios-filled/100/ffffff/guarantee.png" style="width: 60px;"
+                    alt="Selo de Ouro">
+            </div>
+
+            <div class="signature-box">
+                <div class="signature-line"></div>
+                <div class="signature-name">NAGILA ACADEMY</div>
+                <div style="font-size: 0.7rem; opacity: 0.5;">Instituição de Ensino Luxo</div>
+            </div>
+        </div>
+
+        <button class="print-btn" onclick="window.print()">BAIXAR CERTIFICADO (PDF)</button>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>
