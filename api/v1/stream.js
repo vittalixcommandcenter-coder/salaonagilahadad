@@ -1,4 +1,4 @@
-const { createClient } = require('@supabase/supabase-js');
+
 
 module.exports = async (req, res) => {
     const { fileId } = req.query;
