@@ -122,12 +122,12 @@
                 card.className = 'photo-card-full';
                 const src = p.thumbnail_url || `/api/v1/stream?fileId=${p.telegram_file_id}`;
                 card.innerHTML = `
-                    <img src="${src}" alt="${p.title || ''}" loading="lazy">
-                    ${p.title ? `
+                    <img src="${src}" alt="${p.title && p.title !== 'EMPTY' ? p.title : ''}" loading="lazy">
+                    ${(p.title && p.title !== 'EMPTY') ? `
                     <div class="photo-info-overlay">
                         <div class="photo-info-text">${p.title}</div>
-                    </div>` : ''}`;
-                grid.appendChild(card);
+                    </div>` : ''}
+                `;grid.appendChild(card);
             });
         }
 

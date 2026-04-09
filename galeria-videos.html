@@ -109,11 +109,11 @@
                 const card = document.createElement('div');
                 card.className = 'video-card-full';
                 card.innerHTML = `
-                    <video controls playsinline preload="metadata">
-                        <source src="/api/v1/stream?fileId=${v.telegram_file_id}" type="video/mp4">
-                    </video>
-                    ${v.title ? `<div class="video-card-info"><h3>${v.title}</h3></div>` : ''}`;
-                grid.appendChild(card);
+                    <div class="video-container" onclick="openVideoModal('${v.telegram_file_id}')">
+                        <div class="play-icon"><i data-lucide="play"></i></div>
+                    </div>
+                    ${(v.title && v.title !== 'EMPTY') ? `<div class="video-card-info"><h3>${v.title}</h3></div>` : ''}
+                `;grid.appendChild(card);
             });
         }
 
