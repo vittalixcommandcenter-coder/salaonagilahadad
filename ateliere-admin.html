@@ -647,7 +647,8 @@
             grid.innerHTML = data.map(item => {
                 const fileIds = item.telegram_file_ids || [item.telegram_file_id];
                 const msgIds = item.telegram_message_ids || [item.telegram_message_id];
-                const thumbId = fileIds[0];
+                // Para o Admin, a miniatura DEVE ser o JPG (telegram_file_id nativo)
+                const thumbId = item.telegram_file_id;
                 
                 return `
                     <div style="background: #151515; border: 1px solid rgba(255,255,255,0.05); border-radius: 4px; padding: 10px; position: relative;">
