@@ -537,8 +537,47 @@
             }
         }
 
+        function luxuryConfirm(title, message) {
+            return new Promise((resolve) => {
+                const overlay = document.createElement('div');
+                overlay.style.cssText = 'position:fixed; inset:0; background:rgba(0,0,0,0.85); backdrop-filter:blur(10px); z-index:99999; display:flex; align-items:center; justify-content:center; opacity:0; transition:opacity 0.3s ease;';
+                
+                const modal = document.createElement('div');
+                modal.style.cssText = 'background:#0a0a0a; border:1px solid rgba(212,175,55,0.3); border-radius:8px; padding:2.5rem; width:100%; max-width:400px; text-align:center; transform:scale(0.9); transition:transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);';
+                
+                modal.innerHTML = `
+                    <div style="color:#cc0022; margin-bottom:1.5rem; display:flex; justify-content:center;"><i data-lucide="alert-triangle" style="width:48px;height:48px;"></i></div>
+                    <h3 style="font-family:'Bodoni Moda',serif; font-size:1.5rem; color:var(--color-gold-polished); margin-bottom:1rem; letter-spacing:1px; text-transform:uppercase;">${title}</h3>
+                    <p style="font-size:0.9rem; opacity:0.8; margin-bottom:2.5rem; line-height:1.6;">${message}</p>
+                    <div style="display:flex; justify-content:center; gap:1rem;">
+                        <button id="luxury-cancel" class="hover-target" style="background:transparent; border:1px solid rgba(255,255,255,0.2); color:#fff; padding:0.8rem 1.5rem; border-radius:4px; cursor:pointer; font-size:0.8rem; letter-spacing:1px; flex:1; transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.05)'" onmouseout="this.style.background='transparent'">CANCELAR</button>
+                        <button id="luxury-confirm" class="hover-target" style="background:#cc0022; border:none; color:#fff; padding:0.8rem 1.5rem; border-radius:4px; cursor:pointer; font-size:0.8rem; letter-spacing:1px; flex:1; transition:all 0.2s;" onmouseover="this.style.filter='brightness(1.2)'" onmouseout="this.style.filter='none'">CONFIRMAR</button>
+                    </div>
+                `;
+                
+                overlay.appendChild(modal);
+                document.body.appendChild(overlay);
+                lucide.createIcons();
+                
+                requestAnimationFrame(() => {
+                    overlay.style.opacity = '1';
+                    modal.style.transform = 'scale(1)';
+                });
+                
+                const close = (result) => {
+                    overlay.style.opacity = '0';
+                    modal.style.transform = 'scale(0.9)';
+                    setTimeout(() => { overlay.remove(); resolve(result); }, 300);
+                };
+                
+                overlay.querySelector('#luxury-cancel').onclick = () => close(false);
+                overlay.querySelector('#luxury-confirm').onclick = () => close(true);
+            });
+        }
+
         async function deleteCourse(id) {
-            if (!confirm('Excluir este curso permanentemente?')) return;
+            const confirmed = await luxuryConfirm('EXCLUIR CURSO', 'Excluir este curso permanentemente e revogar todo o acesso associado?');
+            if (!confirmed) return;
             const { error } = await sb.from('courses').delete().eq('id', id);
             if (error) { showToast('Erro ao excluir curso.', 'error'); return; }
             showToast('CURSO REMOVIDO.');
@@ -642,7 +681,8 @@
         }
 
         async function deleteGalleryItem(id, messageId, btnEl) {
-            if (!confirm('Tem certeza? Isso será removido permanentemente do site e dos servidores.')) return;
+            const confirmed = await luxuryConfirm('CONFIRMAR EXCLUSÃO', 'Tem certeza? Isso será removido permanentemente do site e dos servidores Vittalix.');
+            if (!confirmed) return;
             
             // Ocultação Instantânea da Interface (UX)
             if (btnEl) {
