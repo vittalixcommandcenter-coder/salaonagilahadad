@@ -4,14 +4,7 @@ module.exports = async (req, res) => {
     const { fileId } = req.query;
     if (!fileId) return res.status(400).json({ error: 'fileId is required' });
 
-    // 1. Initialize Supabase
-    const supabase = createClient(
-        process.env.SUPABASE_URL,
-        process.env.SUPABASE_SERVICE_ROLE_KEY
-    );
-
-    // O arquivo é servido via file_id (que é um hash forte do Telegram, atuando como URL não-listável)
-
+    console.log("Tentando buscar o arquivo no Telegram:", fileId);
 
     // 3. Resolve Telegram Path
     const botToken = process.env.TELEGRAM_BOT_TOKEN;

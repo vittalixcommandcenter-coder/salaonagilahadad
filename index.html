@@ -232,7 +232,7 @@
             if (photos && photos.length > 0) {
                 galleryGrid.innerHTML = photos.map(p =>
                     `<div class="gallery-item hover-target" style="position: relative;">
-                        <img src="/api/v1/stream?fileId=${p.telegram_file_id}" alt="${p.title || 'Nagila Hadad Portfolio'}"/>
+                        <img src="/api/v1/stream?fileId=${p.telegram_file_id}" alt="${p.title || ''}"/>
                         ${p.title ? `<div style="position:absolute; bottom:0; left:0; right:0; background:rgba(0,0,0,0.6); padding:10px; font-size:0.7rem; letter-spacing:2px; text-transform:uppercase; text-align:center;">${p.title}</div>` : ''}
                      </div>`
                 ).join('');

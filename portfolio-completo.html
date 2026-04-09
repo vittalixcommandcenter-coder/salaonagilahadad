@@ -122,7 +122,7 @@
                 card.className = 'photo-card-full';
                 const src = p.thumbnail_url || `/api/v1/stream?fileId=${p.telegram_file_id}`;
                 card.innerHTML = `
-                    <img src="${src}" alt="${p.title || 'Nagila Hadad Portfolio'}" loading="lazy">
+                    <img src="${src}" alt="${p.title || ''}" loading="lazy">
                     ${p.title ? `
                     <div class="photo-info-overlay">
                         <div class="photo-info-text">${p.title}</div>
