@@ -112,7 +112,7 @@
                     <video controls playsinline preload="metadata">
                         <source src="/api/v1/stream?fileId=${v.telegram_file_id}" type="video/mp4">
                     </video>
-                    <div class="video-card-info"><h3>${v.title || 'SEM TÍTULO'}</h3></div>`;
+                    ${v.title ? `<div class="video-card-info"><h3>${v.title}</h3></div>` : ''}`;
                 grid.appendChild(card);
             });
         }

@@ -70,5 +70,14 @@ CREATE POLICY "Admin pode gerenciar cursos"
 ON public.courses FOR ALL
 USING (auth.role() = 'authenticated');
 
-COMMENT ON TABLE public.courses IS 'CMS de cursos — alimenta dinamicamente a Academy e Landing Pages.';
+-- Somente usuários autenticados (admin) podem gerenciar
+CREATE POLICY "Admin pode gerenciar galeria"
+ON public.gallery FOR ALL
+USING (auth.role() = 'authenticated');
 
+-- Adicionar coluna de destaque de vitrine para a Landing Page
+ALTER TABLE public.gallery ADD COLUMN IF NOT EXISTS is_featured BOOLEAN DEFAULT false;
+
+COMMENT ON TABLE public.gallery IS 'Galeria de transformações e curadoria de vídeos da academia.';
+
+COMMENT ON TABLE public.courses IS 'CMS de cursos — alimenta dinamicamente a Academy e Landing Pages.';

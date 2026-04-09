@@ -226,24 +226,32 @@
 
         async function loadHomeContent() {
             // Gallery Photos
-            const { data: photos } = await sbHome.from('gallery').select('*').eq('media_type', 'IMAGE').order('order').limit(6);
+            const { data: photos } = await sbHome.from('gallery').select('*').eq('media_type', 'IMAGE').eq('is_featured', true).order('created_at', { ascending: false }).limit(6);
             const galleryGrid = document.getElementById('gallery-grid');
             document.getElementById('gallery-loading')?.remove();
             if (photos && photos.length > 0) {
                 galleryGrid.innerHTML = photos.map(p =>
-                    `<div class="gallery-item hover-target"><img src="${p.thumbnail_url || p.telegram_file_id}" alt="${p.title || 'Nagila Hadad'}"/></div>`
+                    `<div class="gallery-item hover-target" style="position: relative;">
+                        <img src="/api/v1/stream?fileId=${p.telegram_file_id}" alt="${p.title || 'Nagila Hadad Portfolio'}"/>
+                        ${p.title ? `<div style="position:absolute; bottom:0; left:0; right:0; background:rgba(0,0,0,0.6); padding:10px; font-size:0.7rem; letter-spacing:2px; text-transform:uppercase; text-align:center;">${p.title}</div>` : ''}
+                     </div>`
                 ).join('');
             } else {
                 galleryGrid.innerHTML = `<p style="grid-column:1/-1;text-align:center;padding:4rem 0;opacity:0.3;letter-spacing:4px;font-size:0.8rem;">PORTFÓLIO EM BREVE</p>`;
             }
 
             // Curadoria Videos
-            const { data: videos } = await sbHome.from('gallery').select('*').eq('media_type', 'VIDEO').order('order').limit(4);
+            const { data: videos } = await sbHome.from('gallery').select('*').eq('media_type', 'VIDEO').eq('is_featured', true).order('created_at', { ascending: false }).limit(4);
             const videoGrid = document.getElementById('video-grid');
             document.getElementById('videos-loading')?.remove();
             if (videos && videos.length > 0) {
                 videoGrid.innerHTML = videos.map(v =>
-                    `<div class="curadoria-item"><video controls playsinline preload="metadata"><source src="${v.telegram_file_id}" type="video/mp4"></video></div>`
+                    `<div class="curadoria-item">
+                        <video controls playsinline preload="metadata">
+                            <source src="/api/v1/stream?fileId=${v.telegram_file_id}" type="video/mp4">
+                        </video>
+                        ${v.title ? `<div style="padding: 1rem 0; font-size: 0.8rem; opacity: 0.8; letter-spacing: 2px;">${v.title}</div>` : ''}
+                    </div>`
                 ).join('');
             } else {
                 videoGrid.innerHTML = `<p style="grid-column:1/-1;text-align:center;padding:4rem 0;opacity:0.3;letter-spacing:4px;font-size:0.8rem;">CURADORIA EM BREVE</p>`;

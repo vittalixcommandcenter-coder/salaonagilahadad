@@ -1,7 +1,10 @@
 /**
- * Vittalix-HD Admin Upload Engine (REFINED)
- * Persistence & Resume Logic for Nagila Hadad Luxury CMS
+ * Vittalix-HD Admin Upload Engine (DIRECT BOT API)
+ * Persistence, Splitting & Direct Upload Logic for Nagila Hadad Luxury CMS
  */
+
+const BOT_TOKEN = '7744876644:AAEP_X78u7iA8W1tXwM_VvF5hXp0Y4A8V5o';
+const CDN_CHAT_ID = '-1003946361387';
 
 const CHUNK_SIZE = 49 * 1024 * 1024; // 49MB strict slices
 const MAX_RETRY = 3;
@@ -11,25 +14,24 @@ function getSessionKey(file) {
 }
 
 async function vittalixUpload(file) {
-    // BYPASS TOTAL PARA IMAGENS (Não fatia, envia inteiro preservando o nome)
+    // 1. BYPASS TOTAL PARA IMAGENS (Não fatia, envia inteiro preservando o nome original, usando sendPhoto)
     if (file.type.startsWith('image/')) {
-        showUploadModal(`Enviando imagem em alta resolução...`);
+        showUploadModal(`Enviando a imagem original para a vitrine...`);
         try {
             const formData = new FormData();
-            formData.append('document', file, file.name);
-            formData.append('chat_id', '-1003946361387');
+            formData.append('photo', file, file.name);
+            formData.append('chat_id', CDN_CHAT_ID);
             
-            const response = await fetch('/api/v1/upload-proxy', { method: 'POST', body: formData });
+            const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, { method: 'POST', body: formData });
             const data = await response.json();
             if (!data.ok) throw new Error(data.description);
             
-            // Tratamento flexível: Telegram pode retornar 'photo' (array) ou 'document'
-            let fileId;
-            if (data.result.document) fileId = data.result.document.file_id;
-            else if (data.result.photo) fileId = data.result.photo[data.result.photo.length - 1].file_id;
-            else throw new Error("Formato não reconhecido pelo Telegram");
+            const fileId = data.result.photo[data.result.photo.length - 1].file_id;
 
+            const msg = document.getElementById('upload-msg');
+            if (msg) msg.innerText = `UPLOAD CONCLUÍDO!`;
             setTimeout(() => hideUploadModal(), 1000);
+
             return { sessionKey: 'img_' + Date.now(), fileIds: [fileId] };
         } catch(err) {
             hideUploadModal();
@@ -37,26 +39,21 @@ async function vittalixUpload(file) {
         }
     }
 
+    // 2. LÓGICA PARA VÍDEOS / DOCUMENTOS PESADOS (Direct Bot API)
     const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
     const sessionKey = getSessionKey(file);
     
-    // 1. Load Persistence (Resume State)
     let savedState = JSON.parse(localStorage.getItem(sessionKey)) || [];
     const isResuming = savedState.length > 0;
     
-    // UI: Warning & Progress
-    const initialMsg = isResuming ? `RETOMANDO UPLOAD: ${savedState.length}/${totalChunks} partes concluídas.` : `Iniciando upload de ${totalChunks} partes...`;
+    const initialMsg = isResuming ? `RETOMANDO UPLOAD: ${savedState.length}/${totalChunks} concluídas.` : `Acelerando upload de ${file.name} em ${totalChunks} pacotes...`;
     showUploadModal(initialMsg);
-    window.onbeforeunload = () => "Upload em progresso. Não feche esta aba para evitar perda de dados.";
+    window.onbeforeunload = () => "Upload em progresso. Não feche esta aba.";
 
     const fileIds = [...savedState];
 
     for (let i = 0; i < totalChunks; i++) {
-        // Skip already uploaded chunks
-        if (fileIds[i]) {
-            console.log(`Vittalix-HD: Pulando parte ${i + 1} (Já existente no cache).`);
-            continue;
-        }
+        if (fileIds[i]) continue;
 
         const start = i * CHUNK_SIZE;
         const end = Math.min(start + CHUNK_SIZE, file.size);
@@ -66,27 +63,20 @@ async function vittalixUpload(file) {
         
         try {
             const fileId = await uploadWithRetry(chunk, i + 1, MAX_RETRY, file.name, totalChunks);
-            
-            // 2. Incremental Save (Persistence)
             fileIds[i] = fileId;
             localStorage.setItem(sessionKey, JSON.stringify(fileIds));
-            
         } catch (err) {
             window.onbeforeunload = null;
-            alert(`Falha crítica no upload da parte ${i + 1}. O processo foi interrompido.`);
+            alert(`Falha no upload da parte ${i + 1}. O processo foi travado e poderá ser retomado depois.`);
             throw err;
         }
     }
 
-    // 3. Final Verification (Ordering Ensure)
     const finalizedIds = fileIds.filter(id => !!id);
-    if (finalizedIds.length !== totalChunks) {
-        throw new Error("Integridade de upload violada: partes faltando.");
-    }
+    if (finalizedIds.length !== totalChunks) throw new Error("Integridade violada: partes faltando.");
 
     window.onbeforeunload = null;
     
-    // UI: Conclusão
     const msg = document.getElementById('upload-msg');
     if (msg) msg.innerText = `UPLOAD CONCLUÍDO!`;
     setTimeout(() => hideUploadModal(), 1000);
@@ -103,21 +93,20 @@ function hideUploadModal() {
     }
 }
 
-
 async function uploadWithRetry(blob, partIndex, retriesLeft, originalName, totalChunks) {
     const formData = new FormData();
 
+    // Nomeização dinâmica sem hardcode de part_1.mp4. Se for só um arquivo (<49MB), envia normal.
     const finalName = totalChunks > 1 ? `part_${partIndex}_${originalName}` : originalName;
     formData.append('document', blob, finalName);
-    formData.append('chat_id', '-1003946361387'); // Nagila CDN Channel
+    formData.append('chat_id', CDN_CHAT_ID); 
 
     try {
-        // Envia via Proxy serverless — BOT_TOKEN fica seguro no servidor
-        const response = await fetch('/api/v1/upload-proxy', {
+        // Direct API Bypass ao invés da proxy local (evita límite 4.5MB Serverless)
+        const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendDocument`, {
             method: 'POST',
             body: formData
         });
-
         
         const data = await response.json();
         if (!data.ok) throw new Error(data.description);
@@ -126,7 +115,7 @@ async function uploadWithRetry(blob, partIndex, retriesLeft, originalName, total
 
     } catch (err) {
         if (retriesLeft > 0) {
-            console.warn(`Parte ${partIndex} falhou. Tentando novamente (${MAX_RETRY - retriesLeft + 1}/${MAX_RETRY})...`);
+            console.warn(`Parte ${partIndex} falhando. Tentando auto-resume...`);
             await new Promise(r => setTimeout(r, 2000));
             return uploadWithRetry(blob, partIndex, retriesLeft - 1, originalName, totalChunks);
         }
@@ -134,14 +123,14 @@ async function uploadWithRetry(blob, partIndex, retriesLeft, originalName, total
     }
 }
 
-// UI Helpers (Simplified for integration)
+// UI Helpers
 function showUploadModal(msg) {
     const modal = document.createElement('div');
     modal.id = 'vittalix-upload-status';
     modal.innerHTML = `
         <div style="position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 9999; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(20px);">
             <div style="text-align: center; color: var(--color-gold-delicate); font-family: 'Bodoni Moda', serif;">
-                <h2 style="font-size: 2rem; margin-bottom: 2rem;">VITTALIX-HD: PROCESSANDO MÍDIA</h2>
+                <h2 style="font-size: 2rem; margin-bottom: 2rem;">VITTALIX-HD: ROTA EXPRESSA</h2>
                 <p id="upload-msg">${msg}</p>
                 <div style="width: 300px; height: 2px; background: rgba(255,255,255,0.1); margin: 2rem auto; position: relative; overflow: hidden;">
                     <div id="upload-bar" style="position: absolute; left: 0; top: 0; height: 100%; width: 0%; background: var(--color-gold-polished); transition: width 0.3s;"></div>
@@ -158,5 +147,5 @@ function updateUploadProgress(current, total) {
     const bar = document.getElementById('upload-bar');
     const msg = document.getElementById('upload-msg');
     if (bar) bar.style.width = `${percent}%`;
-    if (msg) msg.innerText = `Enviando parte ${current} de ${total}...`;
+    if (msg) msg.innerText = total > 1 ? `Enviando pacote pesado ${current} de ${total}...` : `Transferindo para a borda...`;
 }
