@@ -682,7 +682,8 @@
         }
 
         window.toggleFeatured = async function(id, mediaType, isFeatured, checkboxEl) {
-            console.log("📢 [DEBUG] Tentando Alterar Destaque:", { id, mediaType, isFeatured });
+            const cleanId = id.trim();
+            console.log("📢 [DEBUG] Tentando Alterar Destaque:", { cleanId, mediaType, isFeatured });
             
             if (checkboxEl) checkboxEl.disabled = true;
 
@@ -704,16 +705,17 @@
                 }
 
                 // 2. Update com Verificação de Linhas Afetadas (.select)
+                // Usamos o ID limpo (.trim) para garantir o match no Postgres
                 const { data, error: updateErr } = await sb.from('gallery')
                     .update({ is_featured: isFeatured })
-                    .eq('id', id)
+                    .eq('id', cleanId)
                     .select();
 
                 if (updateErr) throw updateErr;
 
-                // Teste de Persistência: Se data vier vazio, o filtro .eq('id', id) não encontrou nada ou o RLS barrou silenciamente
+                // Teste de Persistência
                 if (!data || data.length === 0) {
-                    throw new Error("Zero linhas afetadas. O banco recusou a gravação ou o ID é inválido.");
+                    throw new Error("Zero linhas afetadas. O banco recusou a gravação. Verifique as políticas de RLS no Console Supabase.");
                 }
 
                 // Sucesso Real Confirmado
