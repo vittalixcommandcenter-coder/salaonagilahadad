@@ -3,98 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Galeria de Vídeos | Nagila Hadad Luxury Studio</title>
+    <title>Acervo Cinematográfico | Nagila Hadad Academy</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Montserrat:wght@100;300;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400;0,700;1,400&family=Montserrat:wght@300;400;600;700&family=Cormorant+Garamond:wght@300;400;600&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
-    <style>
-        body { background: #000; color: #fff; }
-        .full-gallery-header {
-            padding: 4rem 5%;
-            text-align: center;
-            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
-        }
-        .back-link {
-            display: inline-flex;
-            align-items: center;
-            color: var(--color-gold-polished);
-            text-decoration: none;
-            font-size: 0.8rem;
-            letter-spacing: 0.2em;
-            margin-bottom: 2rem;
-            transition: opacity 0.3s;
-        }
-        .back-link:hover { opacity: 0.7; }
-        .back-link i { margin-right: 10px; width: 16px; }
-
-        .video-grid-full {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-            gap: 30px;
-            padding: 6rem 5%;
-            max-width: 1600px;
-            margin: 0 auto;
-        }
-        .video-card-full {
-            background: #080808;
-            border-radius: 8px;
-            overflow: hidden;
-            border: 1px solid rgba(255,255,255,0.05);
-            transition: transform 0.4s ease;
-        }
-        .video-card-full:hover {
-            transform: translateY(-10px);
-            border-color: var(--color-gold-polished);
-        }
-        .video-card-full video {
-            width: 100%;
-            aspect-ratio: 16 / 9;
-            object-fit: contain;
-            background: #000;
-        }
-        .video-card-info {
-            padding: 1.5rem;
-            text-align: center;
-        }
-        .video-card-info h3 {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 0.7rem;
-            letter-spacing: 0.3em;
-            color: var(--color-gold-polished);
-            text-transform: uppercase;
-        }
-    </style>
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="vittalix-player.js?v=2026.MSE"></script>
 </head>
-<body class="lp-nagila-hadad">
+<body class="academy-body">
 
-    <header class="full-gallery-header">
-        <a href="index.html" class="back-link"><i data-lucide="arrow-left"></i> VOLTAR PARA O ATELIER</a>
-        <h1 class="section-title">ACERVO CINEMATOGRÁFICO</h1>
-        <p class="section-subtitle">A coleção completa de transformações e arte em movimento.</p>
+    <header class="academy-header" style="background: rgba(0,0,0,0.8); backdrop-filter: blur(20px);">
+        <nav class="academy-nav container">
+            <a href="index.html" class="academy-logo">NÁGILA<br><span>ACADEMY</span></a>
+            <div class="nav-links">
+                <a href="academy.html">CURSOS</a>
+                <a href="galeria-videos.html" class="active">ACERVO</a>
+                <a href="dashboard.html" class="btn-primary">DASHBOARD</a>
+            </div>
+        </nav>
     </header>
 
-    <main>
-        <div class="video-grid-full" id="video-grid-full">
-            <p id="videos-loading" style="grid-column:1/-1; text-align:center; padding:8rem 0; opacity:0.4; letter-spacing:4px; font-size:0.8rem;">CARREGANDO ACERVO...</p>
+    <main class="container py-xl">
+        <header class="section-header" data-aos="fade-up" style="text-align: center; margin-bottom: 5rem;">
+            <p class="section-tag">HIGH FIDELITY EXPERIENCE</p>
+            <h1 class="section-title" style="font-family: 'Bodoni Moda', serif; font-size: 3.5rem; color: #fff;">Acervo Cinematográfico</h1>
+            <p style="color: rgba(255,255,255,0.6); max-width: 600px; margin: 2rem auto; font-style: italic;">Obras de arte em movimento, capturadas com a precisão e o luxo da Nagila Hadad Academy.</p>
+        </header>
+
+        <!-- Grid de Vídeos -->
+        <div id="video-grid-full" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 3rem;">
+            <!-- Render dinâmico -->
+            <div id="videos-loading" style="grid-column: 1/-1; text-align: center; padding: 5rem 0;">
+                <div class="luxury-spinner" style="width: 50px; height: 50px; border: 2px solid rgba(212,175,55,0.1); border-top: 2px solid #D4AF37; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto;"></div>
+                <p style="color: #D4AF37; margin-top: 20px; font-size: 0.7rem; letter-spacing: 3px; text-transform: uppercase;">Acessando servidores Vittalix...</p>
+            </div>
         </div>
     </main>
 
-
-    <footer class="footer-bottom" style="padding: 4rem 5%; text-align: center; opacity: 0.5; font-size: 0.7rem;">
-        &copy; 2026 NAGILA HADAD LUXURY STUDIO. TODOS OS DIREITOS RESERVADOS.
+    <footer class="academy-footer">
+        <div class="container" style="text-align: center; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 4rem;">
+            <p style="font-size: 0.7rem; letter-spacing: 2px; opacity: 0.4;">© 2026 NAGILA HADAD ACADEMY | BANDA ZERO BY VITTALIX-HD</p>
+        </div>
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="vittalix-player.js?v=2026.MSE"></script>
     <script>
-        lucide.createIcons();
+        const sb = supabase.createClient(
+            'https://fjuiiivmsfdwsrqiobdu.supabase.co',
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZqdWlpaXZtc2Zkd3NycWlvYmR1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2ODIyNjAsImV4cCI6MjA5MTI1ODI2MH0.-FyHmwxUJsloYRD6Wl6fjYrOHGf5CiFcaVgTT89bGMo'
+        );
 
-        const sb = supabase.createClient('https://fjuiiivmsfdwsrqiobdu.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZqdWlpaXZtc2Zkd3NycWlvYmR1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2ODIyNjAsImV4cCI6MjA5MTI1ODI2MH0.-FyHmwxUJsloYRD6Wl6fjYrOHGf5CiFcaVgTT89bGMo');
+        lucide.createIcons();
+        AOS.init({ duration: 1000, once: true });
 
         async function loadVideoGallery() {
             const container = document.getElementById('video-grid-full');
             
-            // CURADORIA CINEMATOGRÁFICA: Apenas vídeos (media_type: 'VIDEO')
+            // FILTRO DE ELITE: Apenas vídeos (media_type = 'VIDEO')
             const { data, error } = await sb
                 .from('gallery')
                 .select('*')
@@ -103,12 +68,13 @@
 
             document.getElementById('videos-loading')?.remove();
 
-            if (error || !data || data.length === 0) {
+            if (error || !data || !data.length) {
                 container.innerHTML = `
                     <div style="grid-column:1/-1; text-align:center; padding:10rem 0;">
                         <p style="font-family:'Cormorant Garamond',serif; font-size:2rem; color:rgba(212,175,55,0.3); letter-spacing:0.2em; margin-bottom:1rem;">ACERVO EM CONSTRUÇÃO</p>
                         <p style="font-size:0.75rem; letter-spacing:4px; opacity:0.3; text-transform:uppercase;">Nenhum vídeo publicado ainda.</p>
-                    </div>`;
+                    </div>
+                `;
                 return;
             }
 
@@ -117,25 +83,35 @@
                 const displayId = `curadoria-${idx}`;
                 
                 return `
-                    <div class="video-card-full">
-                        <div class="video-container" style="background: #111; position: relative; aspect-ratio: 16/9; overflow: hidden;">
-                            <video id="${displayId}" class="vittalix-video" playsinline muted controls style="width: 100%; height: 100%; object-fit: cover;"></video>
-                            <div class="video-play-hint" onclick="VittalixPlayer.play('${displayId}', ${JSON.stringify(fileIds)})" style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.4); cursor: pointer; transition: 0.3s;">
-                                <div style="padding: 1rem; background: rgba(212,175,55,0.2); border-radius: 50%; backdrop-filter: blur(10px);">
-                                    <i data-lucide="play" style="color: #fff; width: 32px; height: 32px;"></i>
+                    <div class="video-card-full" data-aos="fade-up">
+                        <div class="video-container" style="background: #111; position: relative; aspect-ratio: 16/9; overflow: hidden; border-radius: 8px;">
+                            <video id="${displayId}" class="vittalix-video" playsinline muted controls style="width: 100%; height: 100%; object-fit: cover;" poster="/api/v1/stream?fileId=${fileIds[0]}"></video>
+                            <div class="video-play-hint" onclick="VittalixPlayer.play('${displayId}', ${JSON.stringify(fileIds)})" style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.4); cursor: pointer; transition: 0.3s; z-index: 5;">
+                                <div style="padding: 1.5rem; background: rgba(212,175,55,0.2); border-radius: 50%; backdrop-filter: blur(10px); border: 1px solid rgba(212,175,55,0.3);">
+                                    <i data-lucide="play" style="color: #fff; width: 40px; height: 40px;"></i>
                                 </div>
                             </div>
                         </div>
-                        <div class="video-card-info">
-                            <h3>${item.title || 'OBRA SEM TÍTULO'}</h3>
+                        <div class="video-card-info" style="margin-top: 1.5rem;">
+                            <span style="font-size: 0.6rem; letter-spacing: 2px; color: #D4AF37; text-transform: uppercase;">${item.tag || 'TRANSFORMAÇÃO'}</span>
+                            <h3 style="font-family: 'Bodoni Moda', serif; color: #fff; margin-top: 0.5rem; letter-spacing: 1px;">${item.title || 'OBRA SEM TÍTULO'}</h3>
                         </div>
                     </div>
-                `;grid.appendChild(card);
-            });
+                `;
+            }).join('');
+            
+            lucide.createIcons();
         }
 
-        loadVideos();
+        document.addEventListener('DOMContentLoaded', loadVideoGallery);
     </script>
+
+    <style>
+        .video-card-full { transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); }
+        .video-card-full:hover { transform: translateY(-10px); }
+        .luxury-spinner { border-top-color: #D4AF37 !important; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
 
 </body>
 </html>
