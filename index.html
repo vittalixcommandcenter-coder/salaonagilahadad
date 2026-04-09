@@ -199,7 +199,7 @@
         <span class="modal-close hover-target">&times;</span>
         <button class="modal-btn modal-prev hover-target"><i data-lucide="chevron-left"></i></button>
         <div class="modal-content">
-            <img id="modal-img" src="" alt="Nagila Hadad Portfolio">
+            <img id="modal-img" src="" alt="">
         </div>
         <button class="modal-btn modal-next hover-target"><i data-lucide="chevron-right"></i></button>
     </div>
@@ -250,7 +250,7 @@
                         <video controls playsinline preload="metadata">
                             <source src="/api/v1/stream?fileId=${v.telegram_file_id}" type="video/mp4">
                         </video>
-                        ${v.title ? `<div style="padding: 1rem 0; font-size: 0.8rem; opacity: 0.8; letter-spacing: 2px;">${v.title}</div>` : ''}
+                        ${(v.title && v.title !== 'EMPTY') ? `<div style="padding: 1rem 0; font-size: 0.8rem; opacity: 0.8; letter-spacing: 2px;">${v.title}</div>` : ''}
                     </div>`
                 ).join('');
             } else {
