@@ -1,12 +1,9 @@
 /**
- * Vittalix-HD Admin Upload Engine (DIRECT BOT API)
- * Persistence, Splitting & Direct Upload Logic for Nagila Hadad Luxury CMS
+ * Vittalix-HD Admin Upload Engine
+ * Persistence & Splitting Logic (Vercel Proxy 3MB)
  */
 
-const BOT_TOKEN = '7744876644:AAEP_X78u7iA8W1tXwM_VvF5hXp0Y4A8V5o';
-const CDN_CHAT_ID = '-1003946361387';
-
-const CHUNK_SIZE = 49 * 1024 * 1024; // 49MB strict slices
+const CHUNK_SIZE = 3 * 1024 * 1024; // 3MB strict slices for Vercel 4.5MB Payload Limit
 const MAX_RETRY = 3;
 
 function getSessionKey(file) {
@@ -14,43 +11,51 @@ function getSessionKey(file) {
 }
 
 async function vittalixUpload(file) {
-    // 1. BYPASS TOTAL PARA IMAGENS (Não fatia, envia inteiro preservando o nome original, usando sendPhoto)
+    // 1. IMAGES BYPASS CHUNKING (Uploads fully)
     if (file.type.startsWith('image/')) {
         showUploadModal(`Enviando a imagem original para a vitrine...`);
         try {
             const formData = new FormData();
             formData.append('photo', file, file.name);
-            formData.append('chat_id', CDN_CHAT_ID);
             
-            const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, { method: 'POST', body: formData });
+            const response = await fetch('/api/v1/upload-proxy?type=photo', { method: 'POST', body: formData });
             const data = await response.json();
             if (!data.ok) throw new Error(data.description);
             
-            const fileId = data.result.photo[data.result.photo.length - 1].file_id;
+            const fileId = data.result.document 
+                ? data.result.document.file_id 
+                : data.result.photo[data.result.photo.length - 1].file_id;
+            
+            const messageId = data.result.message_id;
 
             const msg = document.getElementById('upload-msg');
             if (msg) msg.innerText = `UPLOAD CONCLUÍDO!`;
             setTimeout(() => hideUploadModal(), 1000);
 
-            return { sessionKey: 'img_' + Date.now(), fileIds: [fileId] };
+            return { sessionKey: 'img_' + Date.now(), fileIds: [fileId], messageIds: [messageId] };
         } catch(err) {
             hideUploadModal();
             throw err;
         }
     }
 
-    // 2. LÓGICA PARA VÍDEOS / DOCUMENTOS PESADOS (Direct Bot API)
+    // 2. VIDEO LOGIC
     const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
     const sessionKey = getSessionKey(file);
     
-    let savedState = JSON.parse(localStorage.getItem(sessionKey)) || [];
-    const isResuming = savedState.length > 0;
+    let savedState = JSON.parse(localStorage.getItem(sessionKey)) || { fileIds: [], messageIds: [] };
+    if (Array.isArray(savedState)) {
+        savedState = { fileIds: savedState, messageIds: [] }; // Bridge compatibility
+    }
     
-    const initialMsg = isResuming ? `RETOMANDO UPLOAD: ${savedState.length}/${totalChunks} concluídas.` : `Acelerando upload de ${file.name} em ${totalChunks} pacotes...`;
+    const isResuming = savedState.fileIds.filter(Boolean).length > 0;
+    const initialMsg = isResuming ? `RETOMANDO UPLOAD: ${savedState.fileIds.filter(Boolean).length}/${totalChunks} concluídas.` : `Acelerando upload de ${file.name} em ${totalChunks} pacotes...`;
+    
     showUploadModal(initialMsg);
     window.onbeforeunload = () => "Upload em progresso. Não feche esta aba.";
 
-    const fileIds = [...savedState];
+    const fileIds = [...savedState.fileIds];
+    const messageIds = [...savedState.messageIds];
 
     for (let i = 0; i < totalChunks; i++) {
         if (fileIds[i]) continue;
@@ -62,9 +67,10 @@ async function vittalixUpload(file) {
         updateUploadProgress(i + 1, totalChunks);
         
         try {
-            const fileId = await uploadWithRetry(chunk, i + 1, MAX_RETRY, file.name, totalChunks);
-            fileIds[i] = fileId;
-            localStorage.setItem(sessionKey, JSON.stringify(fileIds));
+            const result = await uploadWithRetry(chunk, i + 1, MAX_RETRY, file.name, totalChunks);
+            fileIds[i] = result.fileId;
+            messageIds[i] = result.messageId;
+            localStorage.setItem(sessionKey, JSON.stringify({ fileIds, messageIds }));
         } catch (err) {
             window.onbeforeunload = null;
             alert(`Falha no upload da parte ${i + 1}. O processo foi travado e poderá ser retomado depois.`);
@@ -81,7 +87,7 @@ async function vittalixUpload(file) {
     if (msg) msg.innerText = `UPLOAD CONCLUÍDO!`;
     setTimeout(() => hideUploadModal(), 1000);
 
-    return { sessionKey, fileIds: finalizedIds };
+    return { sessionKey, fileIds: finalizedIds, messageIds };
 }
 
 function hideUploadModal() {
@@ -95,15 +101,11 @@ function hideUploadModal() {
 
 async function uploadWithRetry(blob, partIndex, retriesLeft, originalName, totalChunks) {
     const formData = new FormData();
-
-    // Nomeização dinâmica sem hardcode de part_1.mp4. Se for só um arquivo (<49MB), envia normal.
     const finalName = totalChunks > 1 ? `part_${partIndex}_${originalName}` : originalName;
     formData.append('document', blob, finalName);
-    formData.append('chat_id', CDN_CHAT_ID); 
 
     try {
-        // Direct API Bypass ao invés da proxy local (evita límite 4.5MB Serverless)
-        const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendDocument`, {
+        const response = await fetch('/api/v1/upload-proxy', {
             method: 'POST',
             body: formData
         });
@@ -111,7 +113,10 @@ async function uploadWithRetry(blob, partIndex, retriesLeft, originalName, total
         const data = await response.json();
         if (!data.ok) throw new Error(data.description);
         
-        return data.result.document.file_id;
+        return {
+            fileId: data.result.document.file_id,
+            messageId: data.result.message_id
+        };
 
     } catch (err) {
         if (retriesLeft > 0) {
@@ -123,14 +128,13 @@ async function uploadWithRetry(blob, partIndex, retriesLeft, originalName, total
     }
 }
 
-// UI Helpers
 function showUploadModal(msg) {
     const modal = document.createElement('div');
     modal.id = 'vittalix-upload-status';
     modal.innerHTML = `
         <div style="position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 9999; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(20px);">
             <div style="text-align: center; color: var(--color-gold-delicate); font-family: 'Bodoni Moda', serif;">
-                <h2 style="font-size: 2rem; margin-bottom: 2rem;">VITTALIX-HD: ROTA EXPRESSA</h2>
+                <h2 style="font-size: 2rem; margin-bottom: 2rem;">VITTALIX-HD: ROTA PARALELA</h2>
                 <p id="upload-msg">${msg}</p>
                 <div style="width: 300px; height: 2px; background: rgba(255,255,255,0.1); margin: 2rem auto; position: relative; overflow: hidden;">
                     <div id="upload-bar" style="position: absolute; left: 0; top: 0; height: 100%; width: 0%; background: var(--color-gold-polished); transition: width 0.3s;"></div>
@@ -147,5 +151,5 @@ function updateUploadProgress(current, total) {
     const bar = document.getElementById('upload-bar');
     const msg = document.getElementById('upload-msg');
     if (bar) bar.style.width = `${percent}%`;
-    if (msg) msg.innerText = total > 1 ? `Enviando pacote pesado ${current} de ${total}...` : `Transferindo para a borda...`;
+    if (msg) msg.innerText = total > 1 ? `Enviando pacote seguro ${current} de ${total}...` : `Transferindo para a borda...`;
 }

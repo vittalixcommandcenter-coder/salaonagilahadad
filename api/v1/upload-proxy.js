@@ -26,8 +26,9 @@ export default async function handler(req, res) {
     // Extrair o Content-Type do request original (multipart/form-data com boundary)
     const contentType = req.headers['content-type'];
 
+    const type = req.query.type === 'photo' ? 'sendPhoto' : 'sendDocument';
     const telegramRes = await fetch(
-        `https://api.telegram.org/bot${BOT_TOKEN}/sendDocument`,
+        `https://api.telegram.org/bot${BOT_TOKEN}/${type}`,
         {
             method: 'POST',
             headers: { 'Content-Type': contentType },

@@ -19,9 +19,17 @@ module.exports = async (req, res) => {
         const response = await fetch(`https://api.telegram.org/bot${botToken}/getFile?file_id=${fileId}`);
         const data = await response.json();
 
-        if (!data.ok) throw new Error('Telegram Resolve Failed');
+        if (!data.ok) {
+            console.error('Telegram Resolve Failed details:', JSON.stringify({
+                fileId,
+                status: data.error_code,
+                desc: data.description,
+            }));
+            throw new Error(`Telegram Resolve Failed: ${data.description}`);
+        }
 
         const filePath = data.result.file_path;
+        console.log(`Stream Proxy: Successfully resolved ${fileId} -> ${filePath}`);
         const cdnUrl = `https://api.telegram.org/file/bot${botToken}/${filePath}`;
 
         // 4. Zero-Bandwidth Redirect
