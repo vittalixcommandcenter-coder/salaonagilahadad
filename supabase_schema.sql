@@ -43,3 +43,32 @@ USING (true);
 
 -- 4. Função de Ordenação (Helper para o Frontend)
 COMMENT ON TABLE public.lessons IS 'Tabela central para o LMS da Nagila Academy com suporte a CDN Telegram.';
+
+-- 5. Tabela de Cursos (CMS Principal — alimenta Academy e Landing Pages)
+CREATE TABLE IF NOT EXISTS public.courses (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    title TEXT NOT NULL,
+    category TEXT DEFAULT 'CURSO',
+    description TEXT,
+    syllabus TEXT,
+    price NUMERIC(10,2),
+    cover_url TEXT,         -- URL da capa via proxy /api/v1/stream
+    trailer_url TEXT,       -- URL do trailer via proxy /api/v1/stream
+    telegram_file_ids TEXT[],
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+ALTER TABLE public.courses ENABLE ROW LEVEL SECURITY;
+
+-- Cursos são públicos para leitura (vitrine)
+CREATE POLICY "Cursos visíveis para todos"
+ON public.courses FOR SELECT
+USING (true);
+
+-- Somente usuários autenticados (admin) podem gerenciar
+CREATE POLICY "Admin pode gerenciar cursos"
+ON public.courses FOR ALL
+USING (auth.role() = 'authenticated');
+
+COMMENT ON TABLE public.courses IS 'CMS de cursos — alimenta dinamicamente a Academy e Landing Pages.';
+

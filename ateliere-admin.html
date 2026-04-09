@@ -3,95 +3,128 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel Admin | Nagila Hadad CMS</title>
+    <title>Ateliê Admin | Nagila Hadad CMS</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="admin-upload.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="admin-upload.js"></script>
 
     <style>
         body { background: #050505; color: #fff; font-family: 'Montserrat', sans-serif; overflow: hidden; }
         .admin-layout { display: grid; grid-template-columns: 280px 1fr; height: 100vh; }
-        
+
         /* Sidebar */
-        .admin-sidebar { 
-            background: #0a0a0a; 
-            border-right: 1px solid rgba(212, 175, 55, 0.1); 
+        .admin-sidebar {
+            background: #0a0a0a;
+            border-right: 1px solid rgba(212, 175, 55, 0.1);
             padding: 2.5rem;
             display: flex;
             flex-direction: column;
         }
         .admin-logo { font-size: 1.2rem; font-weight: 700; letter-spacing: 3px; color: var(--color-gold-polished); margin-bottom: 4rem; }
-        
-        .admin-nav { list-style: none; padding: 0; }
-        .admin-nav-item { 
-            padding: 1.2rem; 
-            margin-bottom: 10px; 
-            border-radius: 8px; 
-            cursor: pointer; 
-            display: flex; 
-            align-items: center; 
-            gap: 15px; 
+
+        .admin-nav { list-style: none; padding: 0; flex: 1; }
+        .admin-nav-item {
+            padding: 1.2rem;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 15px;
             transition: all 0.3s;
             font-size: 0.85rem;
             opacity: 0.6;
         }
         .admin-nav-item:hover, .admin-nav-item.active { background: rgba(212, 175, 55, 0.1); opacity: 1; color: var(--color-gold-polished); }
-        
+
         /* Content */
         .admin-main { padding: 4rem 5%; overflow-y: auto; }
         .admin-section { display: none; }
         .admin-section.active { display: block; animation: fadeIn 0.5s ease; }
-        
+
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .admin-card { 
-            background: #0f0f0f; 
-            border: 1px solid rgba(255,255,255,0.05); 
-            padding: 2.5rem; 
-            border-radius: 12px; 
+        .admin-card {
+            background: #0f0f0f;
+            border: 1px solid rgba(255,255,255,0.05);
+            padding: 2.5rem;
+            border-radius: 12px;
             margin-top: 2rem;
         }
         .form-group { margin-bottom: 2rem; }
         .form-group label { display: block; font-size: 0.75rem; letter-spacing: 2px; color: var(--color-gold-delicate); margin-bottom: 10px; text-transform: uppercase; }
-        .form-group input, .form-group textarea, .form-group select { 
-            width: 100%; 
-            background: #151515; 
-            border: 1px solid rgba(255,255,255,0.1); 
-            padding: 1rem; 
-            color: #fff; 
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            background: #151515;
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 1rem;
+            color: #fff;
             border-radius: 4px;
             font-family: inherit;
+            transition: border-color 0.3s;
         }
-        .admin-btn-save { 
-            background: var(--color-gold-polished); 
-            color: #000; 
-            padding: 1rem 3rem; 
-            border: none; 
-            border-radius: 4px; 
-            font-weight: 700; 
-            cursor: pointer; 
+        .form-group input:focus, .form-group textarea:focus { outline: none; border-color: rgba(212,175,55,0.5); }
+
+        .admin-btn-save {
+            background: var(--color-gold-polished);
+            color: #000;
+            padding: 1rem 3rem;
+            border: none;
+            border-radius: 4px;
+            font-weight: 700;
+            cursor: pointer;
             letter-spacing: 2px;
             transition: all 0.3s;
         }
         .admin-btn-save:hover { background: #fff; transform: translateY(-2px); }
+        .admin-btn-save:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
         .table-admin { width: 100%; border-collapse: collapse; margin-top: 2rem; }
         .table-admin th { text-align: left; padding: 1.5rem; font-size: 0.7rem; letter-spacing: 2px; border-bottom: 2px solid rgba(212,175,55,0.2); }
         .table-admin td { padding: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.9rem; }
+        .table-admin .action-btn { background: none; border: none; color: var(--color-gold-delicate); cursor: pointer; padding: 4px; transition: color 0.3s; }
+        .table-admin .action-btn:hover { color: #fff; }
+        .table-admin .action-btn.delete:hover { color: #cc0022; }
+
+        /* Drag & Drop Upload */
+        .drop-zone {
+            border: 2px dashed rgba(212,175,55,0.2);
+            border-radius: 8px;
+            padding: 2.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+        .drop-zone:hover, .drop-zone.dragover {
+            border-color: rgba(212,175,55,0.6);
+            background: rgba(212,175,55,0.04);
+        }
+        .drop-zone input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+        .drop-zone-icon { color: rgba(212,175,55,0.4); margin-bottom: 1rem; }
+        .drop-zone p { font-size: 0.75rem; letter-spacing: 2px; color: rgba(255,255,255,0.4); }
+        .drop-zone .file-name { color: var(--color-gold-polished); font-size: 0.8rem; margin-top: 0.5rem; }
+
+        /* Upload progress bar */
+        .upload-progress { height: 2px; background: rgba(255,255,255,0.05); border-radius: 2px; margin-top: 1rem; overflow: hidden; display: none; }
+        .upload-progress-bar { height: 100%; background: var(--color-gold-polished); width: 0%; transition: width 0.3s; }
     </style>
 </head>
 <body>
+    <!-- Luxury Toast Container -->
+    <div id="luxury-toast-container"></div>
 
     <div class="admin-layout">
         <aside class="admin-sidebar">
             <div class="admin-logo">NÁGILA ADMIN</div>
             <ul class="admin-nav">
                 <li class="admin-nav-item active" onclick="switchSection('courses')"><i data-lucide="book-open"></i> GESTÃO DE CURSOS</li>
-                <li class="admin-nav-item" onclick="switchSection('gallery')"><i data-lucide="image"></i> DESIGN DA HOME</li>
+                <li class="admin-nav-item" onclick="switchSection('gallery')"><i data-lucide="image"></i> GALERIA & VÍDEOS</li>
                 <li class="admin-nav-item" onclick="switchSection('students')"><i data-lucide="users"></i> GESTÃO DE ALUNOS</li>
-                <li class="admin-nav-item" onclick="window.location.href='index.html'" style="margin-top: 4rem;"><i data-lucide="external-link"></i> VER SITE</li>
+                <li class="admin-nav-item" onclick="window.location.href='/inicio'" style="margin-top: 4rem;"><i data-lucide="external-link"></i> VER SITE</li>
+                <li class="admin-nav-item" onclick="handleLogout()" style="color: #ff4d4d; opacity: 0.8;"><i data-lucide="log-out"></i> SAIR</li>
             </ul>
         </aside>
 
@@ -99,94 +132,117 @@
             <!-- SEÇÃO CURSOS -->
             <div id="section-courses" class="admin-section active">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <h1 class="section-title" style="margin: 0; font-size: 2rem;">Mestria em Cursos</h1>
-                    <button class="admin-btn-save" onclick="alert('Criar novo curso...')">+ NOVO CURSO</button>
+                    <h1 class="section-title" style="margin: 0; font-size: 2rem;">Gestão de Cursos</h1>
+                    <button class="admin-btn-save" id="btn-new-course" onclick="openCourseForm(null)">+ NOVO CURSO</button>
                 </div>
-                
+
                 <table class="table-admin">
                     <thead>
                         <tr>
                             <th>NOME DO CURSO</th>
+                            <th>CATEGORIA</th>
                             <th>STATUS</th>
-                            <th>PREÇO</th>
-                            <th>ALUNOS</th>
                             <th>AÇÕES</th>
                         </tr>
                     </thead>
-                    <tbody id="course-list">
-                        <tr>
-                            <td>Architecture: Blonde Mastery</td>
-                            <td style="color: #4CAF50;">ATIVO</td>
-                            <td>R$ 1.297,00</td>
-                            <td>124</td>
-                            <td><i data-lucide="edit-3"></i></td>
-                        </tr>
-                        <tr>
-                            <td>Sculpting: Precision Cuts</td>
-                            <td style="color: #4CAF50;">ATIVO</td>
-                            <td>R$ 997,00</td>
-                            <td>89</td>
-                            <td><i data-lucide="edit-3"></i></td>
-                        </tr>
+                    <tbody id="course-table-body">
+                        <tr><td colspan="4" style="text-align:center; opacity:0.4; letter-spacing:2px; padding:3rem;">CARREGANDO...</td></tr>
                     </tbody>
                 </table>
 
-                <div class="admin-card">
-                    <h3 style="color: var(--color-gold-polished); margin-bottom: 2rem;">EDITAR CURSO SELECIONADO</h3>
-                    <div class="form-group">
-                        <label>Título do Curso</label>
-                        <input type="text" id="course-title-input" value="Architecture: Blonde Mastery">
-                    </div>
-                    <div class="form-group">
-                        <label>Capa do Curso (URL da Imagem 16:9)</label>
-                        <input type="text" id="course-cover-input" value="assets/capa-loiros.jpg">
-                    </div>
-                    <div class="form-group">
-                        <label>Vídeo Trailer / VSL (URL MP4)</label>
-                        <input type="text" id="course-trailer-input" value="assets/videonh2.mp4">
-                    </div>
-                    <div class="form-group">
-                        <label>Valor do Investimento</label>
-                        <input type="text" id="course-price-input" value="1297">
-                    </div>
-                    <div class="form-group">
-                        <label>Ementa Completa (Um módulo por linha)</label>
-                        <textarea id="course-syllabus-input" rows="6" style="width: 100%; background: #151515; border: 1px solid rgba(255,255,255,0.1); padding: 1rem; color: #fff; border-radius: 4px;">História e Psicologia das Cores
-Fisiologia da Fibra Capilar
-Técnicas de Descoloração Segura
-Tonalização e Blindagem
-Finalização de Luxo</textarea>
-                    </div>
-                    <button class="admin-btn-save" onclick="saveCMS()">SALVAR ALTERAÇÕES NO CURSO</button>
-                </div>
+                <!-- Formulário de Curso (inline, toggle) -->
+                <div class="admin-card" id="course-form-card" style="display:none;">
+                    <h3 style="color: var(--color-gold-polished); margin-bottom: 2rem;" id="form-title">NOVO CURSO</h3>
+                    <input type="hidden" id="course-id-input">
 
+                    <div class="form-group">
+                        <label>Título do Curso *</label>
+                        <input type="text" id="course-title-input" placeholder="Ex: Architecture: Blonde Mastery">
+                    </div>
+                    <div class="form-group">
+                        <label>Categoria</label>
+                        <select id="course-category-input">
+                            <option value="MASTERCLASS ONLINE">MASTERCLASS ONLINE</option>
+                            <option value="WORKSHOP PRESENCIAL">WORKSHOP PRESENCIAL</option>
+                            <option value="CURSO">CURSO</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Descrição Completa</label>
+                        <textarea id="course-desc-input" rows="4" placeholder="Descreva o conteúdo do curso..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Ementa (um módulo por linha)</label>
+                        <textarea id="course-syllabus-input" rows="5" placeholder="Módulo 01: Introdução&#10;Módulo 02: Técnicas Avançadas"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Valor do Investimento (R$)</label>
+                        <input type="number" id="course-price-input" placeholder="1297">
+                    </div>
+
+                    <!-- Drag & Drop: Capa (Imagem) -->
+                    <div class="form-group">
+                        <label>Capa do Curso (JPG / PNG — Proporção 16:9)</label>
+                        <div class="drop-zone" id="cover-drop-zone">
+                            <input type="file" id="cover-file-input" accept="image/jpeg,image/png,image/webp" onchange="handleFileSelect('cover', this)">
+                            <i data-lucide="image" class="drop-zone-icon" style="width:32px;height:32px;"></i>
+                            <p>ARRASTE OU CLIQUE PARA SELECIONAR</p>
+                            <div class="file-name" id="cover-file-name"></div>
+                        </div>
+                        <div class="upload-progress" id="cover-progress"><div class="upload-progress-bar" id="cover-progress-bar"></div></div>
+                    </div>
+
+                    <!-- Drag & Drop: Trailer (Video) -->
+                    <div class="form-group">
+                        <label>Vídeo Trailer / VSL (MP4)</label>
+                        <div class="drop-zone" id="trailer-drop-zone">
+                            <input type="file" id="trailer-file-input" accept="video/mp4,video/webm" onchange="handleFileSelect('trailer', this)">
+                            <i data-lucide="video" class="drop-zone-icon" style="width:32px;height:32px;"></i>
+                            <p>ARRASTE OU CLIQUE PARA SELECIONAR</p>
+                            <div class="file-name" id="trailer-file-name"></div>
+                        </div>
+                        <div class="upload-progress" id="trailer-progress"><div class="upload-progress-bar" id="trailer-progress-bar"></div></div>
+                    </div>
+
+                    <div style="display:flex; gap:1rem; margin-top:1rem;">
+                        <button class="admin-btn-save" id="btn-save-course" onclick="saveCourse()">SALVAR CURSO</button>
+                        <button style="background:transparent;border:1px solid rgba(255,255,255,0.1);color:#fff;padding:1rem 2rem;border-radius:4px;cursor:pointer;" onclick="closeCourseForm()">CANCELAR</button>
+                    </div>
+                </div>
             </div>
 
             <!-- SEÇÃO GALERIA -->
             <div id="section-gallery" class="admin-section">
-                <h1 class="section-title" style="font-size: 2rem;">Design da Home (Galerias)</h1>
-                <p style="opacity: 0.5;">Todas as mídias aqui inseridas usarão 'object-fit: cover' automaticamente.</p>
-                
+                <h1 class="section-title" style="font-size: 2rem;">Galeria & Curadoria de Vídeos</h1>
+
                 <div class="admin-card">
-                    <h3 style="color: var(--color-gold-polished); margin-bottom: 2rem;">ADICIONAR À GALERIA DE FOTOS</h3>
-                    <div class="form-group">
-                        <label>Arquivo da Foto (Placeholder)</label>
-                        <input type="file">
+                    <h3 style="color: var(--color-gold-polished); margin-bottom: 2rem;">ADICIONAR FOTO AO PORTFÓLIO</h3>
+                    <div class="drop-zone">
+                        <input type="file" id="gallery-photo-input" accept="image/jpeg,image/png,image/webp" onchange="handleFileSelect('gallery-photo', this)">
+                        <i data-lucide="image" class="drop-zone-icon" style="width:32px;height:32px;"></i>
+                        <p>ARRASTE OU CLIQUE PARA SELECIONAR (JPG / PNG)</p>
+                        <div class="file-name" id="gallery-photo-name"></div>
                     </div>
-                    <div class="form-group">
-                        <label>Legenda / Alt Text</label>
-                        <input type="text" placeholder="Ex: Transformação Blonde Master">
+                    <div class="form-group" style="margin-top:1.5rem;">
+                        <label>Legenda</label>
+                        <input type="text" id="gallery-caption-input" placeholder="Ex: Transformação Loiro Platinado">
                     </div>
-                    <button class="admin-btn-save">CONCLUIR UPLOAD</button>
+                    <button class="admin-btn-save" onclick="uploadGalleryItem('IMAGE')">PUBLICAR NA GALERIA</button>
                 </div>
 
                 <div class="admin-card">
-                    <h3 style="color: var(--color-gold-polished); margin-bottom: 2rem;">VÍDEOS DA CURADORIA</h3>
-                    <div class="form-group">
-                        <label>Slot 01 (Principal)</label>
-                        <input type="text" value="assets/videonh2.mp4">
+                    <h3 style="color: var(--color-gold-polished); margin-bottom: 2rem;">ADICIONAR VÍDEO À CURADORIA</h3>
+                    <div class="drop-zone">
+                        <input type="file" id="gallery-video-input" accept="video/mp4,video/webm" onchange="handleFileSelect('gallery-video', this)">
+                        <i data-lucide="video" class="drop-zone-icon" style="width:32px;height:32px;"></i>
+                        <p>ARRASTE OU CLIQUE PARA SELECIONAR (MP4)</p>
+                        <div class="file-name" id="gallery-video-name"></div>
                     </div>
-                    <button class="admin-btn-save">SINCRONIZAR VÍDEOS</button>
+                    <div class="form-group" style="margin-top:1.5rem;">
+                        <label>Legenda</label>
+                        <input type="text" id="gallery-video-caption-input" placeholder="Ex: Técnica de Babyliss Soberano">
+                    </div>
+                    <button class="admin-btn-save" onclick="uploadGalleryItem('VIDEO')">PUBLICAR NA CURADORIA</button>
                 </div>
             </div>
 
@@ -195,78 +251,232 @@ Finalização de Luxo</textarea>
                 <h1 class="section-title" style="font-size: 2rem;">Gestão de Alunos & Materiais</h1>
                 <div class="admin-card">
                     <h3 style="color: var(--color-gold-polished); margin-bottom: 2rem;">LOGÍSTICA DE CONTEÚDO</h3>
-                    <div class="form-group">
-                        <label>Selecionar Curso</label>
-                        <select>
-                            <option>Architecture: Blonde Mastery</option>
-                            <option>Sculpting: Precision Cuts</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Upload de Apostila (PDF)</label>
-                        <input type="file">
-                    </div>
-                    <button class="admin-btn-save">DISPONIBILIZAR PARA ALUNOS</button>
+                    <p style="opacity:0.4; font-size:0.85rem; letter-spacing:2px;">Em breve: Gerenciar acesso de alunos, apostilas e certificados.</p>
                 </div>
             </div>
         </main>
     </div>
 
     <script>
+        // ── Supabase Config (chaves diretas — sem process.env) ──
+        const SUPABASE_URL = 'https://fjuiiivmsfdwsrqiobdu.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZqdWlpaXZtc2Zkd3NycWlvYmR1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2ODIyNjAsImV4cCI6MjA5MTI1ODI2MH0.-FyHmwxUJsloYRD6Wl6fjYrOHGf5CiFcaVgTT89bGMo';
+        const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+
+        // ── File state (var para garantir hoisting — handlers inline disparam antes do const) ──
+        var selectedFiles = {};
+
+
+        lucide.createIcons();
+
+        // ── Navigation ──
         function switchSection(id) {
             document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.admin-nav-item').forEach(i => i.classList.remove('active'));
-            
             document.getElementById(`section-${id}`).classList.add('active');
             event.currentTarget.classList.add('active');
         }
 
-        lucide.createIcons();
+        // ── Auth (Bypass para testes) ──
+        // checkSession() removida propositalmente para facilitar testes.
+        // Reative após configurar o Supabase:
+        // async function checkSession() {
+        //     const { data: { session } } = await sb.auth.getSession();
+        //     if (!session) window.location.href = '/login';
+        // }
+        // checkSession();
 
-        // Vittalix-HD Integration
-        const supabase = supabase.createClient(
-            'SUPABASE_URL_HERE',
-            'SUPABASE_ANON_KEY_HERE'
-        );
+        async function handleLogout() {
+            await sb.auth.signOut();
+            window.location.href = '/login';
+        }
 
-        async function saveCMS() {
-            const fileInput = document.getElementById('course-video-upload');
-            const title = document.getElementById('course-title-input').value;
-            
-            if (fileInput && fileInput.files.length > 0) {
-                const file = fileInput.files[0];
-                try {
-                    // Logic for 2GB+ Chunking & Resume
-                    const { sessionKey, fileIds } = await vittalixUpload(file);
-                    
-                    // Save metadata to Supabase
-                    const { error } = await supabase
-                        .from('lessons')
-                        .insert([{ 
-                            title: title, 
-                            telegram_file_ids: fileIds,
-                            course_id: 'loiro' // Exemplo
-                        }]);
+        // ── Luxury Toast ──
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('luxury-toast-container');
+            const toast = document.createElement('div');
+            toast.className = `luxury-toast${type === 'error' ? ' error' : ''}`;
+            const icon = type === 'error' ? 'x-circle' : 'check-circle';
+            toast.innerHTML = `<i data-lucide="${icon}" class="toast-icon"></i> ${message}`;
+            container.appendChild(toast);
+            lucide.createIcons();
+            setTimeout(() => toast.remove(), 4100);
+        }
 
-                    if (error) throw error;
-
-                    // 4. Final Cleanup: Clear session only after DB success
-                    localStorage.removeItem(sessionKey);
-                    
-                    alert("CONTEÚDO SINCRONIZADO COM SUCESSO!");
-                } catch (err) {
-                    console.error("Vittalix Error:", err);
-                    alert("Erro no upload Vittalix-HD. Verifique o console.");
-                } finally {
-                    const modal = document.getElementById('vittalix-upload-status');
-                    if (modal) modal.remove();
+        // ── Drag & Drop Zones ──
+        document.querySelectorAll('.drop-zone').forEach(zone => {
+            zone.addEventListener('dragover', (e) => { e.preventDefault(); zone.classList.add('dragover'); });
+            zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
+            zone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                zone.classList.remove('dragover');
+                const input = zone.querySelector('input[type=file]');
+                if (input && e.dataTransfer.files.length) {
+                    input.files = e.dataTransfer.files;
+                    input.dispatchEvent(new Event('change'));
                 }
-            } else {
-                alert("Por favor, selecione um vídeo para upload.");
+            });
+        });
+
+        function handleFileSelect(key, input) {
+            const file = input.files[0];
+            if (!file) return;
+            selectedFiles[key] = file;
+            const nameEl = document.getElementById(`${key.replace('-', '-')}-name`) || 
+                           document.querySelector(`[id$="${key}-name"]`) ||
+                           document.getElementById(`${key}-file-name`) ||
+                           document.getElementById(`${key}-name`);
+            if (nameEl) nameEl.textContent = file.name;
+        }
+
+        // ── Course Table ──
+        async function loadCourses() {
+            const { data, error } = await sb.from('courses').select('*').order('created_at', { ascending: false });
+            const tbody = document.getElementById('course-table-body');
+            if (error || !data || !data.length) {
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;opacity:0.4;letter-spacing:2px;padding:3rem;">Nenhum curso cadastrado ainda.</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = data.map(c => `
+                <tr>
+                    <td>${c.title}</td>
+                    <td style="font-size:0.75rem;opacity:0.6;">${c.category || '—'}</td>
+                    <td style="color:#4CAF50;font-size:0.8rem;">ATIVO</td>
+                    <td>
+                        <button class="action-btn" title="Editar" onclick='openCourseForm(${JSON.stringify(c)})'><i data-lucide="edit-3"></i></button>
+                        <button class="action-btn delete" title="Excluir" onclick="deleteCourse('${c.id}')"><i data-lucide="trash-2"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        // ── Course Form ──
+        function openCourseForm(course) {
+            const card = document.getElementById('course-form-card');
+            card.style.display = 'block';
+            card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            document.getElementById('form-title').textContent = course ? 'EDITAR CURSO' : 'NOVO CURSO';
+            document.getElementById('course-id-input').value = course?.id || '';
+            document.getElementById('course-title-input').value = course?.title || '';
+            document.getElementById('course-category-input').value = course?.category || 'MASTERCLASS ONLINE';
+            document.getElementById('course-desc-input').value = course?.description || '';
+            document.getElementById('course-syllabus-input').value = course?.syllabus || '';
+            document.getElementById('course-price-input').value = course?.price || '';
+        }
+
+        function closeCourseForm() {
+            document.getElementById('course-form-card').style.display = 'none';
+            Object.keys(selectedFiles).forEach(k => delete selectedFiles[k]);
+        }
+
+        async function saveCourse() {
+            const id = document.getElementById('course-id-input').value;
+            const title = document.getElementById('course-title-input').value.trim();
+            if (!title) { showToast('O título do curso é obrigatório.', 'error'); return; }
+
+            const btn = document.getElementById('btn-save-course');
+            btn.disabled = true;
+            btn.textContent = 'SALVANDO...';
+
+            try {
+                const payload = {
+                    title,
+                    category: document.getElementById('course-category-input').value,
+                    description: document.getElementById('course-desc-input').value,
+                    syllabus: document.getElementById('course-syllabus-input').value,
+                    price: parseFloat(document.getElementById('course-price-input').value) || null,
+                };
+
+                // Upload da Capa via Vittalix-HD (Telegram)
+                if (selectedFiles['cover']) {
+                    setProgress('cover', 50);
+                    const { sessionKey, fileIds: [coverId] } = await vittalixUpload(selectedFiles['cover']);
+                    payload.cover_url = `/api/v1/stream?fileId=${coverId}`;
+                    localStorage.removeItem(sessionKey);
+                    setProgress('cover', 100);
+                }
+
+                // Upload do Trailer via Vittalix-HD (Telegram)
+                if (selectedFiles['trailer']) {
+                    setProgress('trailer', 50);
+                    const { sessionKey, fileIds } = await vittalixUpload(selectedFiles['trailer']);
+                    payload.trailer_url = `/api/v1/stream?fileId=${fileIds[0]}`;
+                    payload.telegram_file_ids = fileIds;
+                    localStorage.removeItem(sessionKey);
+                    setProgress('trailer', 100);
+                }
+
+                let error;
+                if (id) {
+                    ({ error } = await sb.from('courses').update(payload).eq('id', id));
+                } else {
+                    ({ error } = await sb.from('courses').insert([payload]));
+                }
+
+                if (error) throw error;
+
+                showToast(id ? 'CURSO ATUALIZADO COM SUCESSO!' : 'NOVO CURSO PUBLICADO!');
+                closeCourseForm();
+                loadCourses();
+
+            } catch (err) {
+                console.error(err);
+                showToast('Erro ao salvar: ' + err.message, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'SALVAR CURSO';
             }
         }
 
+        async function deleteCourse(id) {
+            if (!confirm('Excluir este curso permanentemente?')) return;
+            const { error } = await sb.from('courses').delete().eq('id', id);
+            if (error) { showToast('Erro ao excluir curso.', 'error'); return; }
+            showToast('CURSO REMOVIDO.');
+            loadCourses();
+        }
 
+        // ── Gallery Upload ──
+        async function uploadGalleryItem(mediaType) {
+            const fileInput = mediaType === 'IMAGE' 
+                ? document.getElementById('gallery-photo-input')
+                : document.getElementById('gallery-video-input');
+            const caption = mediaType === 'IMAGE'
+                ? document.getElementById('gallery-caption-input').value
+                : document.getElementById('gallery-video-caption-input').value;
+
+            if (!fileInput?.files?.[0]) { showToast('Selecione um arquivo primeiro.', 'error'); return; }
+
+            try {
+                const { sessionKey, fileIds: [fid] } = await vittalixUpload(fileInput.files[0]);
+                const { error } = await sb.from('gallery').insert([{
+                    title: caption,
+                    telegram_file_id: fid,
+                    media_type: mediaType
+                }]);
+                if (error) throw error;
+                localStorage.removeItem(sessionKey);
+                showToast(mediaType === 'IMAGE' ? 'FOTO PUBLICADA NA GALERIA!' : 'VÍDEO PUBLICADO NA CURADORIA!');
+                fileInput.value = '';
+            } catch (err) {
+                showToast('Erro no upload: ' + err.message, 'error');
+            }
+        }
+
+        // ── Inline progress helper ──
+        function setProgress(key, pct) {
+            const bar = document.getElementById(`${key}-progress-bar`);
+            const wrap = document.getElementById(`${key}-progress`);
+            if (!wrap || !bar) return;
+            wrap.style.display = 'block';
+            bar.style.width = pct + '%';
+            if (pct >= 100) setTimeout(() => { wrap.style.display = 'none'; }, 800);
+        }
+
+        // ── Init ──
+        loadCourses();
     </script>
 </body>
 </html>

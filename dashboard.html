@@ -235,12 +235,13 @@
             <span></span><span></span><span></span>
         </button>
         <ul class="nav-links" id="nav-links">
-            <li><a href="index.html#hero" class="hover-target">INÍCIO</a></li>
-            <li><a href="sobre.html" class="hover-target">SOBRE</a></li>
-            <li><a href="index.html#cinema" class="hover-target">VÍDEOS</a></li>
-            <li><a href="index.html#gallery" class="hover-target">GALERIA</a></li>
-            <li><a href="academy.html" class="hover-target">ACADEMY</a></li>
+            <li><a href="/inicio" class="hover-target">INÍCIO</a></li>
+            <li><a href="/inicio#sobre-mim" class="hover-target">SOBRE</a></li>
+            <li><a href="/inicio#cinema" class="hover-target">VÍDEOS</a></li>
+            <li><a href="/inicio#gallery" class="hover-target">GALERIA</a></li>
+            <li><a href="/academy" class="hover-target">ACADEMY</a></li>
         </ul>
+
 
     </nav>
 
@@ -338,9 +339,10 @@
     <script>
         // Vittalix-HD: Sincronização Segura
         const supabase = supabase.createClient(
-            'SUPABASE_URL_HERE',
-            'SUPABASE_ANON_KEY_HERE'
+            'https://fjuiiivmsfdwsrqiobdu.supabase.co',
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZqdWlpaXZtc2Zkd3NycWlvYmR1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2ODIyNjAsImV4cCI6MjA5MTI1ODI2MH0.-FyHmwxUJsloYRD6Wl6fjYrOHGf5CiFcaVgTT89bGMo'
         );
+
 
         const params = new URLSearchParams(window.location.search);
         const courseId = params.get('course') || 'loiro';

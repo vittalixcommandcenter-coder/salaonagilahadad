@@ -28,13 +28,14 @@
             <span></span><span></span><span></span>
         </button>
         <ul class="nav-links" id="nav-links">
-            <li><a href="#hero" class="hover-target">INÍCIO</a></li>
-            <li><a href="#sobre-mim" class="hover-target">SOBRE</a></li>
+            <li><a href="/inicio" class="hover-target">INÍCIO</a></li>
+            <li><a href="/inicio#sobre-mim" class="hover-target">SOBRE</a></li>
 
-            <li><a href="index.html#cinema" class="hover-target">VÍDEOS</a></li>
-            <li><a href="index.html#gallery" class="hover-target">GALERIA</a></li>
-            <li><a href="academy.html" class="hover-target">ACADEMY</a></li>
+            <li><a href="/inicio#cinema" class="hover-target">VÍDEOS</a></li>
+            <li><a href="/inicio#gallery" class="hover-target">GALERIA</a></li>
+            <li><a href="/academy" class="hover-target">ACADEMY</a></li>
         </ul>
+
 
 
     </nav>
@@ -115,33 +116,15 @@
             <p class="section-subtitle">Impacto visual com controle de qualidade absoluto.</p>
         </div>
 
-        <div class="curadoria-grid">
-            <div class="curadoria-item">
-                <video controls playsinline preload="auto">
-                    <source src="assets/videonh2.mp4" type="video/mp4">
-                </video>
-            </div>
-            <div class="curadoria-item">
-                <video controls playsinline preload="auto">
-                    <source src="assets/videonh.mp4" type="video/mp4">
-                </video>
-            </div>
-            <div class="curadoria-item">
-                <video controls playsinline preload="auto">
-                    <source src="assets/videonh3.mp4" type="video/mp4">
-                </video>
-            </div>
-            <div class="curadoria-item">
-                <video controls playsinline preload="auto">
-                    <source src="assets/videonh4.mp4" type="video/mp4">
-                </video>
-            </div>
+        <div class="curadoria-grid" id="video-grid">
+            <p id="videos-loading" style="grid-column:1/-1;text-align:center;padding:4rem 0;opacity:0.4;letter-spacing:4px;font-size:0.8rem;">CARREGANDO VÍ DEOS...</p>
         </div>
 
         <a href="galeria-videos.html" class="btn-luxury-solid hover-target">
-            EXPLORAR GALERIA COMPLETA DE VÍDEOS
+            EXPLORAR GALERIA COMPLETA DE VÍ DEOS
         </a>
     </section>
+
 
 
 
@@ -151,31 +134,15 @@
             <h2 class="section-title">Obras de Arte Visíveis</h2>
             <p class="section-subtitle">A vitrine do salão. Cada corte é esculpido como uma tela em branco.</p>
         </div>
-        <div class="gallery-grid">
-            <div class="gallery-item hover-target">
-                <img src="assets/foto1.jpg" alt="Trabalho Nagila Hadad" />
-            </div>
-            <div class="gallery-item hover-target">
-                <img src="assets/foto2.jpg" alt="Trabalho Nagila Hadad" />
-            </div>
-            <div class="gallery-item hover-target">
-                <img src="assets/foto3.jpg" alt="Trabalho Nagila Hadad" />
-            </div>
-            <div class="gallery-item hover-target">
-                <img src="assets/foto4.jpg" alt="Trabalho Nagila Hadad" />
-            </div>
-            <div class="gallery-item hover-target">
-                <img src="assets/foto5.jpg" alt="Trabalho Nagila Hadad" />
-            </div>
-            <div class="gallery-item hover-target">
-                <img src="assets/foto6.jpg" alt="Trabalho Nagila Hadad" />
-            </div>
+        <div class="gallery-grid" id="gallery-grid">
+            <p id="gallery-loading" style="grid-column:1/-1;text-align:center;padding:4rem 0;opacity:0.4;letter-spacing:4px;font-size:0.8rem;">CARREGANDO PORTFÓLIO...</p>
         </div>
 
         <a href="portfolio-completo.html" class="btn-luxury-solid hover-target" style="margin-top: 5rem;">
             VER TODAS AS TRANSFORMAÇÕES (PORTFÓLIO)
         </a>
     </section>
+
 
 
     </main>
@@ -237,28 +204,55 @@
         <button class="modal-btn modal-next hover-target"><i data-lucide="chevron-right"></i></button>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="script.js"></script>
     <script>
-        // Inicializar ícones e funções básicas
         document.addEventListener('DOMContentLoaded', () => {
             if (window.lucide) lucide.createIcons();
-            
-            // Toggle do menu mobile (redundância de segurança)
+
             const hamburger = document.getElementById('nav-hamburger');
             const navLinks = document.getElementById('nav-links');
             if (hamburger && navLinks) {
-                hamburger.onclick = () => {
-                    navLinks.classList.toggle('open');
-                    hamburger.classList.toggle('active');
-                };
-                navLinks.querySelectorAll('a').forEach(a => {
-                    a.onclick = () => {
-                        navLinks.classList.remove('open');
-                        hamburger.classList.remove('active');
-                    };
-                });
+                hamburger.onclick = () => { navLinks.classList.toggle('open'); hamburger.classList.toggle('active'); };
+                navLinks.querySelectorAll('a').forEach(a => { a.onclick = () => { navLinks.classList.remove('open'); hamburger.classList.remove('active'); }; });
             }
         });
+
+        // ── Dynamic Content Loaders ──
+        const SUPABASE_URL = 'https://fjuiiivmsfdwsrqiobdu.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZqdWlpaXZtc2Zkd3NycWlvYmR1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2ODIyNjAsImV4cCI6MjA5MTI1ODI2MH0.-FyHmwxUJsloYRD6Wl6fjYrOHGf5CiFcaVgTT89bGMo';
+
+        const sbHome = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        async function loadHomeContent() {
+            // Gallery Photos
+            const { data: photos } = await sbHome.from('gallery').select('*').eq('media_type', 'IMAGE').order('order').limit(6);
+            const galleryGrid = document.getElementById('gallery-grid');
+            document.getElementById('gallery-loading')?.remove();
+            if (photos && photos.length > 0) {
+                galleryGrid.innerHTML = photos.map(p =>
+                    `<div class="gallery-item hover-target"><img src="${p.thumbnail_url || p.telegram_file_id}" alt="${p.title || 'Nagila Hadad'}"/></div>`
+                ).join('');
+            } else {
+                galleryGrid.innerHTML = `<p style="grid-column:1/-1;text-align:center;padding:4rem 0;opacity:0.3;letter-spacing:4px;font-size:0.8rem;">PORTFÓLIO EM BREVE</p>`;
+            }
+
+            // Curadoria Videos
+            const { data: videos } = await sbHome.from('gallery').select('*').eq('media_type', 'VIDEO').order('order').limit(4);
+            const videoGrid = document.getElementById('video-grid');
+            document.getElementById('videos-loading')?.remove();
+            if (videos && videos.length > 0) {
+                videoGrid.innerHTML = videos.map(v =>
+                    `<div class="curadoria-item"><video controls playsinline preload="metadata"><source src="${v.telegram_file_id}" type="video/mp4"></video></div>`
+                ).join('');
+            } else {
+                videoGrid.innerHTML = `<p style="grid-column:1/-1;text-align:center;padding:4rem 0;opacity:0.3;letter-spacing:4px;font-size:0.8rem;">CURADORIA EM BREVE</p>`;
+            }
+
+            if (window.lucide) lucide.createIcons();
+        }
+
+        loadHomeContent();
     </script>
 </body>
 </html>

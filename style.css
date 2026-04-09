@@ -1465,10 +1465,6 @@ body.loaded .preloader-overlay {
         font-size: 0.65rem !important;
     }
 
-    /* Academy cards mobile */
-    .cards-grid {
-        grid-template-columns: 1fr;
-    }
 
     .academy-card {
         height: 450px;
@@ -1697,27 +1693,95 @@ body.loaded .preloader-overlay {
 .academy-video-fixed {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* Garantindo o visual Hotmart/Netflix */
+    object-fit: contain; /* Ajustado para visual soberano sem cortes */
+    background: #000;
     transition: transform 1.2s ease;
 }
+
+/* Custom Gold Video Controls */
+video::-webkit-media-controls-play-button,
+video::-webkit-media-controls-volume-slider-active-bar,
+video::-webkit-media-controls-timeline {
+    filter: sepia(1) saturate(5) hue-rotate(-10deg) brightness(1.2); /* Tom Ouro */
+}
+
+/* Academy Dark Minimalist Theme */
+.academy-dark-theme {
+    background: #050505 !important;
+    color: #fff;
+}
+
+.academy-page-header h1 {
+    letter-spacing: 0.25em;
+    font-weight: 300;
+    text-transform: uppercase;
+    font-family: 'Bodoni Moda', serif;
+}
+
 
 .edu-card:hover .academy-video-fixed {
     transform: scale(1.05);
 }
 
-.video-hover-overlay {
+/* ── Click-to-Play Overlay (substitui hover-play) ── */
+.video-click-overlay {
     position: absolute;
     inset: 0;
-    background: rgba(0,0,0,0.3);
+    background: rgba(0,0,0,0.25);
     display: flex;
     align-items: center;
     justify-content: center;
-    opacity: 0;
-    transition: opacity 0.4s ease;
+    transition: background 0.4s ease;
+    cursor: pointer;
 }
 
-.edu-card:hover .video-hover-overlay {
-    opacity: 1;
+.video-click-container:has(video:not([paused])) .video-click-overlay {
+    background: transparent; /* Some o overlay quando o vídeo está tocando */
+}
+
+/* Botão de Play: Central e Dourado */
+.play-btn-gold {
+    background: rgba(0,0,0,0.4);
+    border: 1px solid rgba(212, 175, 55, 0.5);
+    border-radius: 50%;
+    width: 64px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(4px);
+}
+
+.play-btn-gold:hover {
+    background: rgba(212, 175, 55, 0.2);
+    border-color: var(--color-gold-polished);
+    transform: scale(1.1);
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+}
+
+/* Botão de Volume: Canto inferior direito */
+.vol-btn-mini {
+    position: absolute;
+    bottom: 14px;
+    right: 14px;
+    background: rgba(0,0,0,0.5);
+    border: 1px solid rgba(212,175,55,0.2);
+    color: rgba(255,255,255,0.7);
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.vol-btn-mini:hover {
+    border-color: var(--color-gold-polished);
+    color: var(--color-gold-polished);
 }
 
 .hover-play-icon {
@@ -1743,4 +1807,57 @@ body.loaded .preloader-overlay {
         align-items: center !important;
         text-align: center !important;
     }
+}
+
+/* ─── Luxury Toast Notification System ─── */
+#luxury-toast-container {
+    position: fixed;
+    bottom: 2.5rem;
+    right: 2.5rem;
+    z-index: 99999;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    pointer-events: none;
+}
+
+.luxury-toast {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.2rem 1.8rem;
+    background: #0a0a0a;
+    border: 1px solid rgba(212, 175, 55, 0.35);
+    border-radius: 4px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.9);
+    color: #fff;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.8rem;
+    letter-spacing: 0.15em;
+    min-width: 300px;
+    transform: translateX(120%);
+    animation: toastSlideIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards,
+               toastFadeOut 0.5s ease 3.5s forwards;
+    pointer-events: all;
+}
+
+.luxury-toast.error {
+    border-color: rgba(204, 0, 34, 0.5);
+}
+
+.luxury-toast .toast-icon {
+    width: 18px;
+    height: 18px;
+    color: var(--color-gold-polished);
+    flex-shrink: 0;
+}
+
+.luxury-toast.error .toast-icon { color: #cc0022; }
+
+@keyframes toastSlideIn {
+    to { transform: translateX(0); }
+}
+
+@keyframes toastFadeOut {
+    to { opacity: 0; transform: translateX(20px); pointer-events: none; }
 }

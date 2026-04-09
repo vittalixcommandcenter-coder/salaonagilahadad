@@ -1,0 +1,21 @@
+{
+    "cleanUrls": true,
+    "rewrites": [
+        {
+            "source": "/inicio",
+            "destination": "/index.html"
+        },
+        {
+            "source": "/login",
+            "destination": "/login.html"
+        },
+        {
+            "source": "/admin",
+            "destination": "/ateliere-admin.html"
+        },
+        {
+            "source": "/academy",
+            "destination": "/academy.html"
+        }
+    ]
+}

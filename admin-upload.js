@@ -69,13 +69,12 @@ async function uploadWithRetry(blob, partIndex, retriesLeft) {
     formData.append('chat_id', '-1003946361387'); // Nagila CDN Channel
 
     try {
-        // Enviar via Proxy para não vazar o BOT_TOKEN no client
-        // Em um setup real, faríamos fetch('/api/v1/upload-proxy', { method: 'POST', body: formData });
-        // Aqui, simulamos o fluxo conforme diretriz 3: "Bot Token nunca vaze para o frontend"
-        const response = await fetch(`https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/sendDocument`, {
+        // Envia via Proxy serverless — BOT_TOKEN fica seguro no servidor
+        const response = await fetch('/api/v1/upload-proxy', {
             method: 'POST',
             body: formData
         });
+
         
         const data = await response.json();
         if (!data.ok) throw new Error(data.description);

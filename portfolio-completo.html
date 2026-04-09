@@ -85,24 +85,53 @@
         <p class="section-subtitle">Obras de arte esculpidas em fios de ouro.</p>
     </header>
 
-    <main class="portfolio-grid-full">
-        <!-- Renderizando a coleção principal -->
-        <div class="photo-card-full"><img src="assets/foto1.jpg" alt="Nagila Hadad Portfolio"><div class="photo-info-overlay"><div class="photo-info-text">BLONDE MASTER</div></div></div>
-        <div class="photo-card-full"><img src="assets/foto2.jpg" alt="Nagila Hadad Portfolio"><div class="photo-info-overlay"><div class="photo-info-text">ARCHITECTURAL CUT</div></div></div>
-        <div class="photo-card-full"><img src="assets/foto3.jpg" alt="Nagila Hadad Portfolio"><div class="photo-info-overlay"><div class="photo-info-text">LUXURY GLOW</div></div></div>
-        <div class="photo-card-full"><img src="assets/foto4.jpg" alt="Nagila Hadad Portfolio"><div class="photo-info-overlay"><div class="photo-info-text">GOLDEN WAVES</div></div></div>
-        <div class="photo-card-full"><img src="assets/foto5.jpg" alt="Nagila Hadad Portfolio"><div class="photo-info-overlay"><div class="photo-info-text">SOVEREIGN COLOR</div></div></div>
-        <div class="photo-card-full"><img src="assets/foto6.jpg" alt="Nagila Hadad Portfolio"><div class="photo-info-overlay"><div class="photo-info-text">HAIR ARTISTRY</div></div></div>
-        
-        <!-- Placeholder assets for full gallery feel -->
-        <div class="photo-card-full"><img src="assets/haircut_1.png" alt="Nagila Hadad Portfolio"><div class="photo-info-overlay"><div class="photo-info-text">EDITORIAL STYLE</div></div></div>
-        <div class="photo-card-full"><img src="assets/hero_bg.png" alt="Nagila Hadad Portfolio"><div class="photo-info-overlay"><div class="photo-info-text">ATELIER CORE</div></div></div>
+    <main>
+        <div class="portfolio-grid-full" id="portfolio-grid">
+            <p id="portfolio-loading" style="grid-column:1/-1; text-align:center; padding:8rem 0; opacity:0.4; letter-spacing:4px; font-size:0.8rem;">CARREGANDO PORTFÓLIO...</p>
+        </div>
     </main>
+
 
     <footer class="footer-bottom" style="padding: 4rem 5%; text-align: center; opacity: 0.5; font-size: 0.7rem;">
         &copy; 2026 NAGILA HADAD LUXURY STUDIO. TODOS OS DIREITOS RESERVADOS.
     </footer>
 
-    <script>lucide.createIcons();</script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        lucide.createIcons();
+
+        const sb = supabase.createClient('https://fjuiiivmsfdwsrqiobdu.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZqdWlpaXZtc2Zkd3NycWlvYmR1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2ODIyNjAsImV4cCI6MjA5MTI1ODI2MH0.-FyHmwxUJsloYRD6Wl6fjYrOHGf5CiFcaVgTT89bGMo');
+
+        async function loadPortfolio() {
+            const grid = document.getElementById('portfolio-grid');
+            const { data, error } = await sb.from('gallery').select('*').eq('media_type', 'IMAGE').order('order');
+
+            document.getElementById('portfolio-loading')?.remove();
+
+            if (error || !data || data.length === 0) {
+                grid.innerHTML = `
+                    <div style="grid-column:1/-1; text-align:center; padding:10rem 0;">
+                        <p style="font-family:'Cormorant Garamond',serif; font-size:2rem; color:rgba(212,175,55,0.3); letter-spacing:0.2em; margin-bottom:1rem;">PORTFÓLIO EM CONSTRUÇÃO</p>
+                        <p style="font-size:0.75rem; letter-spacing:4px; opacity:0.3; text-transform:uppercase;">Nenhuma foto publicada ainda.</p>
+                    </div>`;
+                return;
+            }
+
+            data.forEach(p => {
+                const card = document.createElement('div');
+                card.className = 'photo-card-full';
+                const src = p.thumbnail_url || `/api/v1/stream?fileId=${p.telegram_file_id}`;
+                card.innerHTML = `
+                    <img src="${src}" alt="${p.title || 'Nagila Hadad Portfolio'}" loading="lazy">
+                    <div class="photo-info-overlay">
+                        <div class="photo-info-text">${p.title || 'OBRA DE ARTE'}</div>
+                    </div>`;
+                grid.appendChild(card);
+            });
+        }
+
+        loadPortfolio();
+    </script>
+
 </body>
 </html>
