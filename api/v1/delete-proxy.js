@@ -11,7 +11,7 @@ export default async function handler(req, res) {
     }
 
     const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
-    const CHAT_ID   = process.env.TELEGRAM_CHANNEL_ID || '-1003946361387';
+    const CHAT_ID   = process.env.TELEGRAM_CHAT_ID || '-1003946361387';
 
     if (!BOT_TOKEN) {
         return res.status(500).json({ ok: false, description: 'TELEGRAM_BOT_TOKEN não configurado.' });

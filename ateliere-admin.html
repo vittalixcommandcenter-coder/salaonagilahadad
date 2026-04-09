@@ -614,7 +614,7 @@
                             <input type="checkbox" ${item.is_featured ? 'checked' : ''} onchange="toggleFeatured('${item.id}', '${item.media_type}', this.checked)" style="accent-color: var(--color-gold-polished);">
                             DESTAQUE
                         </label>
-                        <button onclick="deleteGalleryItem('${item.id}', '${item.telegram_message_id}')" style="background: none; border: none; color: #cc0022; cursor: pointer; padding: 4px; transition: transform 0.2s;"><i data-lucide="trash-2" style="width:18px;height:18px;"></i></button>
+                        <button onclick="deleteGalleryItem('${item.id}', '${item.telegram_message_id}', this)" style="background: none; border: none; color: #cc0022; cursor: pointer; padding: 4px; transition: transform 0.2s;"><i data-lucide="trash-2" style="width:18px;height:18px;"></i></button>
                     </div>
                 </div>
             `).join('');
@@ -641,8 +641,18 @@
             else showToast(isFeatured ? 'DESTAQUE ATIVADO' : 'DESTAQUE REMOVIDO');
         }
 
-        async function deleteGalleryItem(id, messageId) {
+        async function deleteGalleryItem(id, messageId, btnEl) {
             if (!confirm('Tem certeza? Isso será removido permanentemente do site e dos servidores.')) return;
+            
+            // Ocultação Instantânea da Interface (UX)
+            if (btnEl) {
+                const card = btnEl.closest('div');
+                const mainCard = card.parentElement;
+                mainCard.style.transition = 'all 0.3s ease';
+                mainCard.style.opacity = '0';
+                mainCard.style.transform = 'scale(0.8)';
+                setTimeout(() => mainCard.remove(), 300);
+            }
             
             // Delete from Telegram first if we have the message ID
             if (messageId && messageId !== 'undefined' && messageId !== 'null') {
@@ -659,7 +669,7 @@
 
             const { error } = await sb.from('gallery').delete().eq('id', id);
             if (error) showToast('Erro ao excluir mídia.', 'error');
-            else { showToast('MÍDIA EXCLUÍDA.'); loadGallery(); }
+            else { showToast('MÍDIA EXCLUÍDA.');  } // Sem necessidade do loadGallery forçado pois a DOM já atualizou
         }
 
         // ── Init ──
