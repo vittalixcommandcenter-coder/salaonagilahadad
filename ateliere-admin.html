@@ -702,38 +702,42 @@
         }
 
         async function deleteGalleryItem(id, idsRaw, btnEl) {
-            const confirmed = await luxuryConfirm('CONFIRMAR EXCLUSÃO', 'Tem certeza? Isso será removido permanentemente do site e dos servidores Vittalix.');
+            const confirmed = await luxuryConfirm('CONFIRMAR EXCLUSÃO', 'Deseja remover esta obra permanentemente da vitrine?');
             if (!confirmed) return;
             
-            // Ocultação Instantânea da Interface (UX)
-            if (btnEl) {
-                const card = btnEl.closest('div');
-                const mainCard = card.parentElement;
-                mainCard.style.transition = 'all 0.3s ease';
-                mainCard.style.opacity = '0';
-                mainCard.style.transform = 'scale(0.8)';
-                setTimeout(() => mainCard.remove(), 300);
-            }
+            // 1. Limpeza Lógica (Supabase) - PRIORIDADE
+            const { error: dbError } = await sb.from('gallery').delete().eq('id', id);
             
-            // Delete from Telegram first if we have the message IDs
-            if (idsRaw && idsRaw !== 'undefined' && idsRaw !== 'null') {
-                try {
-                    const ids = idsRaw.split(',');
-                    for (const mid of ids) {
-                        await fetch('/api/v1/delete-proxy', { 
-                            method: 'POST', 
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ message_id: mid })
-                        });
-                    }
-                } catch(e) {
-                    console.warn("Falha silenciosa ao excluir do Telegram", e);
+            if (dbError) {
+                console.error("Falha no Banco:", dbError);
+                showToast(`ERRO NO BANCO: ${dbError.message || 'Acesso Negado'}`, 'error');
+                return;
+            }
+
+            // Sucesso no Banco -> UX Imediata
+            showToast('OBRA REMOVIDA COM SUCESSO');
+            if (btnEl) {
+                const card = btnEl.closest('.grid > div');
+                if (card) {
+                    card.style.opacity = '0';
+                    card.style.transform = 'scale(0.9)';
+                    setTimeout(() => card.remove(), 300);
                 }
             }
 
-            const { error } = await sb.from('gallery').delete().eq('id', id);
-            if (error) showToast('Erro ao excluir mídia.', 'error');
-            else { showToast('MÍDIA EXCLUÍDA.');  } // Sem necessidade do loadGallery forçado pois a DOM já atualizou
+            // 2. Limpeza Física (Telegram) - SEQUENCIAL (evita 400/congestionamento)
+            if (idsRaw && typeof idsRaw === 'string') {
+                const mids = idsRaw.split(',').map(s => s.trim()).filter(Boolean);
+                for (const mid of mids) {
+                    try {
+                        await fetch('/api/v1/delete-proxy', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ message_id: mid })
+                        });
+                    } catch (e) { /* Falha na nuvem não deve afetar a UI */ }
+                }
+            }
         }
 
         // ── Init ──
