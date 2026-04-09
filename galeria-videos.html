@@ -85,19 +85,26 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="vittalix-player.js?v=2026.MSE"></script>
     <script>
         lucide.createIcons();
 
         const sb = supabase.createClient('https://fjuiiivmsfdwsrqiobdu.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZqdWlpaXZtc2Zkd3NycWlvYmR1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2ODIyNjAsImV4cCI6MjA5MTI1ODI2MH0.-FyHmwxUJsloYRD6Wl6fjYrOHGf5CiFcaVgTT89bGMo');
 
-        async function loadVideos() {
-            const grid = document.getElementById('video-grid-full');
-            const { data, error } = await sb.from('gallery').select('*').eq('media_type', 'VIDEO').order('order');
+        async function loadVideoGallery() {
+            const container = document.getElementById('video-grid-full');
+            
+            // CURADORIA CINEMATOGRÁFICA: Apenas vídeos (media_type: 'VIDEO')
+            const { data, error } = await sb
+                .from('gallery')
+                .select('*')
+                .eq('media_type', 'VIDEO')
+                .order('order');
 
             document.getElementById('videos-loading')?.remove();
 
             if (error || !data || data.length === 0) {
-                grid.innerHTML = `
+                container.innerHTML = `
                     <div style="grid-column:1/-1; text-align:center; padding:10rem 0;">
                         <p style="font-family:'Cormorant Garamond',serif; font-size:2rem; color:rgba(212,175,55,0.3); letter-spacing:0.2em; margin-bottom:1rem;">ACERVO EM CONSTRUÇÃO</p>
                         <p style="font-size:0.75rem; letter-spacing:4px; opacity:0.3; text-transform:uppercase;">Nenhum vídeo publicado ainda.</p>
@@ -105,14 +112,24 @@
                 return;
             }
 
-            data.forEach(v => {
-                const card = document.createElement('div');
-                card.className = 'video-card-full';
-                card.innerHTML = `
-                    <div class="video-container" onclick="openVideoModal('${v.telegram_file_id}')">
-                        <div class="play-icon"><i data-lucide="play"></i></div>
+            container.innerHTML = data.map((item, idx) => {
+                const fileIds = item.telegram_file_ids || [item.telegram_file_id];
+                const displayId = `curadoria-${idx}`;
+                
+                return `
+                    <div class="video-card-full">
+                        <div class="video-container" style="background: #111; position: relative; aspect-ratio: 16/9; overflow: hidden;">
+                            <video id="${displayId}" class="vittalix-video" playsinline muted controls style="width: 100%; height: 100%; object-fit: cover;"></video>
+                            <div class="video-play-hint" onclick="VittalixPlayer.play('${displayId}', ${JSON.stringify(fileIds)})" style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.4); cursor: pointer; transition: 0.3s;">
+                                <div style="padding: 1rem; background: rgba(212,175,55,0.2); border-radius: 50%; backdrop-filter: blur(10px);">
+                                    <i data-lucide="play" style="color: #fff; width: 32px; height: 32px;"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="video-card-info">
+                            <h3>${item.title || 'OBRA SEM TÍTULO'}</h3>
+                        </div>
                     </div>
-                    ${(v.title && v.title !== 'EMPTY') ? `<div class="video-card-info"><h3>${v.title}</h3></div>` : ''}
                 `;grid.appendChild(card);
             });
         }

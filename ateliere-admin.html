@@ -601,11 +601,13 @@
             btn.innerText = 'ENVIANDO...';
 
             try {
-                const { sessionKey, fileIds: [fid], messageIds: [mid] } = await vittalixUpload(fileInput.files[0]);
+                const { sessionKey, fileIds: fids, messageIds: mids } = await vittalixUpload(fileInput.files[0]);
                 const { error } = await sb.from('gallery').insert([{
                     title: caption,
-                    telegram_file_id: fid,
-                    telegram_message_id: mid,
+                    telegram_file_id: fids[0], // fallback for compatibility
+                    telegram_file_ids: fids,    // new array field
+                    telegram_message_id: mids[0], // fallback
+                    telegram_message_ids: mids,   // new array field
                     media_type: mediaType
                 }]);
                 if (error) throw error;
@@ -653,7 +655,7 @@
                             <input type="checkbox" ${item.is_featured ? 'checked' : ''} onchange="toggleFeatured('${item.id}', '${item.media_type}', this.checked)" style="accent-color: var(--color-gold-polished);">
                             DESTAQUE
                         </label>
-                        <button onclick="deleteGalleryItem('${item.id}', '${item.telegram_message_id}', this)" style="background: none; border: none; color: #cc0022; cursor: pointer; padding: 4px; transition: transform 0.2s;"><i data-lucide="trash-2" style="width:18px;height:18px;"></i></button>
+                        <button onclick="deleteGalleryItem('${item.id}', '${item.telegram_message_ids || item.telegram_message_id}', this)" style="background: none; border: none; color: #cc0022; cursor: pointer; padding: 4px; transition: transform 0.2s;"><i data-lucide="trash-2" style="width:18px;height:18px;"></i></button>
                     </div>
                 </div>
             `).join('');
@@ -680,7 +682,7 @@
             else showToast(isFeatured ? 'DESTAQUE ATIVADO' : 'DESTAQUE REMOVIDO');
         }
 
-        async function deleteGalleryItem(id, messageId, btnEl) {
+        async function deleteGalleryItem(id, idsRaw, btnEl) {
             const confirmed = await luxuryConfirm('CONFIRMAR EXCLUSÃO', 'Tem certeza? Isso será removido permanentemente do site e dos servidores Vittalix.');
             if (!confirmed) return;
             
@@ -694,14 +696,17 @@
                 setTimeout(() => mainCard.remove(), 300);
             }
             
-            // Delete from Telegram first if we have the message ID
-            if (messageId && messageId !== 'undefined' && messageId !== 'null') {
+            // Delete from Telegram first if we have the message IDs
+            if (idsRaw && idsRaw !== 'undefined' && idsRaw !== 'null') {
                 try {
-                    await fetch('/api/v1/delete-proxy', { 
-                        method: 'POST', 
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ message_id: messageId })
-                    });
+                    const ids = idsRaw.split(',');
+                    for (const mid of ids) {
+                        await fetch('/api/v1/delete-proxy', { 
+                            method: 'POST', 
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ message_id: mid })
+                        });
+                    }
                 } catch(e) {
                     console.warn("Falha silenciosa ao excluir do Telegram", e);
                 }

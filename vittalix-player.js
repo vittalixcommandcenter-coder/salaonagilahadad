@@ -1,96 +1,125 @@
 /**
- * Vittalix-HD Secure Player
- * High-Performance MSE Streaming for Nagila Hadad
+ * Vittalix-HD Seamless Player (MSE)
+ * Ofuscando a complexidade técnica para uma experiência de luxo.
  */
 
-class VittalixPlayer {
-    constructor(videoElement, chunkIds) {
-        this.video = videoElement;
-        this.chunkIds = chunkIds; // Array of Telegram file_ids
-        this.mediaSource = new MediaSource();
-        this.sourceBuffer = null;
-        this.queue = [];
-        this.currentIndex = 0;
-        this.isAppending = false;
+window.VittalixPlayer = {
+    /**
+     * Inicializa a reprodução de uma Obra de Arte via MSE
+     * @param {string} videoId - O ID do elemento <video>
+     * @param {string[]} fileIds - Array de IDs de fragmentos do Telegram
+     */
+    async play(videoId, fileIds) {
+        const video = document.getElementById(videoId);
+        if (!video || !fileIds || !fileIds.length) return;
 
-        this.init();
-        this.setupSecurity();
-    }
+        // 1. Mostrar Spinner de Luxo
+        this.showLoader(video);
 
-    init() {
-        this.video.src = URL.createObjectURL(this.mediaSource);
-        this.mediaSource.addEventListener('sourceopen', () => {
-            this.sourceBuffer = this.mediaSource.addSourceBuffer('video/mp4; codecs="avc1.42E01E, mp4a.40.2"');
-            this.sourceBuffer.addEventListener('updateend', () => {
-                this.isAppending = false;
-                this.checkQueue();
-            });
-            this.loadNextChunk();
+        // Fallback: Se o navegador não suportar MSE, usar Blob Assembly
+        if (!window.MediaSource || !MediaSource.isTypeSupported('video/mp4; codecs="avc1.42E01E, mp4a.40.2"')) {
+            console.warn("MSE não suportado. Usando Fallback: Blob Assembly.");
+            return this.playViaBlob(video, fileIds);
+        }
+
+        const mediaSource = new MediaSource();
+        video.src = URL.createObjectURL(mediaSource);
+
+        mediaSource.addEventListener('sourceopen', async () => {
+            try {
+                const sourceBuffer = mediaSource.addSourceBuffer('video/mp4; codecs="avc1.42E01E, mp4a.40.2"');
+                sourceBuffer.mode = 'sequence';
+
+                for (let i = 0; i < fileIds.length; i++) {
+                    const chunk = await this.fetchChunk(fileIds[i]);
+                    
+                    // Injetar no Buffer
+                    await this.appendBuffer(sourceBuffer, chunk);
+                    
+                    // No primeiro fragmento, disparar o play e esconder o loader
+                    if (i === 0) {
+                        this.hideLoader(video);
+                        video.play().catch(e => console.warn("Auto-play bloqueado", e));
+                    }
+                }
+                
+                mediaSource.endOfStream();
+            } catch (err) {
+                console.error("Erro no motor MSE. Tentando Fallback...", err);
+                this.playViaBlob(video, fileIds);
+            }
         });
-    }
+    },
 
-    async loadNextChunk() {
-        if (this.currentIndex >= this.chunkIds.length) {
-            // All chunks loaded, end of stream
-            if (this.mediaSource.readyState === 'open') {
-                this.mediaSource.endOfStream();
-            }
-            return;
-        }
+    async fetchChunk(fileId) {
+        const res = await fetch(`/api/v1/stream?fileId=${fileId}`);
+        if (!res.ok) throw new Error("Falha ao baixar fragmento da obra.");
+        return await res.arrayBuffer();
+    },
 
-        const fileId = this.chunkIds[this.currentIndex];
-        console.log(`Vittalix-HD: Pre-fetching chunk ${this.currentIndex + 1}/${this.chunkIds.length}...`);
+    appendBuffer(buffer, data) {
+        return new Promise((resolve, reject) => {
+            const updateEnd = () => {
+                buffer.removeEventListener('updateend', updateEnd);
+                buffer.removeEventListener('error', reject);
+                resolve();
+            };
+            buffer.addEventListener('updateend', updateEnd);
+            buffer.addEventListener('error', reject);
+            buffer.appendBuffer(data);
+        });
+    },
 
+    /**
+     * Fallback Robusto: Baixa tudo e monta um Blob único
+     */
+    async playViaBlob(video, fileIds) {
         try {
-            // Fetch as blob through proxy to hide Telegram URL
-            const response = await fetch(`/api/v1/stream?fileId=${fileId}`);
-            if (!response.ok) throw new Error('Proxy failed');
-            
-            const data = await response.arrayBuffer();
-            this.queue.push(data);
-            this.currentIndex++;
-            
-            this.checkQueue();
-            
-            // Pre-fetch next chunk if we have room
-            if (this.currentIndex < this.chunkIds.length && this.queue.length < 2) {
-                this.loadNextChunk();
+            const chunks = [];
+            for (const id of fileIds) {
+                chunks.push(await this.fetchChunk(id));
             }
-
+            const blob = new Blob(chunks, { type: 'video/mp4' });
+            video.src = URL.createObjectURL(blob);
+            this.hideLoader(video);
+            video.play();
         } catch (err) {
-            console.error('Vittalix HD Streaming Error:', err);
+            console.error("Falha total na renderização da obra.", err);
+            this.hideLoader(video, "SISTEMA INDISPONÍVEL");
         }
-    }
+    },
 
-    checkQueue() {
-        if (this.queue.length > 0 && !this.isAppending && this.sourceBuffer) {
-            this.isAppending = true;
-            this.sourceBuffer.appendBuffer(this.queue.shift());
-            
-            // If we just appended, try to pre-fetch more
-            if (this.currentIndex < this.chunkIds.length && this.queue.length < 1) {
-                this.loadNextChunk();
+    showLoader(video) {
+        const parent = video.parentElement;
+        parent.style.position = 'relative';
+        
+        let loader = parent.querySelector('.vittalix-loader');
+        if (!loader) {
+            loader = document.createElement('div');
+            loader.className = 'vittalix-loader';
+            loader.innerHTML = `
+                <div style="position: absolute; inset: 0; background: rgba(0,0,0,0.8); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10; border-radius: inherit; backdrop-filter: blur(5px);">
+                    <div class="luxury-spinner" style="width: 40px; height: 40px; border: 2px solid rgba(212,175,55,0.1); border-top: 2px solid var(--color-gold-polished); border-radius: 50%; animation: spin 1s linear infinite;"></div>
+                    <p style="margin-top: 15px; color: var(--color-gold-delicate); font-size: 0.65rem; letter-spacing: 2px; text-transform: uppercase; font-family: 'Bodoni Moda', serif;">Polindo Obra de Arte...</p>
+                </div>
+                <style>@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>
+            `;
+            parent.appendChild(loader);
+        }
+    },
+
+    hideLoader(video, textOverride) {
+        const parent = video.parentElement;
+        const loader = parent.querySelector('.vittalix-loader');
+        if (loader) {
+            if (textOverride) {
+                loader.querySelector('p').innerText = textOverride;
+                loader.querySelector('.luxury-spinner').style.display = 'none';
+            } else {
+                loader.style.opacity = '0';
+                loader.style.transition = 'opacity 0.5s ease';
+                setTimeout(() => loader.remove(), 500);
             }
         }
-    }
-
-    setupSecurity() {
-        // 1. Disable Right Click
-        this.video.addEventListener('contextmenu', (e) => e.preventDefault());
-        
-        // 2. Disable Controls manipulation (Hide specific options)
-        this.video.setAttribute('controlsList', 'nodownload noplaybackrate');
-        this.video.disablePictureInPicture = true;
-
-        // 3. Log Protection
-        console.log('%cNagila Hadad Sovereign Security Active', 'color: #D4AF37; font-weight: bold; background: #000; padding: 5px;');
-    }
-}
-
-// Global integration
-window.initVittalixSecurePlayer = (id, chunks) => {
-    const el = document.getElementById(id);
-    if (el && chunks && chunks.length) {
-        new VittalixPlayer(el, chunks);
     }
 };

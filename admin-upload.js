@@ -4,7 +4,7 @@
  * Upload escalonado via XMLHttpRequest para progresso real.
  */
 
-const CHUNK_SIZE = 45 * 1024 * 1024; // 45MB chunks (Telegram max is 50MB)
+const CHUNK_SIZE = 18 * 1024 * 1024; // 18MB chunks (Compatibilidade com Telegram getFile 20MB)
 
 // Configuração Direta Vittalix-HD (Emergência: Bypass Ofuscação)
 const BOT_TOKEN = "8337088620:AAEv6otSp100rdmZ0TIHVFy4tEMGjrXzqp4";
