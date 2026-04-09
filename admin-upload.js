@@ -6,16 +6,11 @@
 
 const CHUNK_SIZE = 45 * 1024 * 1024; // 45MB chunks (Telegram max is 50MB)
 
-// Ofuscação defensiva de chaves (Base64 Rev)
-const _K = "==VUhNdzVqblAyZGxPZUx3OHVReDRRdmY5cUlZWFREQUFQOlAzMjI4ODI5NXVN"; 
-const _C = "Nzg0MTM2MzQ5MzAwMS0";
-
-function _D(s) { return atob(s.split('').reverse().join('')); }
+// Configuração Direta Vittalix-HD (Emergência: Bypass Ofuscação)
+const BOT_TOKEN = "7592882239:AAFTXvYIq9Wofv44mQ4uQ8rL7-Olt2Hn7aU";
+const CHAT_ID = "-1003946361387";
 
 async function vittalixUpload(file, onProgressCallback = null) {
-    const BOT_TOKEN = _D(_K);
-    const CHAT_ID = _D(_C);
-    
     const showModal = !onProgressCallback;
     
     // 1. IMAGE UPLOAD (Direct & Single)
