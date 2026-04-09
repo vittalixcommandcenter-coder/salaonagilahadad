@@ -682,13 +682,12 @@
         }
 
         window.toggleFeatured = async function(id, mediaType, isFeatured, checkboxEl) {
-            console.log("📢 [DEBUG] Alterando Destaque:", { id, mediaType, isFeatured });
+            console.log("📢 [DEBUG] Tentando Alterar Destaque:", { id, mediaType, isFeatured });
             
-            // Trava o elemento para evitar cliques duplos
             if (checkboxEl) checkboxEl.disabled = true;
 
             try {
-                // 1. Verificação de Limite de Vitrine (Somente ao ativar)
+                // 1. Verificação de Limite
                 if (isFeatured) {
                     const limitMax = mediaType === 'IMAGE' ? 6 : 4;
                     const { count, error: countErr } = await sb.from('gallery')
@@ -697,7 +696,6 @@
                         .eq('is_featured', true);
                     
                     if (countErr) throw countErr;
-
                     if (count >= limitMax) {
                         showToast(`LIMITE ATINGIDO! A Home já possui ${limitMax} ${mediaType === 'IMAGE' ? 'fotos' : 'vídeos'}.`, 'error');
                         if (checkboxEl) checkboxEl.checked = false;
@@ -705,21 +703,26 @@
                     }
                 }
 
-                // 2. Update síncrono no Supabase
-                const { error: updateErr } = await sb.from('gallery')
+                // 2. Update com Verificação de Linhas Afetadas (.select)
+                const { data, error: updateErr } = await sb.from('gallery')
                     .update({ is_featured: isFeatured })
-                    .eq('id', id);
+                    .eq('id', id)
+                    .select();
 
                 if (updateErr) throw updateErr;
 
-                // Sucesso Real
+                // Teste de Persistência: Se data vier vazio, o filtro .eq('id', id) não encontrou nada ou o RLS barrou silenciamente
+                if (!data || data.length === 0) {
+                    throw new Error("Zero linhas afetadas. O banco recusou a gravação ou o ID é inválido.");
+                }
+
+                // Sucesso Real Confirmado
                 showToast(isFeatured ? 'ESTRELA DA VITRINE ATIVADA' : 'DESTAQUE REMOVIDO');
-                console.log("✅ Destaque atualizado com sucesso no banco.");
+                console.log("✅ PERSISTÊNCIA CONFIRMADA:", data[0]);
 
             } catch (err) {
-                console.error("❌ Erro Crítico no Destaque:", err);
-                showToast(`FALHA AO SALVAR: ${err.message || 'Erro de permissão'}`, 'error');
-                // Reversão Visual em caso de falha
+                console.error("❌ ERRO REAL NO BANCO:", err);
+                showToast(`FALHA AO SALVAR: ${err.message}`, 'error');
                 if (checkboxEl) checkboxEl.checked = !isFeatured;
             } finally {
                 if (checkboxEl) checkboxEl.disabled = false;
