@@ -11,6 +11,32 @@ function getSessionKey(file) {
 }
 
 async function vittalixUpload(file) {
+    // BYPASS TOTAL PARA IMAGENS (Não fatia, envia inteiro preservando o nome)
+    if (file.type.startsWith('image/')) {
+        showUploadModal(`Enviando imagem em alta resolução...`);
+        try {
+            const formData = new FormData();
+            formData.append('document', file, file.name);
+            formData.append('chat_id', '-1003946361387');
+            
+            const response = await fetch('/api/v1/upload-proxy', { method: 'POST', body: formData });
+            const data = await response.json();
+            if (!data.ok) throw new Error(data.description);
+            
+            // Tratamento flexível: Telegram pode retornar 'photo' (array) ou 'document'
+            let fileId;
+            if (data.result.document) fileId = data.result.document.file_id;
+            else if (data.result.photo) fileId = data.result.photo[data.result.photo.length - 1].file_id;
+            else throw new Error("Formato não reconhecido pelo Telegram");
+
+            setTimeout(() => hideUploadModal(), 1000);
+            return { sessionKey: 'img_' + Date.now(), fileIds: [fileId] };
+        } catch(err) {
+            hideUploadModal();
+            throw err;
+        }
+    }
+
     const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
     const sessionKey = getSessionKey(file);
     
