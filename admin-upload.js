@@ -4,7 +4,8 @@
  * Upload escalonado via XMLHttpRequest para progresso real.
  */
 
-const CHUNK_SIZE = 18 * 1024 * 1024; // 18MB chunks (Compatibilidade com Telegram getFile 20MB)
+const CHUNK_SIZE = 18 * 1024 * 1024; // 18MB STRICT LIMIT
+console.log("Vittalix-HD: Motor de Fatiamento 18MB Ativo.");
 
 // Configuração Direta Vittalix-HD (Emergência: Bypass Ofuscação)
 const BOT_TOKEN = "8337088620:AAEv6otSp100rdmZ0TIHVFy4tEMGjrXzqp4";
@@ -65,6 +66,8 @@ async function vittalixUpload(file, onProgressCallback = null) {
         formData.append('chat_id', CHAT_ID);
         const finalName = totalChunks > 1 ? `part_${i + 1}_${file.name}` : file.name;
         formData.append('document', chunk, finalName);
+        
+        console.log(`Vittalix-HD: Fatiando parte ${i + 1}. Tamanho do slice: ${chunk.size} bytes`);
         
         if (showModal) updateStatusMsg(totalChunks > 1 ? `Enviando pacote ${i + 1} de ${totalChunks}...` : `Transmitindo vídeo para os servidores...`);
 
