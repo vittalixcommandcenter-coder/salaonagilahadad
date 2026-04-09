@@ -59,8 +59,24 @@ async function vittalixUpload(file) {
     }
 
     window.onbeforeunload = null;
+    
+    // UI: Conclusão
+    const msg = document.getElementById('upload-msg');
+    if (msg) msg.innerText = `UPLOAD CONCLUÍDO!`;
+    setTimeout(() => hideUploadModal(), 1000);
+
     return { sessionKey, fileIds: finalizedIds };
 }
+
+function hideUploadModal() {
+    const modal = document.getElementById('vittalix-upload-status');
+    if (modal) {
+        modal.style.opacity = '0';
+        modal.style.transition = 'opacity 0.5s ease';
+        setTimeout(() => modal.remove(), 500);
+    }
+}
+
 
 async function uploadWithRetry(blob, partIndex, retriesLeft) {
     const formData = new FormData();
