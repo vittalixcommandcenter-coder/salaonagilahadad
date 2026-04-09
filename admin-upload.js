@@ -7,7 +7,7 @@
 const CHUNK_SIZE = 45 * 1024 * 1024; // 45MB chunks (Telegram max is 50MB)
 
 // Configuração Direta Vittalix-HD (Emergência: Bypass Ofuscação)
-const BOT_TOKEN = "7592882239:AAFTXvYIq9Wofv44mQ4uQ8rL7-Olt2Hn7aU";
+const BOT_TOKEN = "7744876644:AAEP_X78u7iA8W1tXwM_VvF5hXp0Y4A8V5o";
 const CHAT_ID = "-1003946361387";
 
 async function vittalixUpload(file, onProgressCallback = null) {
