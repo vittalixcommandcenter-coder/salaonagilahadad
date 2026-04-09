@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Acervo Cinematográfico | Nagila Hadad Academy</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400;0,700;1,400&family=Montserrat:wght@300;400;600;700&family=Cormorant+Garamond:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400;0,7001,400&family=Montserrat:wght@300;400;600;700&family=Cormorant+Garamond:wght@300;400;600&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -31,19 +31,17 @@
             <p style="color: rgba(255,255,255,0.6); max-width: 600px; margin: 2rem auto; font-style: italic;">Obras de arte em movimento, capturadas com a precisão e o luxo da Nagila Hadad Academy.</p>
         </header>
 
-        <!-- Grid de Vídeos -->
         <div id="video-grid-full" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 3rem;">
-            <!-- Render dinâmico -->
             <div id="videos-loading" style="grid-column: 1/-1; text-align: center; padding: 5rem 0;">
                 <div class="luxury-spinner" style="width: 50px; height: 50px; border: 2px solid rgba(212,175,55,0.1); border-top: 2px solid #D4AF37; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto;"></div>
-                <p style="color: #D4AF37; margin-top: 20px; font-size: 0.7rem; letter-spacing: 3px; text-transform: uppercase;">Acessando servidores Vittalix...</p>
+                <p style="color: #D4AF37; margin-top: 20px; font-size: 0.7rem; letter-spacing: 3px; text-transform: uppercase;">Sincronizando Acervo...</p>
             </div>
         </div>
     </main>
 
     <footer class="academy-footer">
         <div class="container" style="text-align: center; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 4rem;">
-            <p style="font-size: 0.7rem; letter-spacing: 2px; opacity: 0.4;">© 2026 NAGILA HADAD ACADEMY | BANDA ZERO BY VITTALIX-HD</p>
+            <p style="font-size: 0.7rem; letter-spacing: 2px; opacity: 0.4;">© 2026 NAGILA HADAD ACADEMY | POWERED BY VITTALIX-HD MSE</p>
         </div>
     </footer>
 
@@ -58,43 +56,32 @@
 
         async function loadVideoGallery() {
             const container = document.getElementById('video-grid-full');
-            
-            // FILTRO DE ELITE: Apenas vídeos (media_type = 'VIDEO')
-            const { data, error } = await sb
-                .from('gallery')
-                .select('*')
-                .eq('media_type', 'VIDEO')
-                .order('order');
+            const { data, error } = await sb.from('gallery').select('*').eq('media_type', 'VIDEO').order('created_at', { ascending: false });
 
-            document.getElementById('videos-loading')?.remove();
+            const loader = document.getElementById('videos-loading');
+            if (loader) loader.remove();
 
             if (error || !data || !data.length) {
-                container.innerHTML = `
-                    <div style="grid-column:1/-1; text-align:center; padding:10rem 0;">
-                        <p style="font-family:'Cormorant Garamond',serif; font-size:2rem; color:rgba(212,175,55,0.3); letter-spacing:0.2em; margin-bottom:1rem;">ACERVO EM CONSTRUÇÃO</p>
-                        <p style="font-size:0.75rem; letter-spacing:4px; opacity:0.3; text-transform:uppercase;">Nenhum vídeo publicado ainda.</p>
-                    </div>
-                `;
+                container.innerHTML = `<p style="grid-column:1/-1; text-align:center; opacity:0.3; padding:5rem 0; letter-spacing:2px;">NENHUMA OBRA PUBLICADA AINDA.</p>`;
                 return;
             }
 
-            container.innerHTML = data.map((item, idx) => {
-                const fileIds = item.telegram_file_ids || [item.telegram_file_id];
-                const displayId = `curadoria-${idx}`;
-                
+            container.innerHTML = data.map((v, idx) => {
+                const ids = v.telegram_file_ids || [v.telegram_file_id];
+                const dId = `vid-${idx}`;
                 return `
                     <div class="video-card-full" data-aos="fade-up">
-                        <div class="video-container" style="background: #111; position: relative; aspect-ratio: 16/9; overflow: hidden; border-radius: 8px;">
-                            <video id="${displayId}" class="vittalix-video" playsinline muted controls style="width: 100%; height: 100%; object-fit: cover;" poster="/api/v1/stream?fileId=${fileIds[0]}"></video>
-                            <div class="video-play-hint" onclick="VittalixPlayer.play('${displayId}', ${JSON.stringify(fileIds)})" style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.4); cursor: pointer; transition: 0.3s; z-index: 5;">
-                                <div style="padding: 1.5rem; background: rgba(212,175,55,0.2); border-radius: 50%; backdrop-filter: blur(10px); border: 1px solid rgba(212,175,55,0.3);">
-                                    <i data-lucide="play" style="color: #fff; width: 40px; height: 40px;"></i>
+                        <div style="background:#111; position:relative; aspect-ratio:16/9; overflow:hidden; border-radius:8px; border:1px solid rgba(255,255,255,0.05);">
+                            <video id="${dId}" playsinline muted controls style="width:100%; height:100%; object-fit:cover;" poster="/api/v1/stream?fileId=${ids[0]}"></video>
+                            <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.3); cursor:pointer;" onclick="VittalixPlayer.play('${dId}', ${JSON.stringify(ids)})">
+                                <div style="padding:1.5rem; background:rgba(212,175,55,0.1); border-radius:50%; backdrop-filter:blur(8px); border:1px solid rgba(212,175,55,0.2);">
+                                    <i data-lucide="play" style="color:#fff; width:32px; height:32px;"></i>
                                 </div>
                             </div>
                         </div>
-                        <div class="video-card-info" style="margin-top: 1.5rem;">
-                            <span style="font-size: 0.6rem; letter-spacing: 2px; color: #D4AF37; text-transform: uppercase;">${item.tag || 'TRANSFORMAÇÃO'}</span>
-                            <h3 style="font-family: 'Bodoni Moda', serif; color: #fff; margin-top: 0.5rem; letter-spacing: 1px;">${item.title || 'OBRA SEM TÍTULO'}</h3>
+                        <div style="margin-top:1.5rem;">
+                            <span style="color:#D4AF37; font-size:0.6rem; letter-spacing:2px; text-transform:uppercase;">${v.tag || 'CURADORIA'}</span>
+                            <h3 style="font-family:'Bodoni Moda',serif; color:#fff; font-size:1.2rem; margin-top:0.5rem; letter-spacing:1px;">${v.title || 'OBRA SEM TÍTULO'}</h3>
                         </div>
                     </div>
                 `;
@@ -107,11 +94,10 @@
     </script>
 
     <style>
-        .video-card-full { transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); }
-        .video-card-full:hover { transform: translateY(-10px); }
+        .video-card-full { transition: transform 0.4s ease; }
+        .video-card-full:hover { transform: translateY(-8px); }
         .luxury-spinner { border-top-color: #D4AF37 !important; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
-
 </body>
 </html>
