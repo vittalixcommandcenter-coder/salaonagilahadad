@@ -18,8 +18,12 @@ CREATE TABLE IF NOT EXISTS public.gallery (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     title TEXT,
     tag TEXT DEFAULT 'PORTFOLIO',
-    telegram_file_id TEXT NOT NULL, -- ID único do Telegram (Custo Zero de Banda)
+    telegram_file_id TEXT, -- Fallback / Parte 1
+    telegram_file_ids TEXT[], -- Array de todos os fragmentos (Vittalix-HD)
+    telegram_message_id TEXT, -- IDs para deleção
+    telegram_message_ids TEXT[],
     media_type TEXT CHECK (media_type IN ('IMAGE', 'VIDEO')),
+    is_featured BOOLEAN DEFAULT false,
     "order" INT DEFAULT 0,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
