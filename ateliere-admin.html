@@ -669,8 +669,8 @@
                                </div>`
                         }
                         <div style="margin-top: 12px; display: flex; justify-content: space-between; align-items: center;">
-                            <label style="font-size: 0.6rem; color: #fff; display: flex; align-items: center; gap: 6px; cursor:pointer; letter-spacing: 1px; flex: 1;">
-                                <input type="checkbox" ${item.is_featured ? 'checked' : ''} onchange="toggleFeatured('${item.id}', '${item.media_type}', this.checked)" style="accent-color: var(--color-gold-polished);">
+                             <label style="font-size: 0.6rem; color: #fff; display: flex; align-items: center; gap: 6px; cursor:pointer; letter-spacing: 1px; flex: 1;">
+                                <input type="checkbox" ${item.is_featured ? 'checked' : ''} onchange="toggleFeatured('${item.id}', '${item.media_type}', this.checked, this)" style="accent-color: var(--color-gold-polished);">
                                 DESTAQUE
                             </label>
                             <button onclick="deleteGalleryItem('${item.id}', '${msgIds.filter(Boolean).map(id => id.trim()).join(',')}', this)" style="background: none; border: none; color: #cc0022; cursor: pointer; padding: 4px; transition: transform 0.2s;"><i data-lucide="trash-2" style="width:18px;height:18px;"></i></button>
@@ -681,24 +681,46 @@
             lucide.createIcons();
         }
 
-        async function toggleFeatured(id, mediaType, isFeatured) {
-            if (isFeatured) {
-                const limitMax = mediaType === 'IMAGE' ? 6 : 4;
-                const { count } = await sb.from('gallery')
-                    .select('id', { count: 'exact', head: true })
-                    .eq('media_type', mediaType)
-                    .eq('is_featured', true);
+        async function toggleFeatured(id, mediaType, isFeatured, checkboxEl) {
+            // Trava o elemento para evitar cliques duplos
+            if (checkboxEl) checkboxEl.disabled = true;
+
+            try {
+                // 1. Verificação de Limite de Vitrine (Somente ao ativar)
+                if (isFeatured) {
+                    const limitMax = mediaType === 'IMAGE' ? 6 : 4;
+                    const { count, error: countErr } = await sb.from('gallery')
+                        .select('id', { count: 'exact', head: true })
+                        .eq('media_type', mediaType)
+                        .eq('is_featured', true);
                     
-                if (count >= limitMax) {
-                    showToast(`LIMITE ATINGIDO! A Home comporta no máximo ${limitMax} ${mediaType === 'IMAGE' ? 'fotos' : 'vídeos'}.`, 'error');
-                    setTimeout(() => loadGallery(), 500); // Reverte o visual do checkbox
-                    return;
+                    if (countErr) throw countErr;
+
+                    if (count >= limitMax) {
+                        showToast(`LIMITE ATINGIDO! A Home já possui ${limitMax} ${mediaType === 'IMAGE' ? 'fotos' : 'vídeos'}.`, 'error');
+                        if (checkboxEl) checkboxEl.checked = false;
+                        return;
+                    }
                 }
+
+                // 2. Update síncrono no Supabase
+                const { error: updateErr } = await sb.from('gallery')
+                    .update({ is_featured: isFeatured })
+                    .eq('id', id);
+
+                if (updateErr) throw updateErr;
+
+                // Sucesso Real
+                showToast(isFeatured ? 'ESTRELA DA VITRINE ATIVADA' : 'DESTAQUE REMOVIDO');
+
+            } catch (err) {
+                console.error("Erro no Destaque:", err);
+                showToast(`FALHA AO SALVAR: ${err.message || 'Erro de permissão'}`, 'error');
+                // Reversão Visual em caso de falha
+                if (checkboxEl) checkboxEl.checked = !isFeatured;
+            } finally {
+                if (checkboxEl) checkboxEl.disabled = false;
             }
-            
-            const { error } = await sb.from('gallery').update({ is_featured: isFeatured }).eq('id', id);
-            if (error) showToast('Erro ao atualizar destaque.', 'error');
-            else showToast(isFeatured ? 'DESTAQUE ATIVADO' : 'DESTAQUE REMOVIDO');
         }
 
         async function deleteGalleryItem(id, idsRaw, btnEl) {
