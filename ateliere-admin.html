@@ -681,7 +681,9 @@
             lucide.createIcons();
         }
 
-        async function toggleFeatured(id, mediaType, isFeatured, checkboxEl) {
+        window.toggleFeatured = async function(id, mediaType, isFeatured, checkboxEl) {
+            console.log("📢 [DEBUG] Alterando Destaque:", { id, mediaType, isFeatured });
+            
             // Trava o elemento para evitar cliques duplos
             if (checkboxEl) checkboxEl.disabled = true;
 
@@ -712,9 +714,10 @@
 
                 // Sucesso Real
                 showToast(isFeatured ? 'ESTRELA DA VITRINE ATIVADA' : 'DESTAQUE REMOVIDO');
+                console.log("✅ Destaque atualizado com sucesso no banco.");
 
             } catch (err) {
-                console.error("Erro no Destaque:", err);
+                console.error("❌ Erro Crítico no Destaque:", err);
                 showToast(`FALHA AO SALVAR: ${err.message || 'Erro de permissão'}`, 'error');
                 // Reversão Visual em caso de falha
                 if (checkboxEl) checkboxEl.checked = !isFeatured;
