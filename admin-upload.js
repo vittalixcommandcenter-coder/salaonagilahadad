@@ -39,7 +39,7 @@ async function vittalixUpload(file) {
         updateUploadProgress(i + 1, totalChunks);
         
         try {
-            const fileId = await uploadWithRetry(chunk, i + 1, MAX_RETRY);
+            const fileId = await uploadWithRetry(chunk, i + 1, MAX_RETRY, file.name, totalChunks);
             
             // 2. Incremental Save (Persistence)
             fileIds[i] = fileId;
@@ -78,10 +78,11 @@ function hideUploadModal() {
 }
 
 
-async function uploadWithRetry(blob, partIndex, retriesLeft) {
+async function uploadWithRetry(blob, partIndex, retriesLeft, originalName, totalChunks) {
     const formData = new FormData();
 
-    formData.append('document', blob, `part_${partIndex}.mp4`);
+    const finalName = totalChunks > 1 ? `part_${partIndex}_${originalName}` : originalName;
+    formData.append('document', blob, finalName);
     formData.append('chat_id', '-1003946361387'); // Nagila CDN Channel
 
     try {
@@ -101,7 +102,7 @@ async function uploadWithRetry(blob, partIndex, retriesLeft) {
         if (retriesLeft > 0) {
             console.warn(`Parte ${partIndex} falhou. Tentando novamente (${MAX_RETRY - retriesLeft + 1}/${MAX_RETRY})...`);
             await new Promise(r => setTimeout(r, 2000));
-            return uploadWithRetry(blob, partIndex, retriesLeft - 1);
+            return uploadWithRetry(blob, partIndex, retriesLeft - 1, originalName, totalChunks);
         }
         throw err;
     }

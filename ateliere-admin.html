@@ -546,6 +546,11 @@
 
             if (!fileInput?.files?.[0]) { showToast('Selecione um arquivo primeiro.', 'error'); return; }
 
+            const btn = event.currentTarget || event.target;
+            const originalText = btn.innerText;
+            btn.disabled = true;
+            btn.innerText = 'ENVIANDO...';
+
             try {
                 const { sessionKey, fileIds: [fid] } = await vittalixUpload(fileInput.files[0]);
                 const { error } = await sb.from('gallery').insert([{
@@ -557,8 +562,14 @@
                 localStorage.removeItem(sessionKey);
                 showToast(mediaType === 'IMAGE' ? 'FOTO PUBLICADA NA GALERIA!' : 'VÍDEO PUBLICADO NA CURADORIA!');
                 fileInput.value = '';
+                if (mediaType === 'IMAGE') document.getElementById('gallery-photo-name').innerText = '';
+                if (mediaType === 'VIDEO') document.getElementById('gallery-video-name').innerText = '';
+                
             } catch (err) {
                 showToast('Erro no upload: ' + err.message, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerText = originalText;
             }
         }
 

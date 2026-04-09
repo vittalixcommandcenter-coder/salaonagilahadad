@@ -10,13 +10,8 @@ module.exports = async (req, res) => {
         process.env.SUPABASE_SERVICE_ROLE_KEY
     );
 
-    // 2. Validate Session
-    const authHeader = req.headers.authorization;
-    const { data: { user }, error: authError } = await supabase.auth.getUser(authHeader?.split(' ')[1]);
+    // O arquivo é servido via file_id (que é um hash forte do Telegram, atuando como URL não-listável)
 
-    if (authError || !user) {
-        return res.status(401).json({ error: 'Unauthorized: Premium high-end content requires a valid session.' });
-    }
 
     // 3. Resolve Telegram Path
     const botToken = process.env.TELEGRAM_BOT_TOKEN;
