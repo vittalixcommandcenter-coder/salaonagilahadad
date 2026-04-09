@@ -498,8 +498,8 @@
 
                 // Upload da Capa via Vittalix-HD (Telegram)
                 if (selectedFiles['cover']) {
-                    setProgress('cover', 50);
-                    const { sessionKey, fileIds: [coverId] } = await vittalixUpload(selectedFiles['cover']);
+                    setProgress('cover', 0);
+                    const { sessionKey, fileIds: [coverId] } = await vittalixUpload(selectedFiles['cover'], (p) => setProgress('cover', p));
                     payload.cover_url = `/api/v1/stream?fileId=${coverId}`;
                     localStorage.removeItem(sessionKey);
                     setProgress('cover', 100);
@@ -507,8 +507,8 @@
 
                 // Upload do Trailer via Vittalix-HD (Telegram)
                 if (selectedFiles['trailer']) {
-                    setProgress('trailer', 50);
-                    const { sessionKey, fileIds } = await vittalixUpload(selectedFiles['trailer']);
+                    setProgress('trailer', 0);
+                    const { sessionKey, fileIds } = await vittalixUpload(selectedFiles['trailer'], (p) => setProgress('trailer', p));
                     payload.trailer_url = `/api/v1/stream?fileId=${fileIds[0]}`;
                     payload.telegram_file_ids = fileIds;
                     localStorage.removeItem(sessionKey);
