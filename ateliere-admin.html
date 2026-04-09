@@ -5,13 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ateliê Admin | Nagila Hadad CMS</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400;0,700;1,400&family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="admin-upload.js"></script>
 
     <style>
         body { background: #050505; color: #fff; font-family: 'Montserrat', sans-serif; overflow: hidden; }
+        
+        /* --- Login Overlay --- */
+        #login-overlay { position: fixed; inset: 0; z-index: 9999; background: radial-gradient(circle at center, #1a1a1a 0%, #0a0a0a 100%); display: flex; align-items: center; justify-content: center; transition: opacity 0.8s ease; }
+        .login-card { width: 100%; max-width: 420px; padding: 4rem 3rem; background: rgba(15, 15, 15, 0.95); border: 1px solid rgba(212, 175, 55, 0.15); border-radius: 4px; backdrop-filter: blur(20px); text-align: center; box-shadow: 0 40px 100px rgba(0,0,0,0.9); }
+        .login-logo { font-family: 'Bodoni Moda', serif; font-size: 2.2rem; letter-spacing: 0.3em; color: #D4AF37; margin-bottom: 0.5rem; text-transform: uppercase; }
+        .login-subtitle { font-size: 0.7rem; letter-spacing: 5px; text-transform: uppercase; color: rgba(255, 255, 255, 0.3); margin-bottom: 4rem; }
+        .login-btn { width: 100%; padding: 1.2rem; margin-top: 1.5rem; background: transparent; color: #D4AF37; border: 1px solid #D4AF37; font-weight: 600; letter-spacing: 4px; text-transform: uppercase; font-size: 0.75rem; cursor: pointer; transition: all 0.5s ease; position: relative; overflow: hidden; }
+        .login-btn:hover { background: #D4AF37; color: #000; box-shadow: 0 0 30px rgba(212, 175, 55, 0.3); }
+        .error-msg { color: #ff4d4d; font-size: 0.8rem; margin-top: 2rem; display: none; font-weight: 400; }
+        .back-home { display: inline-block; margin-top: 3rem; font-size: 0.6rem; letter-spacing: 3px; text-transform: uppercase; color: rgba(255, 255, 255, 0.2); text-decoration: none; transition: color 0.3s ease; }
+        .back-home:hover { color: #fff; }
+
         .admin-layout { display: grid; grid-template-columns: 280px 1fr; height: 100vh; }
 
         /* Sidebar */
@@ -113,9 +125,31 @@
     </style>
 </head>
 <body>
+    <!-- Login Overlay -->
+    <div id="login-overlay">
+        <div class="login-card">
+            <div class="login-logo">NAGILA</div>
+            <div class="login-subtitle">Academy Portal</div>
+            <form id="login-form">
+                <div class="form-group" style="text-align: left; margin-bottom: 2.5rem;">
+                    <label style="color: #D4AF37; font-size: 0.65rem; letter-spacing: 3px; margin-bottom: 12px; opacity: 0.8;">E-mail de Acesso</label>
+                    <input type="email" id="login-email" required placeholder="admin@nagilahadad.com.br" style="background:transparent; border:none; border-bottom:1px solid rgba(255,255,255,0.1); padding:12px 0; border-radius:0;">
+                </div>
+                <div class="form-group" style="text-align: left; margin-bottom: 2.5rem;">
+                    <label style="color: #D4AF37; font-size: 0.65rem; letter-spacing: 3px; margin-bottom: 12px; opacity: 0.8;">Chave de Segurança</label>
+                    <input type="password" id="login-password" required placeholder="••••••••" style="background:transparent; border:none; border-bottom:1px solid rgba(255,255,255,0.1); padding:12px 0; border-radius:0;">
+                </div>
+                <button type="submit" class="login-btn" id="login-button">Autenticar</button>
+                <div id="login-error-msg" class="error-msg">Credenciais inválidas.</div>
+            </form>
+            <a href="/inicio" class="back-home">Voltar ao Site Sede</a>
+        </div>
+    </div>
+
     <!-- Luxury Toast Container -->
     <div id="luxury-toast-container"></div>
 
+    <div id="admin-content" style="display: none; opacity: 0; transition: opacity 0.8s ease;">
     <div class="admin-layout">
         <aside class="admin-sidebar">
             <div class="admin-logo">NÁGILA ADMIN</div>
@@ -255,6 +289,8 @@
                 </div>
             </div>
         </main>
+        </main>
+    </div>
     </div>
 
     <script>
@@ -278,18 +314,79 @@
             event.currentTarget.classList.add('active');
         }
 
-        // ── Auth (Bypass para testes) ──
-        // checkSession() removida propositalmente para facilitar testes.
-        // Reative após configurar o Supabase:
-        // async function checkSession() {
-        //     const { data: { session } } = await sb.auth.getSession();
-        //     if (!session) window.location.href = '/login';
-        // }
-        // checkSession();
+        // ── Auth & SPA State Machine ──
+        const ALLOWED_ADMIN_EMAIL = 'antonio-bocardo@hotmail.com';
+
+        async function verifyAuthState() {
+            const { data: { session } } = await sb.auth.getSession();
+            
+            if (session && session.user.email === ALLOWED_ADMIN_EMAIL) {
+                // Admin validado
+                showAdminDashboard();
+            } else if (session) {
+                // Logado mas email não é de admin
+                await sb.auth.signOut();
+                showLoginError('Acesso não autorizado para esta conta.');
+            } else {
+                // Deslogado
+                showLoginScreen();
+            }
+        }
+
+        function showAdminDashboard() {
+            document.getElementById('login-overlay').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('login-overlay').style.display = 'none';
+                const adminContent = document.getElementById('admin-content');
+                adminContent.style.display = 'block';
+                // Trigger reflow
+                void adminContent.offsetWidth;
+                adminContent.style.opacity = '1';
+                loadCourses();
+            }, 800);
+        }
+
+        function showLoginScreen() {
+            document.getElementById('admin-content').style.display = 'none';
+            document.getElementById('admin-content').style.opacity = '0';
+            const overlay = document.getElementById('login-overlay');
+            overlay.style.display = 'flex';
+            void overlay.offsetWidth;
+            overlay.style.opacity = '1';
+        }
+
+        function showLoginError(msg) {
+            const errorEl = document.getElementById('login-error-msg');
+            errorEl.innerText = msg;
+            errorEl.style.display = 'block';
+            document.getElementById('login-button').innerText = 'Autenticar';
+        }
+
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('login-button');
+            btn.innerText = 'Verificando...';
+            document.getElementById('login-error-msg').style.display = 'none';
+
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+
+            try {
+                const { data, error } = await sb.auth.signInWithPassword({ email, password });
+                if (error) throw error;
+                
+                // Força re-verificação da lógica central
+                verifyAuthState();
+
+            } catch (err) {
+                showLoginError('Falha: ' + err.message);
+                btn.innerText = 'Autenticar';
+            }
+        });
 
         async function handleLogout() {
             await sb.auth.signOut();
-            window.location.href = '/login';
+            window.location.reload();
         }
 
         // ── Luxury Toast ──
@@ -476,7 +573,7 @@
         }
 
         // ── Init ──
-        loadCourses();
+        verifyAuthState();
     </script>
 </body>
 </html>
