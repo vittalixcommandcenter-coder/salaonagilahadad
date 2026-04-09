@@ -601,13 +601,13 @@
             btn.innerText = 'ENVIANDO...';
 
             try {
-                const { sessionKey, fileIds: fids, messageIds: mids } = await vittalixUpload(fileInput.files[0]);
+                const { sessionKey, fileIds: fids, messageIds: mids, nativeThumbId } = await vittalixUpload(fileInput.files[0]);
                 const { error } = await sb.from('gallery').insert([{
                     title: caption,
-                    telegram_file_id: fids[0], // fallback for compatibility
-                    telegram_file_ids: fids,    // new array field
-                    telegram_message_id: mids[0], // fallback
-                    telegram_message_ids: mids,   // new array field
+                    telegram_file_id: nativeThumbId || fids[0], // Prioriza a miniatura nativa leve
+                    telegram_file_ids: fids,
+                    telegram_message_id: mids[0],
+                    telegram_message_ids: mids,
                     media_type: mediaType
                 }]);
                 if (error) throw error;

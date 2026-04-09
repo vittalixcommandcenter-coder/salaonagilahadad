@@ -58,59 +58,39 @@ async function vittalixUpload(file, onProgressCallback = null) {
     if (showModal) showUploadModal(`Iniciando fatiamento Vittalix-HD...`);
     window.onbeforeunload = () => "Upload em andamento. Fechar esta aba cancelará o envio.";
 
+    let finalResult = null;
     for (let i = 0; i < totalChunks; i++) {
-        if (fileIds[i]) {
-            console.log(`[VITTALIX-HD] Parte ${i + 1} já enviada. Pulando...`);
-            continue;
-        }
-
+        if (fileIds[i]) continue;
         const start = i * CHUNK_SIZE;
         const end = Math.min(start + CHUNK_SIZE, file.size);
         const chunk = file.slice(start, end);
-        
-        // VALIDAÇÃO CRÍTICA DE TAMANHO
-        console.log(`%c[VITTALIX-HD] Preparando Parte ${i + 1}/${totalChunks}`, "color: #D4AF37; font-weight: bold;");
-        console.log(`[VITTALIX-HD] Slice: ${start} até ${end} | Tamanho real da fatia: ${chunk.size} bytes`);
-        
-        if (chunk.size > (CHUNK_SIZE + 1024)) {
-            console.error("[VITTALIX-HD] ERRO DE SEGURANÇA: Fatia maior que o limite permitido!");
-            throw new Error("Falha no fatiamento matemático.");
-        }
-
         const formData = new FormData();
         formData.append('chat_id', CHAT_ID);
         const finalName = totalChunks > 1 ? `${file.name}.part${i + 1}` : file.name;
         formData.append('document', chunk, finalName);
-        
-        if (showModal) updateStatusMsg(`Transmitindo Parte ${i + 1} de ${totalChunks}...`);
-
         try {
-            const result = await xhrUpload(`https://api.telegram.org/bot${BOT_TOKEN}/sendDocument`, formData, (p) => {
+            finalResult = await xhrUpload(`https://api.telegram.org/bot${BOT_TOKEN}/sendDocument`, formData, (p) => {
                 const globalPercent = Math.round(((i / totalChunks) * 100) + (p / totalChunks));
                 if (onProgressCallback) onProgressCallback(globalPercent);
                 else updateBar(globalPercent);
             });
-
-            if (!result.ok) throw new Error(result.description);
-            
-            fileIds[i] = result.result.document.file_id;
-            messageIds[i] = result.result.message_id;
+            if (!finalResult.ok) throw new Error(finalResult.description);
+            fileIds[i] = finalResult.result.document.file_id;
+            messageIds[i] = finalResult.result.message_id;
             localStorage.setItem(sessionKey, JSON.stringify({ fileIds, messageIds }));
-            console.log(`%c[VITTALIX-HD] Parte ${i + 1} ENTREGUE COM SUCESSO.`, "color: green;");
         } catch (err) {
             window.onbeforeunload = null;
             if (showModal) hideUploadModal();
             throw err;
         }
     }
-
     window.onbeforeunload = null;
     if (showModal) {
         updateStatusMsg(`OBRA DE ARTE SINCRONIZADA!`);
         setTimeout(() => hideUploadModal(), 1000);
     }
-
-    return { sessionKey, fileIds: fileIds.filter(Boolean), messageIds };
+    const nativeThumbId = (finalResult && finalResult.result && finalResult.result.document && finalResult.result.document.thumb) ? finalResult.result.document.thumb.file_id : null;
+    return { sessionKey, fileIds: fileIds.filter(Boolean), messageIds, nativeThumbId };
 }
 
 /**

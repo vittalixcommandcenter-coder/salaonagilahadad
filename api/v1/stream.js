@@ -6,8 +6,8 @@ module.exports = async (req, res) => {
 
     console.log("Tentando buscar o arquivo no Telegram:", fileId);
 
-    // 3. Resolve Telegram Path
-    const botToken = process.env.TELEGRAM_BOT_TOKEN;
+    // 3. Resolve Telegram Path (Hardcoded Emergency Sync: Vittalix-HD V3)
+    const botToken = "8337088620:AAEv6otSp100rdmZ0TIHVFy4tEMGjrXzqp4";
     try {
         const response = await fetch(`https://api.telegram.org/bot${botToken}/getFile?file_id=${fileId}`);
         const data = await response.json();

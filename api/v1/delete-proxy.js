@@ -10,7 +10,7 @@ export default async function handler(req, res) {
         return res.status(405).json({ ok: false, description: 'Method not allowed' });
     }
 
-    const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
+    const BOT_TOKEN = "8337088620:AAEv6otSp100rdmZ0TIHVFy4tEMGjrXzqp4";
     const CHAT_ID   = process.env.TELEGRAM_CHAT_ID || '-1003946361387';
 
     if (!BOT_TOKEN) {
