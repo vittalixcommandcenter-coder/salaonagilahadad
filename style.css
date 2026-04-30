@@ -409,53 +409,32 @@ a {
     z-index: 3;
 }
 
-/* --- Video Carousel Section --- */
-/* ─── Storytelling Transition ─── */
-.lp-nagila-hadad .story-divider {
-    padding: 150px 5%; /* ─── SEÇÃO SOBRE MIM (CONEXÃO PROFISSIONAL) ─── */
+/* Autoridade de Marcas (Wella / GA.MA) */
+.autoridade-marcas {
+    margin-top: 3.5rem;
+    border-left: 2px solid var(--color-gold-delicate);
+    padding-left: 2rem;
 }
+
 .secao-sobre-nagila {
-    background: linear-gradient(to bottom, #111 0%, #1a0808 100%); /* Transição suave vinho */
-    padding: 100px 5%;
-    overflow: hidden;
-}
-
-.sobre-container {
-    max-width: 1400px;
-    margin: 0 auto;
-    display: flex;
-    align-items: center;
-    gap: 5rem;
-}
-
-.sobre-imagem {
-    flex: 1;
-    height: 80vh;
-    border-radius: 4px;
+    background: transparent; /* Integrado ao degradê global */
+    padding: 0; /* Padding controlado via Tailwind py-24/32 na index */
     overflow: hidden;
     position: relative;
 }
 
-.sobre-imagem img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover; /* Garantindo nitidez original */
-    object-position: center;
-    filter: brightness(0.9) contrast(1.1);
-}
-
-.sobre-texto {
-    flex: 1;
-    color: #F5F5DC; /* Branco Marfim/Creme */
+.lp-nagila-hadad .story-divider {
+    padding: 220px 5%; /* Aumentado para Luxury Whitespace */
 }
 
 .sobre-titulo {
     font-family: 'Bodoni Moda', serif;
-    font-size: clamp(2rem, 4vw, 3rem);
+    font-size: clamp(2.2rem, 5vw, 4rem);
     color: var(--color-gold-polished);
-    letter-spacing: 0.15em;
-    margin-bottom: 2rem;
+    letter-spacing: 0.35em;
+    margin-bottom: 2.5rem;
     text-transform: uppercase;
+    font-weight: 300;
 }
 
 .sobre-bio p {
@@ -517,10 +496,10 @@ a {
     font-size: clamp(2rem, 6vw, 4.5rem);
     font-style: italic;
     color: var(--color-gold-polished);
-    font-weight: 300;
-    letter-spacing: 0.02em;
+    font-weight: 200; /* Extra Light */
+    letter-spacing: 0.15em; /* Tracking Generoso */
     margin-bottom: 2rem;
-    text-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    text-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
 
 .lp-nagila-hadad .story-line {
@@ -533,10 +512,9 @@ a {
 
 /* ─── Cinema Experience Scoped Refinements ─── */
 .lp-nagila-hadad .video-carousel-section {
-    padding: 150px 0; /* Padding generoso */
+    padding: 220px 0; /* Luxury Whitespace */
     text-align: center;
     background: transparent;
-    /* Remove qualquer divisão de cor */
     position: relative;
     z-index: 5;
 }
@@ -547,13 +525,11 @@ a {
     font-family: 'Cormorant Garamond', serif;
     font-size: clamp(2.5rem, 8vw, 4rem);
     color: var(--color-gold-polished);
-    /* Rose Gold aplicado ao nome */
     text-transform: uppercase;
-    font-weight: 500;
-    letter-spacing: 0.15em;
-    text-shadow: 0 10px 40px rgba(0, 0, 0, 0.8), 0 2px 4px rgba(0, 0, 0, 0.4);
-    /* Sombreado leve e profundo */
-    margin-bottom: 0.5rem;
+    font-weight: 300; /* Font-Light */
+    letter-spacing: 0.35em; /* Tracking-Wide */
+    text-shadow: 0 15px 45px rgba(0, 0, 0, 0.4);
+    margin-bottom: 1rem;
 }
 
 .carousel-container {
@@ -819,36 +795,73 @@ a {
     margin-bottom: 4rem;
 }
 
-.curadoria-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 30px;
+/* Forçando Grid de 4 Colunas no Desktop */
+body .lp-nagila-hadad .curadoria-grid {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 30px !important;
     max-width: 1400px;
     margin: 0 auto;
 }
 
+/* Responsividade do Grid */
+@media (max-width: 1200px) {
+    body .lp-nagila-hadad .curadoria-grid { grid-template-columns: repeat(3, 1fr) !important; }
+}
+@media (max-width: 900px) {
+    body .lp-nagila-hadad .curadoria-grid { grid-template-columns: repeat(2, 1fr) !important; }
+}
+@media (max-width: 600px) {
+    body .lp-nagila-hadad .curadoria-grid { grid-template-columns: 1fr !important; }
+}
+
 .curadoria-item {
-    background: #080808; /* Fundo levemente off-black para o contêiner */
-    border-radius: 12px;
-    overflow: hidden;
-    aspect-ratio: 16 / 9; /* Mantendo proporção padrão para a grade */
-    border: 1px solid rgba(212, 175, 55, 0.15);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: transform 0.4s ease;
+    background: transparent;
+    border-radius: 20px;
+    transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 .curadoria-item:hover {
-    transform: translateY(-5px);
-    border-color: var(--color-gold-polished);
+    transform: translateY(-12px) scale(1.03);
+}
+
+body .lp-nagila-hadad .curadoria-item .video-click-container {
+    width: 100% !important;
+    position: relative !important;
+    aspect-ratio: 9 / 16 !important; /* Força Proporção Vertical Reels EXATA */
+    background: #080808 !important;
+    border-radius: inherit;
+    overflow: hidden !important;
+}
+
+/* Elegant Title for Curadoria Grid */
+.curadoria-title {
+    margin-top: 1.5rem;
+    font-size: 0.85rem;
+    color: #F5F5DC;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    font-weight: 300;
+    opacity: 0.7;
+    transition: opacity 0.4s ease, letter-spacing 0.4s ease;
+}
+
+.curadoria-item:hover .curadoria-title {
+    opacity: 1;
+    letter-spacing: 0.35em;
+    color: var(--color-gold-polished);
 }
 
 .curadoria-item video {
     width: 100%;
     height: 100%;
-    object-fit: contain; /* REGRA DE OURO: Proibir esticamento */
+    object-fit: cover; /* Garantindo preenchimento luxuoso */
     display: block;
+    transition: transform 1.2s ease;
+}
+
+.curadoria-item:hover video {
+    transform: scale(1.08);
 }
 
 /* ─── BOTÕES DE LUXO SÓLIDOS ─── */
@@ -878,11 +891,7 @@ a {
     box-shadow: 0 20px 45px rgba(212, 175, 55, 0.3);
 }
 
-@media (max-width: 768px) {
-    .curadoria-grid {
-        grid-template-columns: 1fr;
-    }
-}
+/* Removido conflito de grid mobile legado */
 
 
 /* REVERT UNIVERSAL VOL BTN (Academy, Dashboard) */
@@ -991,9 +1000,9 @@ a {
 
 /* --- Portfólio: Obras de Arte (Editorial Redesign) --- */
 .lp-nagila-hadad .gallery-section {
-    padding: 150px 5%; /* Padding generoso solicitado */
+    padding: 220px 5%; /* Luxury Whitespace */
     text-align: center;
-    background: #000000; /* Preto Absoluto solicitado */
+    background: #000000;
     color: #F5F5DC;
 }
 
@@ -1009,9 +1018,10 @@ a {
 .lp-nagila-hadad .gallery-item {
     position: relative;
     overflow: hidden;
-    border-radius: 4px;
+    border-radius: 16px; /* Aumentado para rounded-2xl */
     filter: grayscale(0.2);
     transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+    border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .lp-nagila-hadad .gallery-item img {
@@ -1024,9 +1034,33 @@ a {
 
 .lp-nagila-hadad .gallery-item:hover {
     filter: grayscale(0);
-    transform: scale(1.02);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.8);
+    transform: translateY(-8px) scale(1.02); /* Movimento mais fluido */
+    box-shadow: 0 40px 80px rgba(0,0,0,0.8);
+    border-color: rgba(212, 175, 55, 0.3);
     z-index: 10;
+}
+
+/* Luxury Overlay for Image Titles */
+.gallery-info-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%);
+    padding: 2rem 1.5rem 1.2rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    text-align: center;
+    color: #F5F5DC;
+    opacity: 0;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    transform: translateY(10px);
+}
+
+.gallery-item:hover .gallery-info-overlay {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 /* Editorial Layout: Quebra da rigidez com tamanhos alternados */
@@ -1283,6 +1317,23 @@ a {
     letter-spacing: 2px;
     text-transform: uppercase;
     opacity: 0.3;
+}
+
+.vittalix-link {
+    color: var(--color-gold-polished);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+.vittalix-link:hover {
+    color: #fff;
+    border-bottom-color: #fff;
+    opacity: 1;
+}
+
+.dev-credit {
+    opacity: 1;
 }
 
 @media (max-width: 900px) {
@@ -1723,26 +1774,50 @@ video::-webkit-media-controls-timeline {
     transform: scale(1.05);
 }
 
-/* ── Click-to-Play Overlay (substitui hover-play) ── */
+/* ── Click-to-Play Overlay (Atualizado para Usabilidade Soberana) ── */
 .video-click-overlay {
     position: absolute;
     inset: 0;
-    background: rgba(0,0,0,0.25);
+    background: rgba(0,0,0,0.1);
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background 0.4s ease;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     cursor: pointer;
+    z-index: 10;
+    pointer-events: auto; /* Garantir que o clique chegue aos botões */
 }
 
-.video-click-container:has(video:not([paused])) .video-click-overlay {
-    background: transparent; /* Some o overlay quando o vídeo está tocando */
+/* Os botões dentro do overlay DEVEM ser clicáveis */
+.video-click-overlay .play-btn-gold,
+.video-click-overlay .vol-btn-mini,
+.video-click-overlay .close-modal-btn {
+    pointer-events: auto;
 }
 
-/* Botão de Play: Central e Dourado */
+/* Comportamento de Visibilidade Soberana (Sempre Visível mas Sutil) */
+.video-click-overlay {
+    opacity: 1 !important; /* Nunca some completamente */
+}
+
+.video-click-container:hover .video-click-overlay {
+    background: rgba(0,0,0,0.3);
+}
+
+.play-btn-gold, .vol-btn-mini {
+    opacity: 0.7;
+    transition: all 0.4s ease;
+}
+
+.video-click-container:hover .play-btn-gold,
+.video-click-container:hover .vol-btn-mini {
+    opacity: 1;
+}
+
+/* Estilo do Botão Central */
 .play-btn-gold {
     background: rgba(0,0,0,0.4);
-    border: 1px solid rgba(212, 175, 55, 0.5);
+    border: 1px solid rgba(212, 175, 55, 0.4);
     border-radius: 50%;
     width: 64px;
     height: 64px;
@@ -1750,15 +1825,22 @@ video::-webkit-media-controls-timeline {
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: all 0.3s ease;
-    backdrop-filter: blur(4px);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    backdrop-filter: blur(8px);
 }
 
 .play-btn-gold:hover {
-    background: rgba(212, 175, 55, 0.2);
+    background: rgba(212, 175, 55, 0.25);
     border-color: var(--color-gold-polished);
-    transform: scale(1.1);
-    box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+    transform: scale(1.15);
+    box-shadow: 0 0 30px rgba(212, 175, 55, 0.3);
+}
+
+.play-btn-gold i {
+    width: 28px;
+    height: 28px;
+    color: #fff;
+    transition: transform 0.3s ease;
 }
 
 /* Botão de Volume: Canto inferior direito */
@@ -1782,6 +1864,62 @@ video::-webkit-media-controls-timeline {
 .vol-btn-mini:hover {
     border-color: var(--color-gold-polished);
     color: var(--color-gold-polished);
+}
+
+.vol-btn-mini i {
+    width: 18px;
+    height: 18px;
+}
+
+/* Modal de Vídeo (Expansão Soberana) */
+.video-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.95);
+    backdrop-filter: blur(15px);
+    z-index: 10000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+.video-modal-overlay.active {
+    display: flex;
+    opacity: 1;
+}
+
+.video-modal-content {
+    width: 90%;
+    max-width: 1200px;
+    aspect-ratio: 16/9;
+    position: relative;
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    box-shadow: 0 0 100px rgba(0,0,0,1), 0 0 50px rgba(212,175,55,0.1);
+    background: #000;
+}
+
+.close-modal-btn {
+    position: absolute;
+    top: -50px;
+    right: 0;
+    color: #fff;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    opacity: 0.7;
+    transition: opacity 0.3s;
+}
+
+.close-modal-btn:hover {
+    opacity: 1;
 }
 
 .hover-play-icon {
@@ -1860,4 +1998,224 @@ video::-webkit-media-controls-timeline {
 
 @keyframes toastFadeOut {
     to { opacity: 0; transform: translateX(20px); pointer-events: none; }
+}
+/* --- PREMIUM VOLUME SLIDER --- */
+.vittalix-volume-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    outline: none;
+    cursor: pointer;
+}
+
+.vittalix-volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 10px;
+    height: 10px;
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    transition: transform 0.2s ease;
+}
+
+.vittalix-volume-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.3);
+    background: var(--color-gold-polished);
+}
+
+.vittalix-volume-slider::-moz-range-thumb {
+    width: 10px;
+    height: 10px;
+    background: #fff;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+/* ─── VITTALIX MODAL DE VÍDEO (Galeria / Acervo) ─── */
+.video-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: rgba(0, 0, 0, 0.88);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.35s ease;
+}
+
+.video-modal-overlay.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.video-modal-content {
+    position: relative;
+    width: 92vw;
+    max-width: 960px;
+    aspect-ratio: 16 / 9;
+    background: #000;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid rgba(197, 160, 89, 0.18);
+    box-shadow: 0 40px 120px rgba(0, 0, 0, 0.95), 0 0 60px rgba(197, 160, 89, 0.08);
+    transform: scale(0.95);
+    transition: transform 0.35s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.video-modal-overlay.active .video-modal-content {
+    transform: scale(1);
+}
+
+.close-modal-btn {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: rgba(0, 0, 0, 0.65);
+    border: 1px solid rgba(197, 160, 89, 0.3);
+    border-radius: 50px;
+    color: rgba(246, 245, 242, 0.85);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+.close-modal-btn:hover {
+    background: rgba(197, 160, 89, 0.15);
+    border-color: var(--color-gold-polished);
+    color: var(--color-gold-polished);
+}
+
+/* Fechar clicando fora do vídeo */
+.video-modal-overlay {
+    cursor: pointer;
+}
+.video-modal-content {
+    cursor: default;
+}
+
+/* ─── SLIDER DE VOLUME VERTICAL (Pílula Lateral) ─── */
+.vol-slider-vertical {
+    -webkit-appearance: slider-vertical;
+    appearance: slider-vertical;
+    writing-mode: vertical-lr;
+    direction: rtl;         /* inverte para o topo = máximo */
+    width: 6px;
+    flex: 1;
+    cursor: pointer;
+    outline: none;
+    border: none;
+    background: transparent;
+    accent-color: #C5A059;
+}
+
+/* Thumb — bolinha dourada */
+.vol-slider-vertical::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    background: #C5A059;
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba(197,160,89,0.7);
+    transition: transform 0.2s ease;
+    cursor: pointer;
+}
+.vol-slider-vertical::-webkit-slider-thumb:hover {
+    transform: scale(1.3);
+}
+.vol-slider-vertical::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    background: #C5A059;
+    border: none;
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba(197,160,89,0.7);
+    cursor: pointer;
+}
+
+/* Track — trilho fino */
+.vol-slider-vertical::-webkit-slider-runnable-track {
+    width: 4px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 4px;
+}
+.vol-slider-vertical::-moz-range-track {
+    width: 4px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 4px;
+}
+/* ─── NAVEGAÇÃO NO MODAL CINEMATOGRÁFICO ─── */
+.modal-nav-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 60px;
+    height: 60px;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(197, 160, 89, 0.2);
+    border-radius: 50%;
+    color: #C5A059;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+    z-index: 1001;
+}
+
+.modal-nav-btn:hover {
+    background: #C5A059;
+    color: black;
+    border-color: #C5A059;
+    transform: translateY(-50%) scale(1.1);
+    box-shadow: 0 0 40px rgba(197, 160, 89, 0.3);
+}
+
+.modal-nav-btn.prev { left: 40px; }
+.modal-nav-btn.next { right: 40px; }
+
+.video-modal-content {
+    width: auto;
+    max-width: 95vw;
+    height: auto;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    cursor: default;
+    background: #000;
+}
+
+#modal-video-root {
+    max-width: 100%;
+    max-height: 75vh;
+    object-fit: contain;
+}
+
+@media (max-width: 768px) {
+    .video-modal-content {
+        width: 100%;
+        max-height: 85vh;
+    }
+    #modal-video-root {
+        max-height: 60vh;
+    }
 }

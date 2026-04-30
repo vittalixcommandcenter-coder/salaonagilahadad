@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prévia do Curso | Nagila Academy</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:wght@400;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body { background: #070707; color: #fff; font-family: 'Montserrat', sans-serif; }
+        .preview-wrap { max-width: 1260px; margin: 0 auto; padding: 120px 5% 70px; }
+        .preview-grid { display: grid; grid-template-columns: 1.15fr 1fr; gap: 1.2rem; }
+        .preview-media, .preview-info, .preview-lessons { border: 1px solid rgba(212,175,55,0.2); border-radius: 12px; background: rgba(255,255,255,0.02); }
+        .preview-media { overflow: hidden; min-height: 540px; position: relative; }
+        .preview-media img { width: 100%; height: 100%; object-fit: cover; }
+        .preview-info { padding: 1.5rem; display: flex; flex-direction: column; }
+        .eyebrow { color: var(--color-gold-polished); font-size: 0.62rem; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 0.7rem; }
+        h1 { font-family: 'Bodoni Moda', serif; font-size: clamp(1.7rem, 3vw, 2.4rem); margin-bottom: 0.7rem; color: var(--color-champagne); }
+        .course-desc { line-height: 1.65; opacity: 0.82; font-size: 0.86rem; margin-bottom: 1rem; }
+        .kpis { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.6rem; margin-bottom: 1rem; }
+        .kpi { border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; text-align: center; padding: 0.6rem; }
+        .kpi b { display: block; color: var(--color-gold-polished); font-size: 1rem; }
+        .kpi span { font-size: 0.58rem; opacity: 0.72; letter-spacing: 1.5px; text-transform: uppercase; }
+        .learn-box { border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 0.8rem; margin-bottom: 1rem; }
+        .learn-box h3 { font-size: 0.7rem; letter-spacing: 2px; text-transform: uppercase; color: var(--color-gold-delicate); margin-bottom: 0.65rem; }
+        .learn-list { margin: 0; padding-left: 1rem; display: grid; gap: 0.4rem; font-size: 0.8rem; opacity: 0.9; }
+        .cta-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.55rem; margin-top: auto; }
+        .btn-main, .btn-secondary { border-radius: 8px; padding: 0.9rem 1rem; text-align: center; text-transform: uppercase; letter-spacing: 2px; font-size: 0.62rem; text-decoration: none; }
+        .btn-main { background: var(--color-gold-polished); color: #111; border: 1px solid var(--color-gold-polished); font-weight: 700; }
+        .btn-secondary { background: transparent; color: var(--color-gold-polished); border: 1px solid rgba(212,175,55,0.45); }
+        .preview-lessons { margin-top: 1.2rem; padding: 1rem; }
+        .preview-lessons h2 { font-family: 'Bodoni Moda', serif; font-size: 1.3rem; color: var(--color-champagne); margin-bottom: 0.7rem; }
+        .lesson-row { display: grid; grid-template-columns: 48px 1fr auto; gap: 0.7rem; align-items: center; padding: 0.7rem; border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; margin-bottom: 0.55rem; }
+        .lesson-num { width: 48px; height: 48px; border-radius: 8px; background: rgba(212,175,55,0.12); border: 1px solid rgba(212,175,55,0.28); display: flex; align-items: center; justify-content: center; color: var(--color-gold-polished); font-weight: 700; }
+        .lesson-name { font-size: 0.86rem; }
+        .lesson-tag { font-size: 0.56rem; text-transform: uppercase; letter-spacing: 1.6px; opacity: 0.65; }
+        @media (max-width: 980px) { .preview-grid { grid-template-columns: 1fr; } .preview-media { min-height: 360px; } .kpis { grid-template-columns: 1fr; } .cta-row { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <nav class="navbar scrolled">
+        <ul class="nav-links" style="display:flex;">
+            <li><a href="/academy" class="hover-target">ACADEMY</a></li>
+        </ul>
+        <button id="cart-icon-btn" class="hover-target" style="background: none; border: none; color: var(--color-gold-polished); cursor: pointer; position: relative; margin-left: auto; padding-right: 20px;">
+            <i data-lucide="shopping-bag" style="width: 24px; height: 24px;"></i>
+            <span id="cart-counter" style="position: absolute; top: -5px; right: 10px; background: #fff; color: #000; font-size: 10px; font-weight: bold; border-radius: 50%; padding: 2px 6px; display: none;">0</span>
+        </button>
+    </nav>
+
+    <main class="preview-wrap">
+        <section class="preview-grid">
+            <article class="preview-media">
+                <img id="course-cover" src="assets/em-breve.png" alt="Capa do curso">
+            </article>
+            <article class="preview-info">
+                <span class="eyebrow" id="course-category">MASTERCLASS ONLINE</span>
+                <h1 id="course-title">Carregando curso...</h1>
+                <p class="course-desc" id="course-description">Carregando detalhes da formação...</p>
+
+                <div class="kpis">
+                    <div class="kpi"><b id="kpi-lessons">0</b><span>Aulas</span></div>
+                    <div class="kpi"><b id="kpi-level">Todos</b><span>Nível</span></div>
+                    <div class="kpi"><b id="kpi-price">R$ 0</b><span>Investimento</span></div>
+                </div>
+
+                <div class="learn-box">
+                    <h3>O que você vai aprender</h3>
+                    <ul class="learn-list" id="learn-list"></ul>
+                </div>
+
+                <div class="cta-row">
+                    <a class="btn-main" id="btn-acquire" href="#">ADICIONAR À SACOLA</a>
+                    <a class="btn-secondary" id="btn-student-area" href="#">Entrar na Área do Aluno</a>
+                </div>
+            </article>
+        </section>
+
+        <section class="preview-lessons">
+            <h2>Prévia da estrutura do curso</h2>
+            <div id="lessons-preview-list"></div>
+        </section>
+    </main>
+    
+    <!-- CART DRAWER -->
+    <div id="cart-drawer-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; display: none;"></div>
+    <div id="cart-drawer" style="position: fixed; top: 0; right: -400px; width: 400px; max-width: 100%; height: 100%; background: #0a0a0a; z-index: 10001; border-left: 1px solid rgba(212,175,55,0.2); transition: right 0.3s ease; display: flex; flex-direction: column; padding: 2rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem;">
+            <h2 style="font-family: 'Bodoni Moda', serif; color: var(--color-gold-polished); font-size: 1.2rem; letter-spacing: 2px;">SUA SACOLA</h2>
+            <button id="cart-close-btn" style="background: none; border: none; color: white; cursor: pointer;"><i data-lucide="x"></i></button>
+        </div>
+        <div id="cart-items" style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 1rem;"></div>
+        <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1rem; margin-top: 1rem; display: flex; flex-direction: column; gap: 0.8rem;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                <span style="opacity: 0.7; font-size: 0.9rem;">TOTAL:</span>
+                <strong id="cart-total" style="color: var(--color-gold-polished); font-size: 1.2rem;">R$ 0,00</strong>
+            </div>
+            <button id="cart-checkout-btn" class="edu-btn-outline" style="width: 100%; background: var(--color-gold-polished); color: #000; font-weight: bold; border: none; cursor: pointer; padding: 1rem;">FINALIZAR COMPRA</button>
+            <button id="cart-continue-btn" class="edu-btn-outline" style="width: 100%; border-color: rgba(212,175,55,0.4); color: var(--color-gold-polished); cursor: pointer; padding: 1rem;">CONTINUAR COMPRANDO</button>
+        </div>
+    </div>
+
+    <script>
+        const SUPABASE_URL = 'https://fjuiiivmsfdwsrqiobdu.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZqdWlpaXZtc2Zkd3NycWlvYmR1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2ODIyNjAsImV4cCI6MjA5MTI1ODI2MH0.-FyHmwxUJsloYRD6Wl6fjYrOHGf5CiFcaVgTT89bGMo';
+        const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const params = new URLSearchParams(window.location.search);
+        const courseId = params.get('id');
+
+        function extractLearningPoints(course, lessons) {
+            const points = [];
+            if (course.description) {
+                course.description.split('.').map((s) => s.trim()).filter(Boolean).slice(0, 2).forEach((item) => points.push(item));
+            }
+            lessons.slice(0, 3).forEach((lesson) => points.push(`Aula prática: ${lesson.title}`));
+            return points.slice(0, 5);
+        }
+
+        async function initCoursePreview() {
+            if (!courseId) { window.location.href = '/academy'; return; }
+            const { data: course } = await sb.from('courses').select('*').eq('id', courseId).single();
+            const { data: lessons } = await sb.from('lessons').select('*').eq('course_id', courseId).order('order', { ascending: true });
+
+            if (!course) {
+                document.getElementById('course-title').textContent = 'Curso não encontrado';
+                return;
+            }
+
+            // Verifica sessão e posse
+            const { data: { session } } = await sb.auth.getSession();
+            let ownsCourse = false;
+            if (session) {
+                const { data: ownership } = await sb.from('user_courses').select('*').eq('user_id', session.user.id).eq('course_id', courseId).single();
+                if (ownership) ownsCourse = true;
+            }
+
+            const list = lessons || [];
+            const level = course.level || course.nivel || 'Todos';
+            document.title = `${course.title} | Prévia`;
+            document.getElementById('course-category').textContent = course.category || 'CURSO';
+            document.getElementById('course-title').textContent = course.title;
+            document.getElementById('course-description').textContent = course.description || 'Formação premium com metodologia autoral Nagila Academy.';
+            document.getElementById('kpi-lessons').textContent = String(list.length);
+            document.getElementById('kpi-level').textContent = level;
+            document.getElementById('kpi-price').textContent = course.price ? `R$ ${Number(course.price).toFixed(2)}` : 'R$ 0,00';
+            document.getElementById('course-cover').src = course.cover_url || 'assets/em-breve.png';
+            
+            const btnAcquire = document.getElementById('btn-acquire');
+            const btnStudent = document.getElementById('btn-student-area');
+            
+            btnStudent.href = `student-area.html?course=${courseId}`;
+
+            if (ownsCourse) {
+                btnAcquire.textContent = 'CURSO ADQUIRIDO (ACESSAR)';
+                btnAcquire.href = `student-area.html?course=${courseId}`;
+                btnAcquire.style.background = '#111';
+                btnAcquire.style.color = 'var(--color-gold-polished)';
+                btnStudent.style.display = 'none';
+            } else {
+                btnAcquire.addEventListener('click', async (e) => {
+                    e.preventDefault();
+                    
+                    const item = {
+                        id: course.id,
+                        title: course.title,
+                        price: course.price,
+                        cover: course.cover_url
+                    };
+                    
+                    // Verifica se já está no carrinho
+                    if (!nagilaCart.some(c => c.id === item.id)) {
+                        nagilaCart.push(item);
+                        localStorage.setItem('nagila_cart', JSON.stringify(nagilaCart));
+                        updateCartCounter();
+                    }
+                    
+                    toggleCartDrawer();
+                });
+            }
+
+            const learnPoints = extractLearningPoints(course, list);
+            document.getElementById('learn-list').innerHTML = learnPoints.map((p) => `<li>${p}</li>`).join('');
+            document.getElementById('lessons-preview-list').innerHTML = list.length
+                ? list.map((lesson, idx) => `
+                    <div class="lesson-row">
+                        <div class="lesson-num">${idx + 1}</div>
+                        <div>
+                            <div class="lesson-name">${lesson.title}</div>
+                            <div class="lesson-tag">Módulo ${String(idx + 1).padStart(2, '0')}</div>
+                        </div>
+                        <i data-lucide="play-circle" style="opacity:0.65;"></i>
+                    </div>
+                  `).join('')
+                : `<div class="lesson-row"><div class="lesson-num">!</div><div class="lesson-name">Nenhuma aula cadastrada ainda.</div><div></div></div>`;
+
+            lucide.createIcons();
+        }
+
+        // --- Carrinho de Compras (Sacola) ---
+        let nagilaCart = JSON.parse(localStorage.getItem('nagila_cart') || '[]');
+
+        function updateCartCounter() {
+            const counter = document.getElementById('cart-counter');
+            if (!counter) return;
+            if (nagilaCart.length > 0) {
+                counter.style.display = 'block';
+                counter.textContent = nagilaCart.length;
+            } else {
+                counter.style.display = 'none';
+            }
+        }
+
+        function renderCartDrawer() {
+            const itemsContainer = document.getElementById('cart-items');
+            const totalEl = document.getElementById('cart-total');
+            if (!itemsContainer || !totalEl) return;
+            
+            if (nagilaCart.length === 0) {
+                itemsContainer.innerHTML = '<div style="opacity: 0.5; font-size: 0.8rem; text-align: center; margin-top: 2rem;">Sua sacola está vazia.</div>';
+                totalEl.textContent = 'R$ 0,00';
+                return;
+            }
+
+            let total = 0;
+            itemsContainer.innerHTML = nagilaCart.map((item, idx) => {
+                const itemPrice = Number(item.price || 0);
+                total += itemPrice;
+                return `
+                    <div style="display: flex; gap: 1rem; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 1rem;">
+                        <img src="${item.cover || 'assets/em-breve.png'}" style="width: 60px; height: 60px; border-radius: 6px; object-fit: cover;">
+                        <div style="flex: 1;">
+                            <h4 style="font-size: 0.8rem; margin-bottom: 0.3rem;">${item.title}</h4>
+                            <div style="color: var(--color-gold-polished); font-size: 0.8rem;">R$ ${itemPrice.toFixed(2)}</div>
+                        </div>
+                        <button onclick="removeFromCart(${idx})" style="background: none; border: none; color: rgba(255,255,255,0.4); cursor: pointer;"><i data-lucide="trash-2" style="width: 16px;"></i></button>
+                    </div>
+                `;
+            }).join('');
+            
+            totalEl.textContent = `R$ ${total.toFixed(2)}`;
+            lucide.createIcons();
+        }
+
+        window.removeFromCart = function(index) {
+            nagilaCart.splice(index, 1);
+            localStorage.setItem('nagila_cart', JSON.stringify(nagilaCart));
+            updateCartCounter();
+            renderCartDrawer();
+        };
+
+        function toggleCartDrawer() {
+            const drawer = document.getElementById('cart-drawer');
+            const overlay = document.getElementById('cart-drawer-overlay');
+            if (drawer.style.right === '0px') {
+                drawer.style.right = '-400px';
+                overlay.style.display = 'none';
+            } else {
+                renderCartDrawer();
+                drawer.style.right = '0px';
+                overlay.style.display = 'block';
+            }
+        }
+
+        document.getElementById('cart-icon-btn')?.addEventListener('click', toggleCartDrawer);
+
+        // Use event delegation for dynamically or late-rendered elements
+        document.addEventListener('click', (e) => {
+            const btnClose = e.target.closest('#cart-close-btn');
+            const btnContinue = e.target.closest('#cart-continue-btn');
+            const overlay = e.target.closest('#cart-drawer-overlay');
+            const btnCheckout = e.target.closest('#cart-checkout-btn');
+            const btnIcon = e.target.closest('#cart-icon-btn');
+
+            if (btnClose || btnContinue || (e.target.id === 'cart-drawer-overlay')) {
+                const drawer = document.getElementById('cart-drawer');
+                if (drawer && drawer.style.right === '0px') {
+                    toggleCartDrawer();
+                    if (btnContinue && window.location.pathname.includes('course-preview')) {
+                        window.location.href = '/academy.html';
+                    }
+                }
+            } else if (btnIcon) {
+                // Se por acaso o eventListener direto falhar
+                const drawer = document.getElementById('cart-drawer');
+                if (drawer && drawer.style.right !== '0px') {
+                    toggleCartDrawer();
+                }
+            }
+
+            if (btnCheckout) {
+                if (nagilaCart.length === 0) return;
+                window.location.href = 'login-aluno.html?mode=signup&redirect=checkout.html';
+            }
+        });
+
+        initCoursePreview();
+        updateCartCounter();
+    </script>
+</body>
+</html>
+

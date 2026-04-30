@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Área do Aluno | Nagila Academy</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:wght@400;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body { background: #080808; color: #fff; font-family: 'Montserrat', sans-serif; }
+        .player-container { display: grid; grid-template-columns: 1fr 360px; min-height: calc(100vh - 74px); max-width: 1700px; margin: 0 auto; border: 1px solid rgba(212,175,55,0.12); }
+        .main-video-area { background: #000; display: flex; flex-direction: column; }
+        #video-viewport { flex-grow: 1; display: flex; align-items: center; justify-content: center; background: #000; }
+        #video-viewport video { width: 100%; height: 100%; object-fit: contain; }
+        .video-footer { padding: 1.4rem 1.6rem; border-top: 1px solid rgba(255,255,255,0.08); background: #0b0b0b; }
+        .video-title { font-family: 'Bodoni Moda', serif; color: var(--color-gold-polished); font-size: 1.4rem; margin-bottom: 0.35rem; }
+        .video-desc { font-size: 0.78rem; opacity: 0.72; letter-spacing: 1px; }
+        .playlist-sidebar { background: #0d0d0d; display: flex; flex-direction: column; overflow: hidden; border-left: 1px solid rgba(255,255,255,0.08); }
+        .playlist-header { padding: 1.2rem; border-bottom: 1px solid rgba(255,255,255,0.08); }
+        .playlist-header h3 { font-size: 0.68rem; letter-spacing: 3px; text-transform: uppercase; color: var(--color-gold-polished); opacity: 0.85; margin-bottom: 0.35rem; }
+        .playlist-items { flex-grow: 1; overflow-y: auto; padding: 0.65rem; }
+        .playlist-item { display: flex; gap: 10px; padding: 0.65rem; border-radius: 10px; cursor: pointer; transition: all 0.25s ease; margin-bottom: 0.4rem; border: 1px solid transparent; }
+        .playlist-item:hover { background: rgba(255,255,255,0.03); border-color: rgba(212,175,55,0.12); }
+        .playlist-item.active { background: rgba(212,175,55,0.07); border-color: rgba(212,175,55,0.35); }
+        .item-thumb { width: 92px; aspect-ratio: 16/9; background: #111; border-radius: 6px; overflow: hidden; flex-shrink: 0; }
+        .item-thumb img { width: 100%; height: 100%; object-fit: cover; }
+        .item-title { font-size: 0.78rem; margin-bottom: 3px; line-height: 1.25; color: rgba(255,255,255,0.92); }
+        .item-status { font-size: 0.54rem; text-transform: uppercase; letter-spacing: 1.5px; opacity: 0.4; }
+        .playlist-item.active .item-status { opacity: 1; color: var(--color-gold-polished); }
+        @media (max-width: 1024px) { .player-container { grid-template-columns: 1fr; } .playlist-sidebar { max-height: 380px; } }
+    </style>
+</head>
+<body>
+    <nav class="navbar" style="position:static;background:#050505;">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:0 5%;width:100%;">
+            <a href="/dashboard.html" class="hover-target" style="display:flex;align-items:center;gap:8px;text-decoration:none;color:#fff;font-size:0.68rem;letter-spacing:2px;">
+                <i data-lucide="chevron-left"></i> VOLTAR PARA MEU PAINEL
+            </a>
+            <h1 id="current-course-title" style="font-family:'Bodoni Moda',serif;font-size:1rem;letter-spacing:4px;color:var(--color-gold-polished);">STUDENT AREA</h1>
+            <div style="width:120px;"></div>
+        </div>
+    </nav>
+
+    <div class="player-container">
+        <section class="main-video-area">
+            <div id="video-viewport"></div>
+            <div class="video-footer">
+                <div class="video-title" id="current-lesson-title">Carregando aula...</div>
+                <div class="video-desc" id="current-lesson-desc">Aula prática com metodologia Nagila Academy.</div>
+            </div>
+        </section>
+        <aside class="playlist-sidebar">
+            <div class="playlist-header">
+                <h3>Conteúdo do Curso</h3>
+                <p id="total-lessons" style="font-size:0.58rem;letter-spacing:2px;opacity:0.65;">0 AULAS DISPONÍVEIS</p>
+            </div>
+            <div class="playlist-items" id="playlist-items"></div>
+        </aside>
+    </div>
+
+    <script>
+        const SUPABASE_URL = 'https://fjuiiivmsfdwsrqiobdu.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZqdWlpaXZtc2Zkd3NycWlvYmR1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2ODIyNjAsImV4cCI6MjA5MTI1ODI2MH0.-FyHmwxUJsloYRD6Wl6fjYrOHGf5CiFcaVgTT89bGMo';
+        const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const urlParams = new URLSearchParams(window.location.search);
+        const courseId = urlParams.get('course') || urlParams.get('id');
+        let allLessons = [];
+        let currentLessonIndex = 0;
+
+        async function initPlayer() {
+            if (!courseId) { window.location.href = '/dashboard.html'; return; }
+
+            // 1. Check Session
+            const { data: { session } } = await sb.auth.getSession();
+            if (!session) {
+                alert("Acesso restrito. Faça login para acessar esta aula.");
+                window.location.href = `login-aluno.html?redirect=student-area.html?course=${courseId}`;
+                return;
+            }
+
+            // 2. Verify Ownership
+            const { data: ownership } = await sb.from('user_courses').select('*').eq('user_id', session.user.id).eq('course_id', courseId).single();
+            if (!ownership) {
+                alert("Você não possui acesso a este curso. Adquira-o na vitrine para desbloquear.");
+                window.location.href = `checkout.html?course=${courseId}`;
+                return;
+            }
+
+            const { data: course } = await sb.from('courses').select('*').eq('id', courseId).single();
+            const { data: lessons } = await sb.from('lessons').select('*').eq('course_id', courseId).order('order', { ascending: true });
+
+            if (!course) { window.location.href = '/dashboard.html'; return; }
+            document.getElementById('current-course-title').innerText = (course.title || 'STUDENT AREA').toUpperCase();
+            document.title = `${course.title || 'Curso'} | Área do Aluno`;
+
+            allLessons = lessons || [];
+            document.getElementById('total-lessons').innerText = `${allLessons.length} AULAS DISPONÍVEIS`;
+            renderPlaylist();
+            if (allLessons.length) loadLesson(0);
+            else {
+                document.getElementById('video-viewport').innerHTML = '<p style="opacity:0.7;letter-spacing:2px;">NENHUMA AULA DISPONÍVEL NO MOMENTO.</p>';
+                document.getElementById('current-lesson-title').innerText = 'Sem aulas cadastradas';
+            }
+        }
+
+        function renderPlaylist() {
+            const container = document.getElementById('playlist-items');
+            container.innerHTML = allLessons.map((lesson, index) => `
+                <div class="playlist-item ${index === currentLessonIndex ? 'active' : ''}" onclick="loadLesson(${index})">
+                    <div class="item-thumb"><img src="${lesson.thumbnail_url || 'assets/em-breve.png'}" alt=""></div>
+                    <div>
+                        <div class="item-title">${lesson.title}</div>
+                        <div class="item-status">${index === currentLessonIndex ? 'Assistindo agora' : 'Aula ' + (index + 1)}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function loadLesson(index) {
+            currentLessonIndex = index;
+            const lesson = allLessons[index];
+            if (!lesson) return;
+            document.getElementById('current-lesson-title').innerText = lesson.title;
+            document.getElementById('current-lesson-desc').innerText = lesson.description || 'Aula prática com metodologia Nagila Academy.';
+            const fileId = Array.isArray(lesson.telegram_file_ids) ? lesson.telegram_file_ids[0] : null;
+            const videoUrl = fileId ? `/api/v1/stream?fileId=${fileId}` : '';
+            document.getElementById('video-viewport').innerHTML = videoUrl
+                ? `<video controls autoplay playsinline><source src="${videoUrl}" type="video/mp4">Seu navegador não suporta vídeos.</video>`
+                : '<p style="opacity:0.7;letter-spacing:2px;">VÍDEO INDISPONÍVEL PARA ESTA AULA.</p>';
+            renderPlaylist();
+        }
+
+        window.loadLesson = loadLesson;
+        initPlayer();
+        lucide.createIcons();
+    </script>
+</body>
+</html>

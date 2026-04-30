@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Área do Aluno | Nagila Academy</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400;0,700;1,400&family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <style>
+        body { background: #0a0a0a; color: #fff; font-family: 'Montserrat', sans-serif; }
+        
+        .player-container {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            height: calc(100vh - 80px);
+            max-width: 1800px;
+            margin: 0 auto;
+            gap: 2px;
+            background: rgba(255,255,255,0.05);
+        }
+
+        .main-video-area {
+            background: #000;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        #video-viewport {
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #000;
+            overflow: hidden;
+        }
+
+        #video-viewport video {
+            max-width: 100%;
+            max-height: 100%;
+            width: auto;
+            height: auto;
+            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+        }
+
+        .video-footer {
+            padding: 2rem 3rem;
+            background: #0a0a0a;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .video-title {
+            font-family: 'Bodoni Moda', serif;
+            font-size: 1.8rem;
+            color: var(--color-gold-polished);
+            margin-bottom: 0.5rem;
+        }
+
+        .video-desc {
+            font-size: 0.85rem;
+            opacity: 0.5;
+            letter-spacing: 1px;
+        }
+
+        /* Sidebar Playlist */
+        .playlist-sidebar {
+            background: #0d0d0d;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .playlist-header {
+            padding: 2rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .playlist-header h3 {
+            font-size: 0.75rem;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: var(--color-gold-polished);
+            opacity: 0.8;
+        }
+
+        .playlist-items {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+
+        .playlist-item {
+            display: flex;
+            gap: 15px;
+            padding: 1rem;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 0.5rem;
+            border: 1px solid transparent;
+        }
+
+        .playlist-item:hover {
+            background: rgba(255,255,255,0.03);
+            border-color: rgba(212,175,55,0.1);
+        }
+
+        .playlist-item.active {
+            background: rgba(212,175,55,0.05);
+            border-color: rgba(212,175,55,0.3);
+        }
+
+        .item-thumb {
+            width: 100px;
+            aspect-ratio: 16/9;
+            background: #111;
+            border-radius: 6px;
+            overflow: hidden;
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        .item-thumb img { width: 100%; height: 100%; object-fit: cover; }
+        
+        .item-info {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .item-title {
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 4px;
+            line-height: 1.2;
+            color: rgba(255,255,255,0.9);
+        }
+
+        .item-status {
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            opacity: 0.3;
+        }
+
+        .active .item-status { color: var(--color-gold-polished); opacity: 1; }
+
+        @media (max-width: 1024px) {
+            .player-container { grid-template-columns: 1fr; height: auto; }
+            .playlist-sidebar { height: 500px; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar" style="position: static; background: #000;">
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 0 5%; width: 100%;">
+            <a href="/academy" class="hover-target" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: #fff; font-size: 0.7rem; letter-spacing: 2px;">
+                <i data-lucide="chevron-left"></i> VOLTAR PARA ACADEMY
+            </a>
+            <h1 style="font-family: 'Bodoni Moda', serif; font-size: 1.2rem; letter-spacing: 5px; color: var(--color-gold-polished);">STUDENT AREA</h1>
+            <div style="width: 100px;"></div>
+        </div>
+    </nav>
+
+    <div class="player-container" style="display: flex; align-items: center; justify-center; background: #0a0a0a;">
+        <!-- Placeholder Ultra-Premium "Em Breve" -->
+        <div style="width: 100%; min-height: 80vh; display: flex; flex-direction: column; items-center; justify-content: center; text-center; padding: 2rem;">
+            <div style="max-width: 600px; margin: 0 auto; border: 1px solid rgba(212, 175, 55, 0.2); padding: 4rem; border-radius: 2px; background: rgba(10,10,10,0.4); backdrop-filter: blur(10px); text-align: center;">
+                <h1 style="font-family: 'Bodoni Moda', serif; font-size: 3rem; color: #C5A059; margin-bottom: 1.5rem; letter-spacing: 0.1em; text-transform: uppercase;">Acesso Restrito</h1>
+                <div style="width: 50px; height: 1px; background: #C5A059; margin: 2rem auto;"></div>
+                <p style="font-family: 'Montserrat', sans-serif; font-size: 0.8rem; color: #ffffff; letter-spacing: 4px; text-transform: uppercase; opacity: 0.6; line-height: 2;">
+                    A ÁREA DO ALUNO ESTÁ SENDO CONFIGURADA PARA GARANTIR A MÁXIMA PRIVACIDADE E PERFORMANCE.<br>
+                    DISPONÍVEL EM BREVE.
+                </p>
+                <a href="/academy" style="display: inline-block; margin-top: 3rem; color: #C5A059; text-decoration: none; font-size: 0.7rem; letter-spacing: 3px; text-transform: uppercase; border-bottom: 1px solid #C5A059; padding-bottom: 5px;">
+                    VOLTAR À VITRINE
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const SUPABASE_URL = 'https://fjuiiivmsfdwsrqiobdu.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZqdWlpaXZtc2Zkd3NycWlvYmR1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2ODIyNjAsImV4cCI6MjA5MTI1ODI2MH0.-FyHmwxUJsloYRD6Wl6fjYrOHGf5CiFcaVgTT89bGMo';
+        const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const courseId = urlParams.get('id');
+
+        let allLessons = [];
+        let currentLessonIndex = 0;
+
+        async function initPlayer() {
+            if (!courseId) {
+                window.location.href = '/academy';
+                return;
+            }
+
+            // 1. Fetch Course Info
+            const { data: course, error: cErr } = await sb.from('courses').select('*').eq('id', courseId).single();
+            if (cErr) return;
+            document.getElementById('current-course-title').innerText = `Curso: ${course.title}`;
+            document.title = `${course.title} | Student Area`;
+
+            // 2. Fetch Lessons
+            const { data: lessons, error: lErr } = await sb.from('lessons').select('*').eq('course_id', courseId).order('order', { ascending: true });
+            if (lErr || !lessons.length) return;
+
+            allLessons = lessons;
+            document.getElementById('total-lessons').innerText = `${lessons.length} AULAS DISPONÍVEIS`;
+            
+            renderPlaylist();
+            loadLesson(0);
+        }
+
+        function renderPlaylist() {
+            const container = document.getElementById('playlist-items');
+            container.innerHTML = allLessons.map((lesson, index) => `
+                <div class="playlist-item ${index === currentLessonIndex ? 'active' : ''}" onclick="loadLesson(${index})">
+                    <div class="item-thumb">
+                        <img src="${lesson.thumbnail_url || ''}" alt="">
+                        <div class="absolute inset-0 flex items-center justify-center bg-black/40">
+                            <i data-lucide="play" class="w-4 h-4 text-white"></i>
+                        </div>
+                    </div>
+                    <div class="item-info">
+                        <span class="item-title">${lesson.title}</span>
+                        <span class="item-status">${index === currentLessonIndex ? 'Assistindo agora' : 'Aula ' + (index + 1)}</span>
+                    </div>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        function loadLesson(index) {
+            currentLessonIndex = index;
+            const lesson = allLessons[index];
+            
+            document.getElementById('current-lesson-title').innerText = lesson.title;
+            
+            const viewport = document.getElementById('video-viewport');
+            
+            // Aqui usamos a rota de stream do nosso backend (Proxy Telegram)
+            // No futuro, se quiser usar o fragmentador vittalix-player, basta importar o script e chamar aqui.
+            // Por enquanto, vamos usar o stream direto da primeira parte (ou a URL do vídeo se for única).
+            const fileId = lesson.telegram_file_ids[0];
+            const videoUrl = `/api/v1/stream?fileId=${fileId}`;
+
+            viewport.innerHTML = `
+                <video id="main-player" controls autoplay playsinline class="w-full h-full">
+                    <source src="${videoUrl}" type="video/mp4">
+                    Seu navegador não suporta vídeos.
+                </video>
+            `;
+
+            renderPlaylist();
+        }
+
+        initPlayer();
+        lucide.createIcons();
+    </script>
+
+</body>
+</html>

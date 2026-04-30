@@ -5,6 +5,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nagila Academy | Maestria em Educação</title>
+    <meta name="description" content="Vitrine oficial de cursos da Nagila Academy. Encontre formações profissionais em cabelo, técnicas autorais, acesso imediato e certificado.">
+    <meta name="robots" content="index,follow">
+    <meta property="og:title" content="Nagila Academy | Vitrine de Cursos">
+    <meta property="og:description" content="Aprenda técnicas profissionais com cursos premium da Nagila Academy.">
+    <meta property="og:type" content="website">
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,13 +17,49 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..700&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Montserrat:wght@200;400&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
         rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="style.css">
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         .academy-page-header {
-            padding: 15vh 5% 4rem 5%;
+            padding: 11.5vh 5% 1.6rem 5%;
             text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .academy-page-header::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(1200px 240px at 50% -20%, rgba(212, 175, 55, 0.12), transparent 60%);
+            pointer-events: none;
+        }
+        
+        .academy-subtitle-lux {
+            text-align: left;
+            margin-left: 5px;
+            letter-spacing: 4px;
+            opacity: 0.9;
+            font-size: 0.74rem;
+            text-transform: uppercase;
+            font-weight: 300;
+        }
+
+        .academy-title-signature {
+            font-family: 'Cinzel', 'Bodoni Moda', serif;
+            font-size: clamp(2.3rem, 4.4vw, 3.7rem);
+            letter-spacing: 0.22em;
+            margin-bottom: 0.18rem;
+            line-height: 1.05;
+            text-transform: uppercase;
+            font-weight: 500;
+            background: linear-gradient(180deg, #f3e6c6 4%, #d9b778 38%, #b78d44 90%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 8px 24px rgba(197, 160, 89, 0.12);
         }
 
         .academy-wrapper {
@@ -27,10 +68,495 @@
             margin: 0 auto;
         }
 
+        .academy-shop-copy {
+            max-width: 620px;
+            margin: 0 auto 1rem auto;
+            opacity: 0.96;
+            letter-spacing: 1.2px;
+            font-size: 0.74rem;
+            text-transform: uppercase;
+            line-height: 1.5;
+        }
+
+        .academy-navbar-variant {
+            border-bottom: 1px solid rgba(212, 175, 55, 0.12);
+            transition: background 0.35s ease, backdrop-filter 0.35s ease, border-color 0.35s ease;
+        }
+
+        .academy-navbar-variant.scrolled {
+            background: rgba(8, 8, 8, 0.88);
+            backdrop-filter: blur(14px);
+            border-color: rgba(212, 175, 55, 0.22);
+        }
+
+        .academy-navbar-variant .nav-links a[href="/academy"] {
+            color: var(--color-gold-polished);
+            opacity: 1;
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+        }
+
+        .academy-campaign-banner {
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            background: linear-gradient(110deg, rgba(212, 175, 55, 0.12), rgba(212, 175, 55, 0.02));
+            border-radius: 12px;
+            padding: 0.95rem 1.1rem;
+            margin-bottom: 0.9rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .academy-hero-actions {
+            display: flex;
+            justify-content: center;
+            gap: 0.7rem;
+            margin-bottom: 1rem;
+        }
+
+        .academy-mini-cta {
+            border: 1px solid rgba(212, 175, 55, 0.35);
+            color: var(--color-gold-polished);
+            background: rgba(212, 175, 55, 0.09);
+            text-decoration: none;
+            text-transform: uppercase;
+            font-size: 0.62rem;
+            letter-spacing: 2px;
+            padding: 0.7rem 1rem;
+            border-radius: 6px;
+            font-weight: 600;
+            opacity: 0.98;
+        }
+
+        .academy-mini-cta:hover {
+            background: rgba(212, 175, 55, 0.2);
+            color: #f4dca8;
+        }
+
+        .academy-campaign-banner strong {
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            color: var(--color-gold-polished);
+        }
+
+        .academy-campaign-banner span {
+            opacity: 0.82 !important;
+        }
+
+        .academy-proof-row {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 0.8rem;
+            margin-bottom: 0.9rem;
+        }
+
+        .proof-item {
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.02);
+            padding: 0.85rem;
+            text-align: center;
+        }
+
+        .proof-item b {
+            display: block;
+            color: var(--color-gold-polished);
+            font-size: 1.15rem;
+            margin-bottom: 0.2rem;
+            font-weight: 700;
+            text-shadow: 0 0 18px rgba(212, 175, 55, 0.18);
+        }
+
+        .proof-item span {
+            font-size: 0.64rem;
+            opacity: 0.82;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .academy-toolbar {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+            gap: 0.7rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .academy-toolbar input,
+        .academy-toolbar select {
+            width: 100%;
+            background: #111;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            padding: 0.74rem 0.8rem;
+            border-radius: 8px;
+            font-size: 0.74rem;
+            letter-spacing: 0.8px;
+        }
+
+        .academy-toolbar input:focus,
+        .academy-toolbar select:focus {
+            outline: none;
+            border-color: rgba(212, 175, 55, 0.58);
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.16), 0 0 16px rgba(212, 175, 55, 0.2);
+        }
+
+        .academy-quick-actions {
+            display: flex;
+            gap: 0.7rem;
+            margin-top: -0.2rem;
+            margin-bottom: 1.1rem;
+        }
+
+        .quick-action-btn {
+            border: 1px solid rgba(212, 175, 55, 0.25);
+            border-radius: 8px;
+            background: rgba(255,255,255,0.02);
+            color: var(--color-gold-delicate);
+            text-transform: uppercase;
+            font-size: 0.62rem;
+            letter-spacing: 1.7px;
+            padding: 0.62rem 0.9rem;
+            cursor: pointer;
+        }
+
+        .quick-action-btn.active {
+            border-color: rgba(212, 175, 55, 0.6);
+            background: rgba(212, 175, 55, 0.12);
+        }
+
+        .academy-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 2.6rem 1rem;
+            border: 1px dashed rgba(212, 175, 55, 0.2);
+            border-radius: 12px;
+            opacity: 0.8;
+            letter-spacing: 2px;
+            font-size: 0.72rem;
+        }
+
+        .academy-load-more-wrap {
+            margin-top: 1.2rem;
+            display: flex;
+            justify-content: center;
+        }
+
+        .academy-load-more {
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            background: transparent;
+            color: var(--color-gold-polished);
+            padding: 0.78rem 1.5rem;
+            border-radius: 6px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-size: 0.64rem;
+            cursor: pointer;
+        }
+
+        .academy-load-more:hover {
+            background: rgba(212, 175, 55, 0.08);
+        }
+
+        .course-toolbar {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 5;
+            display: flex;
+            gap: 6px;
+        }
+
+        .course-mini-btn {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 1px solid rgba(212,175,55,0.35);
+            background: rgba(9,9,9,0.76);
+            color: var(--color-gold-delicate);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            backdrop-filter: blur(4px);
+        }
+
+        .course-mini-btn.active {
+            color: #f4dca8;
+            border-color: rgba(212,175,55,0.8);
+            background: rgba(212,175,55,0.2);
+        }
+
+        .edu-benefits {
+            display: flex;
+            gap: 0.3rem;
+            flex-wrap: wrap;
+            margin-bottom: 0.6rem;
+        }
+
+        .edu-benefits span {
+            font-size: 0.53rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            padding: 0.2rem 0.42rem;
+            border-radius: 999px;
+            border: 1px solid rgba(var(--cover-accent-rgb), 0.35);
+            background: rgba(var(--cover-accent-rgb), 0.08);
+            color: rgba(255,255,255,0.86);
+        }
+
+        .edu-action-row {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 0.45rem;
+            align-items: center;
+        }
+
+        .edu-preview-btn {
+            border: 1px solid rgba(255,255,255,0.18);
+            background: rgba(255,255,255,0.02);
+            color: #fff;
+            border-radius: 6px;
+            font-size: 0.57rem;
+            letter-spacing: 1.7px;
+            text-transform: uppercase;
+            padding: 0.74rem 0.65rem;
+            cursor: pointer;
+        }
+
+        .edu-preview-btn:hover {
+            border-color: rgba(212,175,55,0.6);
+            color: var(--color-gold-polished);
+        }
+
+        .compare-drawer {
+            position: fixed;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: 18px;
+            width: min(92vw, 860px);
+            border: 1px solid rgba(212,175,55,0.33);
+            background: rgba(8,8,8,0.92);
+            backdrop-filter: blur(12px);
+            border-radius: 12px;
+            padding: 0.8rem 0.9rem;
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.7rem;
+        }
+
+        .compare-drawer-list {
+            display: flex;
+            gap: 0.45rem;
+            flex-wrap: wrap;
+        }
+
+        .compare-pill {
+            font-size: 0.58rem;
+            letter-spacing: 1.3px;
+            text-transform: uppercase;
+            padding: 0.35rem 0.5rem;
+            border-radius: 999px;
+            border: 1px solid rgba(212,175,55,0.4);
+            color: var(--color-gold-delicate);
+        }
+
+        .academy-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(10px);
+            z-index: 10000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .academy-modal-box {
+            width: min(900px, 96vw);
+            max-height: 86vh;
+            overflow: auto;
+            border: 1px solid rgba(212,175,55,0.35);
+            background: #0a0a0a;
+            border-radius: 12px;
+            padding: 1rem;
+        }
+
+        .academy-modal-close {
+            float: right;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: transparent;
+            color: #fff;
+            border-radius: 6px;
+            padding: 0.35rem 0.5rem;
+            cursor: pointer;
+        }
+
+        .testimonials-grid {
+            margin-top: 1.8rem;
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 0.8rem;
+        }
+
+        .testimonial-card {
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 10px;
+            padding: 0.9rem;
+            background: rgba(255,255,255,0.02);
+        }
+
+        .testimonial-head {
+            display: flex;
+            align-items: center;
+            gap: 0.55rem;
+            margin-bottom: 0.6rem;
+        }
+
+        .testimonial-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid rgba(212,175,55,0.45);
+            box-shadow: 0 0 0 2px rgba(212,175,55,0.08);
+        }
+
+        .testimonial-meta {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.15;
+        }
+
+        .testimonial-name {
+            font-size: 0.62rem;
+            color: var(--color-gold-polished);
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        .testimonial-role {
+            font-size: 0.56rem;
+            opacity: 0.65;
+            letter-spacing: 1.3px;
+            text-transform: uppercase;
+        }
+
+        .testimonial-stars {
+            margin-left: auto;
+            color: #d4af37;
+            font-size: 0.58rem;
+            letter-spacing: 1px;
+            opacity: 0.9;
+        }
+
+        .testimonial-card p {
+            font-size: 0.72rem;
+            line-height: 1.6;
+            opacity: 0.82;
+        }
+
+        .testimonial-card b {
+            display: block;
+            margin-top: 0.65rem;
+            color: var(--color-gold-polished);
+            font-size: 0.63rem;
+            letter-spacing: 1.8px;
+            text-transform: uppercase;
+        }
+
+        .academy-policy-strip {
+            margin-top: 1.2rem;
+            border: 1px solid rgba(212,175,55,0.22);
+            border-radius: 12px;
+            padding: 0.9rem;
+            background: linear-gradient(120deg, rgba(212,175,55,0.08), rgba(212,175,55,0.02));
+            font-size: 0.7rem;
+            letter-spacing: 1.2px;
+            line-height: 1.7;
+        }
+
+        .exit-coupon-popup {
+            position: fixed;
+            right: 16px;
+            bottom: 16px;
+            width: min(360px, calc(100vw - 32px));
+            border: 1px solid rgba(212,175,55,0.45);
+            border-radius: 12px;
+            background: rgba(10,10,10,0.95);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+            padding: 0.9rem;
+            z-index: 10001;
+            display: none;
+        }
+
+        .exit-coupon-popup h4 {
+            color: var(--color-gold-polished);
+            margin-bottom: 0.35rem;
+            font-size: 0.78rem;
+            letter-spacing: 1px;
+        }
+
+        .exit-coupon-popup p {
+            opacity: 0.82;
+            font-size: 0.7rem;
+            line-height: 1.5;
+        }
+
+        .academy-trust-row {
+            margin-top: 2.2rem;
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 0.8rem;
+        }
+
+        .trust-card {
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 10px;
+            padding: 0.9rem;
+            background: rgba(255,255,255,0.02);
+            font-size: 0.7rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .academy-faq {
+            margin-top: 1.6rem;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .academy-faq details {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 0.9rem 1rem;
+            background: rgba(255,255,255,0.01);
+        }
+
+        .academy-faq details:last-child {
+            border-bottom: 0;
+        }
+
+        .academy-faq summary {
+            cursor: pointer;
+            font-size: 0.75rem;
+            letter-spacing: 1.2px;
+            color: var(--color-gold-delicate);
+        }
+
+        .academy-faq p {
+            margin-top: 0.7rem;
+            font-size: 0.73rem;
+            opacity: 0.75;
+            line-height: 1.6;
+        }
+
         .academy-hero-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-            gap: 3.5rem;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 1.3rem;
         }
 
         /* Card customizado para evitar conflito com o global */
@@ -48,27 +574,87 @@
             box-shadow:
                 0 10px 30px rgba(0, 0, 0, 0.5),
                 0 2px 5px rgba(207, 156, 66, 0.05);
+            width: 100%;
+            max-width: none;
+            cursor: pointer;
+            --cover-accent-rgb: 197, 160, 89;
+            opacity: 0;
+            transform: translateY(24px) scale(0.985);
+            animation: academyCardIn 650ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+            animation-delay: var(--card-delay, 0ms);
         }
 
         .edu-card:hover {
-            border-color: rgba(207, 156, 66, 0.4);
+            border-color: rgba(var(--cover-accent-rgb), 0.45);
             background: rgba(255, 255, 255, 0.06);
             /* Elevação 3D */
             transform: translateY(-15px) scale(1.02);
             box-shadow:
                 0 40px 80px rgba(0, 0, 0, 0.8),
-                0 0 30px rgba(207, 156, 66, 0.15);
+                0 0 30px rgba(var(--cover-accent-rgb), 0.2);
+        }
+
+        .edu-card:focus-visible {
+            outline: 2px solid rgba(212, 175, 55, 0.65);
+            outline-offset: 2px;
+        }
+
+        .edu-card-link {
+            text-decoration: none;
+            color: inherit;
         }
 
         .edu-media {
             width: 100%;
-            height: 600px;
             background: #000;
             position: relative;
             overflow: hidden;
             display: flex;
             align-items: center;
             justify-content: center;
+        }
+
+        .edu-media.has-cover {
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        .edu-media.has-cover::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: inherit;
+            filter: blur(14px) brightness(0.45);
+            transform: scale(1.08);
+            z-index: 1;
+        }
+
+        .edu-media::after {
+            content: "";
+            position: absolute;
+            inset: auto 0 0 0;
+            height: 34%;
+            background: linear-gradient(to top, rgba(4, 4, 4, 0.8), rgba(4, 4, 4, 0));
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .edu-card.has-dynamic-accent {
+            border-color: rgba(var(--cover-accent-rgb), 0.3);
+            box-shadow:
+                0 10px 30px rgba(0, 0, 0, 0.5),
+                0 2px 5px rgba(var(--cover-accent-rgb), 0.12);
+        }
+
+        .edu-card::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            pointer-events: none;
+            box-shadow: inset 0 1px 0 rgba(var(--cover-accent-rgb), 0.15);
+            opacity: 0.85;
         }
 
         .edu-video-container {
@@ -86,6 +672,41 @@
             object-fit: contain;
             border-radius: 24px 24px 0 0;
             transition: transform 0.8s ease;
+        }
+
+        .edu-media img {
+            width: 100%;
+            height: 350px;
+            object-fit: contain;
+            object-position: center;
+            border-radius: 24px 24px 0 0;
+            transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+            display: block;
+            position: relative;
+            z-index: 3;
+            will-change: transform;
+        }
+
+        .edu-card:hover .edu-media img,
+        .edu-card:focus-visible .edu-media img {
+            transform: translateY(-4px) scale(1.035);
+        }
+
+        .course-status-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            z-index: 4;
+            padding: 6px 10px;
+            border-radius: 999px;
+            border: 1px solid rgba(var(--cover-accent-rgb), 0.45);
+            background: rgba(10, 10, 10, 0.72);
+            backdrop-filter: blur(6px);
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.58rem;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            white-space: nowrap;
         }
 
         /* Controles de Vídeo Transparentes */
@@ -145,7 +766,7 @@
         }
 
         .edu-info {
-            padding: 2.5rem;
+            padding: 1.1rem 1.1rem 1.2rem;
             display: flex;
             flex-direction: column;
             flex-grow: 1;
@@ -153,24 +774,34 @@
 
         .edu-tag {
             color: var(--color-champagne);
-            font-size: 0.7rem;
-            letter-spacing: 4px;
+            font-size: 0.62rem;
+            letter-spacing: 3px;
             text-transform: uppercase;
-            margin-bottom: 1.2rem;
+            margin-bottom: 0.7rem;
             display: block;
         }
 
         .edu-title {
-            font-size: 2.2rem;
-            margin-bottom: 1.2rem;
+            font-size: clamp(1.1rem, 1.5vw, 1.35rem);
+            margin-bottom: 0.5rem;
             font-family: 'Bodoni Moda', serif;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            min-height: 2.4em;
         }
 
         .edu-desc {
-            font-size: 0.95rem;
+            font-size: 0.78rem;
             opacity: 0.7;
-            line-height: 1.8;
-            margin-bottom: 2.5rem;
+            line-height: 1.45;
+            margin-bottom: 0.9rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            min-height: 3.6em;
         }
 
         .edu-btn-outline {
@@ -178,24 +809,105 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
-            padding: 1rem 2rem;
+            padding: 0.8rem 1.2rem;
             background: transparent;
             color: var(--color-gold-polished);
-            border: 1px solid rgba(212, 175, 55, 0.4);
+            border: 1px solid rgba(var(--cover-accent-rgb), 0.45);
             border-radius: 4px;
             font-family: 'Montserrat', sans-serif;
-            font-size: 0.75rem;
+            font-size: 0.64rem;
             letter-spacing: 0.2em;
             text-transform: uppercase;
             text-decoration: none;
             transition: all 0.4s ease;
             margin-top: auto;
+            background-image: linear-gradient(
+                120deg,
+                rgba(var(--cover-accent-rgb), 0.08),
+                rgba(var(--cover-accent-rgb), 0.02)
+            );
         }
 
         .edu-btn-outline:hover {
             border-color: var(--color-gold-polished);
             background: rgba(212, 175, 55, 0.05);
             transform: translateY(-2px);
+        }
+
+        .edu-card:hover .edu-btn-outline,
+        .edu-card:focus-visible .edu-btn-outline {
+            border-color: rgba(var(--cover-accent-rgb), 0.75);
+            background: rgba(var(--cover-accent-rgb), 0.12);
+        }
+
+        .academy-fallback-cover {
+            width: 100%;
+            min-height: 350px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(145deg, #111, #1b1b1b);
+            color: #C5A059;
+            letter-spacing: 4px;
+            font-size: 0.72rem;
+            text-transform: uppercase;
+        }
+
+        .skeleton-card {
+            pointer-events: none;
+        }
+
+        .skeleton-block {
+            border-radius: 6px;
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0.04) 25%, rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0.04) 75%);
+            background-size: 200% 100%;
+            animation: academyShimmer 1.3s infinite linear;
+        }
+
+        .skeleton-media {
+            width: 100%;
+            height: 350px;
+            border-radius: 24px 24px 0 0;
+        }
+
+        .skeleton-line-sm {
+            width: 35%;
+            height: 8px;
+            margin-bottom: 8px;
+        }
+
+        .skeleton-line-lg {
+            width: 85%;
+            height: 20px;
+            margin-bottom: 8px;
+        }
+
+        .skeleton-line-md {
+            width: 100%;
+            height: 10px;
+            margin-bottom: 6px;
+        }
+
+        .skeleton-line-md.last {
+            width: 72%;
+            margin-bottom: 12px;
+        }
+
+        .skeleton-btn {
+            width: 100%;
+            height: 32px;
+        }
+
+        @keyframes academyShimmer {
+            from { background-position: 200% 0; }
+            to { background-position: -200% 0; }
+        }
+
+        @keyframes academyCardIn {
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
         }
 
         .edu-tag-editorial {
@@ -217,6 +929,62 @@
             margin: 2rem auto;
             opacity: 0.3;
         }
+
+        @media (max-width: 1200px) {
+            .academy-toolbar {
+                grid-template-columns: 1fr 1fr 1fr;
+            }
+
+            .academy-toolbar input {
+                grid-column: 1 / -1;
+            }
+
+            .academy-hero-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .academy-page-header {
+                padding-top: 12vh;
+            }
+
+            .academy-hero-actions {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .academy-proof-row,
+            .academy-trust-row {
+                grid-template-columns: 1fr;
+            }
+
+            .academy-toolbar {
+                grid-template-columns: 1fr;
+            }
+
+            .academy-quick-actions {
+                flex-wrap: wrap;
+            }
+
+            .testimonials-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .academy-hero-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .edu-card {
+                max-width: 380px;
+                margin: 0 auto;
+            }
+
+            .edu-media img {
+                height: 330px;
+            }
+        }
+
     </style>
 </head>
 
@@ -229,7 +997,7 @@
     </div>
 
 
-    <nav class="navbar" id="navbar">
+    <nav class="navbar academy-navbar-variant" id="navbar">
         <button class="nav-hamburger" id="nav-hamburger" aria-label="Menu">
             <span></span><span></span><span></span>
         </button>
@@ -241,7 +1009,10 @@
             <li><a href="/academy" class="hover-target">ACADEMY</a></li>
         </ul>
 
-
+        <button id="cart-icon-btn" class="hover-target" style="background: none; border: none; color: var(--color-gold-polished); cursor: pointer; position: relative; margin-left: 20px;">
+            <i data-lucide="shopping-bag" style="width: 24px; height: 24px;"></i>
+            <span id="cart-counter" style="position: absolute; top: -5px; right: -5px; background: #fff; color: #000; font-size: 10px; font-weight: bold; border-radius: 50%; padding: 2px 6px; display: none;">0</span>
+        </button>
     </nav>
 
 
@@ -249,11 +1020,9 @@
         <div
             style="display: flex; justify-content: space-between; align-items: flex-end; width: 100%; max-width: 1400px; margin: 0 auto;">
             <div style="text-align: left;">
-                <h1 class="hero-name-front" style="font-size: 3.5rem; letter-spacing: 0.3em; margin-bottom: 0;">NAGILA
+                <h1 class="academy-title-signature">NAGILA
                     ACADEMY</h1>
-                <p class="section-subtitle"
-                    style="text-align: left; margin-left: 5px; letter-spacing: 4px; opacity: 0.7;">Excelência em
-                    formação capilar.</p>
+                <p class="section-subtitle academy-subtitle-lux">Excelência em formação capilar.</p>
             </div>
 
             <a href="/dashboard.html" class="edu-btn-outline hover-target" style="margin-bottom: 2rem;">
@@ -262,6 +1031,11 @@
 
         </div>
         <div class="separator-line"></div>
+        <p class="academy-shop-copy">Sua loja oficial de formação capilar premium. Acesso imediato, aulas práticas e metodologia exclusiva Nagila Academy.</p>
+        <div class="academy-hero-actions">
+            <a href="#academy-grid" class="academy-mini-cta">Ver Cursos</a>
+            <a href="https://wa.me/5518997055954" class="academy-mini-cta" target="_blank" rel="noopener noreferrer">Falar com Suporte</a>
+        </div>
     </header>
 
 
@@ -269,12 +1043,179 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <div class="academy-wrapper">
+        <section class="academy-campaign-banner reveal">
+            <strong>Semana Beauty Pro: 20% OFF em cursos selecionados</strong>
+            <span style="font-size:0.62rem;letter-spacing:2px;opacity:0.7;">Cupom: BEAUTY20</span>
+        </section>
+
+        <section class="academy-proof-row reveal" id="academy-proof-row">
+            <div class="proof-item"><b id="proof-courses">0</b><span>Cursos Ativos</span></div>
+            <div class="proof-item"><b id="proof-students">+0</b><span>Alunas Impactadas</span></div>
+            <div class="proof-item"><b id="proof-rating">0.0</b><span>Avaliação Média</span></div>
+        </section>
+
+        <section class="academy-toolbar reveal">
+            <input id="filter-search" type="search" placeholder="Buscar curso por nome ou descrição...">
+            <select id="filter-category">
+                <option value="">Categoria</option>
+                <option value="MASTERCLASS ONLINE">Masterclass Online</option>
+                <option value="WORKSHOP PRESENCIAL">Workshop Presencial</option>
+                <option value="CURSO">Curso</option>
+            </select>
+            <select id="filter-level">
+                <option value="">Nível</option>
+                <option value="iniciante">Iniciante</option>
+                <option value="intermediario">Intermediário</option>
+                <option value="avancado">Avançado</option>
+            </select>
+            <select id="filter-price">
+                <option value="">Preço</option>
+                <option value="ate500">Até R$ 500</option>
+                <option value="500a1000">R$ 500 a R$ 1.000</option>
+                <option value="acima1000">Acima de R$ 1.000</option>
+            </select>
+            <select id="filter-sort">
+                <option value="recentes">Mais recentes</option>
+                <option value="barato">Menor preço</option>
+                <option value="caro">Maior preço</option>
+                <option value="titulo">Ordem alfabética</option>
+                <option value="destaque">Mais vendidos</option>
+            </select>
+        </section>
+        <section class="academy-quick-actions reveal">
+            <button class="quick-action-btn" id="btn-only-favorites" type="button">Mostrar Favoritos</button>
+            <button class="quick-action-btn" id="btn-clear-filters" type="button">Limpar Filtros</button>
+        </section>
+
         <section id="academy-grid" class="academy-hero-grid reveal">
             <!-- Cursos carregados dinamicamente do Supabase -->
-            <div id="courses-loading" style="grid-column: 1/-1; text-align:center; padding: 6rem 0; opacity:0.4;">
-                <p style="letter-spacing:4px; font-size:0.8rem;">CARREGANDO CURSOS...</p>
-            </div>
+            <article class="edu-card skeleton-card" aria-hidden="true">
+                <div class="skeleton-block skeleton-media"></div>
+                <div class="edu-info">
+                    <div class="skeleton-block skeleton-line-sm"></div>
+                    <div class="skeleton-block skeleton-line-lg"></div>
+                    <div class="skeleton-block skeleton-line-md"></div>
+                    <div class="skeleton-block skeleton-line-md last"></div>
+                    <div class="skeleton-block skeleton-btn"></div>
+                </div>
+            </article>
+            <article class="edu-card skeleton-card" aria-hidden="true">
+                <div class="skeleton-block skeleton-media"></div>
+                <div class="edu-info">
+                    <div class="skeleton-block skeleton-line-sm"></div>
+                    <div class="skeleton-block skeleton-line-lg"></div>
+                    <div class="skeleton-block skeleton-line-md"></div>
+                    <div class="skeleton-block skeleton-line-md last"></div>
+                    <div class="skeleton-block skeleton-btn"></div>
+                </div>
+            </article>
+            <article class="edu-card skeleton-card" aria-hidden="true">
+                <div class="skeleton-block skeleton-media"></div>
+                <div class="edu-info">
+                    <div class="skeleton-block skeleton-line-sm"></div>
+                    <div class="skeleton-block skeleton-line-lg"></div>
+                    <div class="skeleton-block skeleton-line-md"></div>
+                    <div class="skeleton-block skeleton-line-md last"></div>
+                    <div class="skeleton-block skeleton-btn"></div>
+                </div>
+            </article>
         </section>
+        <div class="academy-load-more-wrap">
+            <button id="academy-load-more" class="academy-load-more" type="button" style="display:none;">Carregar mais cursos</button>
+        </div>
+
+        <section class="academy-trust-row reveal">
+            <div class="trust-card">Pagamento Seguro</div>
+            <div class="trust-card">Certificado de Conclusão</div>
+            <div class="trust-card">Suporte Prioritário</div>
+        </section>
+
+        <section class="testimonials-grid reveal">
+            <article class="testimonial-card">
+                <div class="testimonial-head">
+                    <img class="testimonial-avatar" src="https://i.pravatar.cc/72?img=41" alt="Foto de Larissa M.">
+                    <div class="testimonial-meta">
+                        <span class="testimonial-name">Larissa M.</span>
+                        <span class="testimonial-role">Cabeleireira</span>
+                    </div>
+                    <span class="testimonial-stars">★★★★★</span>
+                </div>
+                <p>"Consegui elevar meu ticket em 3 semanas aplicando exatamente o método das aulas."</p>
+            </article>
+            <article class="testimonial-card">
+                <div class="testimonial-head">
+                    <img class="testimonial-avatar" src="https://i.pravatar.cc/72?img=32" alt="Foto de Ana P.">
+                    <div class="testimonial-meta">
+                        <span class="testimonial-name">Ana P.</span>
+                        <span class="testimonial-role">Colorista</span>
+                    </div>
+                    <span class="testimonial-stars">★★★★★</span>
+                </div>
+                <p>"A didática é clara e prática. O conteúdo já me fez ganhar mais confiança com clientes premium."</p>
+            </article>
+            <article class="testimonial-card">
+                <div class="testimonial-head">
+                    <img class="testimonial-avatar" src="https://i.pravatar.cc/72?img=48" alt="Foto de Bruna T.">
+                    <div class="testimonial-meta">
+                        <span class="testimonial-name">Bruna T.</span>
+                        <span class="testimonial-role">Studio Owner</span>
+                    </div>
+                    <span class="testimonial-stars">★★★★★</span>
+                </div>
+                <p>"Plataforma fluida, suporte rápido e aulas com padrão realmente profissional."</p>
+            </article>
+        </section>
+
+        <section class="academy-policy-strip reveal">
+            Garantia de satisfação em 7 dias para cursos elegíveis • Compra 100% segura • Acesso imediato após confirmação • Política de suporte e termos disponíveis na área da aluna.
+        </section>
+
+        <section class="academy-faq reveal">
+            <details>
+                <summary>Como recebo acesso ao curso?</summary>
+                <p>O acesso é liberado automaticamente após confirmação da matrícula, diretamente na área da aluna.</p>
+            </details>
+            <details>
+                <summary>Os cursos têm certificado?</summary>
+                <p>Sim. Ao concluir os módulos obrigatórios, você pode gerar seu certificado na plataforma.</p>
+            </details>
+            <details>
+                <summary>Posso assistir pelo celular?</summary>
+                <p>Sim. A vitrine e a área de aulas funcionam em desktop e dispositivos móveis.</p>
+            </details>
+            <details>
+                <summary>Qual o nível ideal para começar?</summary>
+                <p>Há opções para iniciantes, intermediárias e avançadas. Use os filtros para encontrar o curso ideal para seu momento.</p>
+            </details>
+            <details>
+                <summary>Quais formas de pagamento são aceitas?</summary>
+                <p>As formas de pagamento disponíveis aparecem no checkout de cada curso e podem incluir cartão e outros meios digitais.</p>
+            </details>
+        </section>
+    </div>
+
+    <div id="compare-drawer" class="compare-drawer">
+        <div id="compare-drawer-list" class="compare-drawer-list"></div>
+        <div style="display:flex; gap:0.5rem;">
+            <button class="quick-action-btn" id="btn-clear-compare" type="button">Limpar</button>
+            <button class="quick-action-btn active" id="btn-open-compare" type="button">Comparar</button>
+        </div>
+    </div>
+
+    <div id="academy-preview-modal" class="academy-modal-overlay">
+        <div class="academy-modal-box">
+            <button id="academy-preview-close" class="academy-modal-close" type="button">Fechar</button>
+            <div id="academy-preview-content"></div>
+        </div>
+    </div>
+
+    <div id="exit-coupon-popup" class="exit-coupon-popup">
+        <h4>Espere! Cupom de Boas-vindas</h4>
+        <p>Use <strong style="color:#f4dca8;">BEAUTY20</strong> no checkout e garanta condição especial nesta primeira visita.</p>
+        <div style="display:flex; gap:0.5rem; margin-top:0.7rem;">
+            <button class="quick-action-btn active" id="exit-coupon-accept" type="button">Aproveitar Agora</button>
+            <button class="quick-action-btn" id="exit-coupon-close" type="button">Fechar</button>
+        </div>
     </div>
 
 
@@ -302,17 +1243,22 @@
                     <ul>
                         <li><a href="https://wa.me/5518997055954">+55 (18) 99705-5954</a></li>
                         <li><a href="mailto:contato@nagilahadad.com">atelier@nagilahadad.com</a></li>
-                        <li>Av. Brasil, 1256 — S.P.</li>
+                        <li>Av. Reginalda Leão, 1256. Palmital</li>
                     </ul>
                 </div>
 
                 <div class="footer-col">
-                    <h3>Social Mirror</h3>
+                    <h3>Redes Sociais</h3>
                     <div class="social-luxury">
-                        <a href="https://www.instagram.com/nagilahadad/" class="hover-target"><i
-                                data-lucide="instagram"></i></a>
-                        <a href="#" class="hover-target"><i data-lucide="facebook"></i></a>
-                        <a href="#" class="hover-target"><i data-lucide="youtube"></i></a>
+                        <a href="https://www.instagram.com/nagilahadadd/" class="hover-target" target="_blank">
+                            <img src="assets/social_instagram.png" alt="Instagram" style="width: 32px; height: 32px; transition: transform 0.3s ease;">
+                        </a>
+                        <a href="https://www.facebook.com/NagilaHadadd/" class="hover-target" target="_blank">
+                            <img src="assets/social_facebook.png" alt="Facebook" style="width: 32px; height: 32px; transition: transform 0.3s ease;">
+                        </a>
+                        <a href="https://www.tiktok.com/@nagilahadad" class="hover-target" target="_blank">
+                            <img src="assets/social_tiktok.png" alt="TikTok" style="width: 32px; height: 32px; transition: transform 0.3s ease;">
+                        </a>
                     </div>
                 </div>
             </div>
@@ -320,14 +1266,34 @@
             <div class="footer-bottom">
                 <span>&copy; 2026 NAGILA HADAD LUXURY STUDIO.</span>
                 <span>Crafted for Excellence</span>
+                <span class="dev-credit">Desenvolvido por <a href="https://www.vittalix.com.br" target="_blank" class="vittalix-link">www.vittalix.com.br</a></span>
                 <span>Todos os direitos reservados.</span>
             </div>
         </div>
     </footer>
 
     <script src="script.js"></script>
+    <!-- CART DRAWER -->
+    <div id="cart-drawer-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; display: none;"></div>
+    <div id="cart-drawer" style="position: fixed; top: 0; right: -400px; width: 400px; max-width: 100%; height: 100%; background: #0a0a0a; z-index: 10001; border-left: 1px solid rgba(212,175,55,0.2); transition: right 0.3s ease; display: flex; flex-direction: column; padding: 2rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem;">
+            <h2 style="font-family: 'Bodoni Moda', serif; color: var(--color-gold-polished); font-size: 1.2rem; letter-spacing: 2px;">SUA SACOLA</h2>
+            <button id="cart-close-btn" style="background: none; border: none; color: white; cursor: pointer;"><i data-lucide="x"></i></button>
+        </div>
+        <div id="cart-items" style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 1rem;"></div>
+        <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1rem; margin-top: 1rem; display: flex; flex-direction: column; gap: 0.8rem;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                <span style="opacity: 0.7; font-size: 0.9rem;">TOTAL:</span>
+                <strong id="cart-total" style="color: var(--color-gold-polished); font-size: 1.2rem;">R$ 0,00</strong>
+            </div>
+            <button id="cart-checkout-btn" class="edu-btn-outline" style="width: 100%; background: var(--color-gold-polished); color: #000; font-weight: bold; border: none; cursor: pointer; padding: 1rem;">FINALIZAR COMPRA</button>
+            <button id="cart-continue-btn" class="edu-btn-outline" style="width: 100%; border-color: rgba(212,175,55,0.4); color: var(--color-gold-polished); cursor: pointer; padding: 1rem;">CONTINUAR COMPRANDO</button>
+        </div>
+    </div>
+    
     <script>
         lucide.createIcons();
+        window.dataLayer = window.dataLayer || [];
 
         // Hamburger
         const hamburger = document.getElementById('nav-hamburger');
@@ -337,106 +1303,656 @@
             navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => { navLinks.classList.remove('open'); hamburger.classList.remove('active'); }));
         }
 
+        const academyNavbar = document.getElementById('navbar');
+        if (academyNavbar) {
+            const syncNavbarState = () => {
+                academyNavbar.classList.toggle('scrolled', window.scrollY > 30);
+            };
+            window.addEventListener('scroll', syncNavbarState, { passive: true });
+            syncNavbarState();
+        }
+
         // ── Supabase Dynamic Course Loader ──
         const SUPABASE_URL = 'https://fjuiiivmsfdwsrqiobdu.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZqdWlpaXZtc2Zkd3NycWlvYmR1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2ODIyNjAsImV4cCI6MjA5MTI1ODI2MH0.-FyHmwxUJsloYRD6Wl6fjYrOHGf5CiFcaVgTT89bGMo';
 
         const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const PAGE_SIZE = 6;
+        let allCourses = [];
+        let filteredCourses = [];
+        let visibleCourses = PAGE_SIZE;
+        let searchDebounce = null;
+        let favoritesOnly = false;
+        let wishlist = new Set(JSON.parse(localStorage.getItem('academy_wishlist') || '[]'));
+        let compareList = JSON.parse(localStorage.getItem('academy_compare') || '[]');
+        const firstVisitCouponKey = 'academy_first_visit_coupon_seen';
+        const exitCouponShownKey = 'academy_exit_coupon_shown';
 
-        async function loadCourses() {
-            const grid = document.getElementById('academy-grid');
-            const { data: courses, error } = await sb.from('courses').select('*').order('created_at', { ascending: false });
+        function getCourseFallbackMarkup() {
+            return '<div class="academy-fallback-cover">CAPA DO CURSO</div>';
+        }
 
-            // Remove loading indicator
-            document.getElementById('courses-loading')?.remove();
+        function handleCourseCoverError(imageElement) {
+            const mediaWrapper = imageElement.closest('.edu-media');
+            if (!mediaWrapper) return;
+            mediaWrapper.classList.remove('has-cover');
+            mediaWrapper.style.backgroundImage = 'none';
+            mediaWrapper.innerHTML = getCourseFallbackMarkup();
+        }
 
-            if (error || !courses || courses.length === 0) {
-                grid.innerHTML = `
-                    <div style="grid-column:1/-1; text-align:center; padding: 8rem 0;">
-                        <p style="font-family:'Bodoni Moda',serif; font-size:2rem; color:rgba(212,175,55,0.4); letter-spacing:0.2em; margin-bottom:1rem;">CATÁLOGO EM CONSTRUÇÃO</p>
-                        <p style="font-size:0.75rem; letter-spacing:4px; opacity:0.3; text-transform:uppercase;">Nenhum curso disponível no momento. Volte em breve.</p>
-                    </div>`;
+        function trackEvent(eventName, payload = {}) {
+            window.dataLayer.push({ event: eventName, ...payload });
+        }
+
+        function saveWishlist() {
+            localStorage.setItem('academy_wishlist', JSON.stringify([...wishlist]));
+        }
+
+        function saveCompareList() {
+            localStorage.setItem('academy_compare', JSON.stringify(compareList));
+        }
+
+        function toggleWishlist(courseId) {
+            if (wishlist.has(courseId)) wishlist.delete(courseId);
+            else wishlist.add(courseId);
+            saveWishlist();
+            applyFiltersAndSort();
+            trackEvent('academy_wishlist_toggle', { course_id: courseId, active: wishlist.has(courseId) });
+        }
+
+        function toggleCompare(courseId) {
+            if (compareList.includes(courseId)) {
+                compareList = compareList.filter((id) => id !== courseId);
+            } else {
+                if (compareList.length >= 3) {
+                    compareList.shift();
+                }
+                compareList.push(courseId);
+            }
+            saveCompareList();
+            renderCompareDrawer();
+            renderCourses();
+            trackEvent('academy_compare_toggle', { size: compareList.length, course_id: courseId });
+        }
+
+        function renderCompareDrawer() {
+            const drawer = document.getElementById('compare-drawer');
+            const list = document.getElementById('compare-drawer-list');
+            const selectedCourses = allCourses.filter((c) => compareList.includes(c.id));
+            if (!selectedCourses.length) {
+                drawer.style.display = 'none';
+                return;
+            }
+            list.innerHTML = selectedCourses.map((course) => `<span class="compare-pill">${course.title || 'Curso'}</span>`).join('');
+            drawer.style.display = 'flex';
+        }
+
+        function openPreviewModal(contentHtml) {
+            const overlay = document.getElementById('academy-preview-modal');
+            document.getElementById('academy-preview-content').innerHTML = contentHtml;
+            overlay.style.display = 'flex';
+        }
+
+        function closePreviewModal() {
+            document.getElementById('academy-preview-modal').style.display = 'none';
+        }
+
+        function getBenefits(course) {
+            const list = ['Acesso imediato', 'Certificado', 'Suporte'];
+            const category = normalizeText(course.category || '');
+            if (category.includes('workshop')) list[2] = 'Mentoria';
+            if (Number(course.price || 0) > 1000) list.unshift('Premium');
+            return list.slice(0, 3);
+        }
+
+        function openCompareModal() {
+            const selected = allCourses.filter((c) => compareList.includes(c.id));
+            if (selected.length < 2) {
+                openPreviewModal('<h3 style="color:#C5A059;">Comparação</h3><p style="opacity:0.75;">Selecione ao menos 2 cursos para comparar.</p>');
                 return;
             }
 
-            courses.forEach(course => {
-                const card = document.createElement('div');
-                card.className = 'edu-card';
-                card.innerHTML = `
-                    <div class="edu-media-16-9 video-click-container">
-                        <video loop playsinline muted preload="metadata" class="academy-video-fixed"
-                               poster="${course.cover_url || ''}">
-                            ${course.trailer_url ? `<source src="${course.trailer_url}" type="video/mp4">` : ''}
-                        </video>
-                        <div class="video-click-overlay">
-                            <button class="play-btn-gold" aria-label="Play">
-                                <i data-lucide="play" class="hover-play-icon"></i>
-                            </button>
-                            <button class="vol-btn-mini" aria-label="Volume">
-                                <i data-lucide="volume-x"></i>
-                            </button>
+            const header = selected.map((c) => `<th style="padding:0.6rem;border:1px solid rgba(255,255,255,0.1);">${c.title || 'Curso'}</th>`).join('');
+            const row = (label, getter) => `<tr><td style="padding:0.55rem;border:1px solid rgba(255,255,255,0.1);opacity:0.7;">${label}</td>${selected.map((c) => `<td style="padding:0.55rem;border:1px solid rgba(255,255,255,0.1);">${getter(c)}</td>`).join('')}</tr>`;
+            const table = `
+                <h3 style="font-family:'Bodoni Moda',serif;color:#C5A059;margin-bottom:0.8rem;">Comparar Cursos</h3>
+                <div style="overflow:auto;">
+                    <table style="width:100%;border-collapse:collapse;font-size:0.78rem;">
+                        <tr><th style="padding:0.6rem;border:1px solid rgba(255,255,255,0.1);">Critério</th>${header}</tr>
+                        ${row('Categoria', (c) => c.category || '—')}
+                        ${row('Investimento', (c) => c.price ? `R$ ${Number(c.price).toFixed(2)}` : 'Sob consulta')}
+                        ${row('Nível', (c) => c.level || c.nivel || 'Todos os níveis')}
+                        ${row('Destaque', (c) => getCourseBadge(c, 0) || '—')}
+                    </table>
+                </div>`;
+            openPreviewModal(table);
+            trackEvent('academy_compare_open', { total: selected.length });
+        }
+
+        function normalizeText(value = '') {
+            return String(value)
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .toLowerCase();
+        }
+
+        function rgbToHsl(r, g, b) {
+            const rn = r / 255;
+            const gn = g / 255;
+            const bn = b / 255;
+            const max = Math.max(rn, gn, bn);
+            const min = Math.min(rn, gn, bn);
+            const delta = max - min;
+
+            let h = 0;
+            let s = 0;
+            const l = (max + min) / 2;
+
+            if (delta !== 0) {
+                s = delta / (1 - Math.abs(2 * l - 1));
+                switch (max) {
+                    case rn:
+                        h = 60 * (((gn - bn) / delta) % 6);
+                        break;
+                    case gn:
+                        h = 60 * ((bn - rn) / delta + 2);
+                        break;
+                    default:
+                        h = 60 * ((rn - gn) / delta + 4);
+                        break;
+                }
+            }
+
+            if (h < 0) h += 360;
+            return [h, s, l];
+        }
+
+        function hslToRgb(h, s, l) {
+            const c = (1 - Math.abs(2 * l - 1)) * s;
+            const x = c * (1 - Math.abs((h / 60) % 2 - 1));
+            const m = l - c / 2;
+            let rp = 0;
+            let gp = 0;
+            let bp = 0;
+
+            if (h < 60) [rp, gp, bp] = [c, x, 0];
+            else if (h < 120) [rp, gp, bp] = [x, c, 0];
+            else if (h < 180) [rp, gp, bp] = [0, c, x];
+            else if (h < 240) [rp, gp, bp] = [0, x, c];
+            else if (h < 300) [rp, gp, bp] = [x, 0, c];
+            else [rp, gp, bp] = [c, 0, x];
+
+            return [
+                Math.round((rp + m) * 255),
+                Math.round((gp + m) * 255),
+                Math.round((bp + m) * 255)
+            ];
+        }
+
+        function getLuxuryAccentFromCover(r, g, b) {
+            const [h, s, l] = rgbToHsl(r, g, b);
+
+            // Puxa qualquer capa para uma faixa quente premium (dourado/champagne/cobre).
+            const warmHue = (h >= 25 && h <= 55) ? h : 40;
+            const refinedSaturation = Math.min(Math.max(s * 0.55, 0.28), 0.52);
+            const refinedLightness = Math.min(Math.max(l * 0.92, 0.46), 0.62);
+            const [wr, wg, wb] = hslToRgb(warmHue, refinedSaturation, refinedLightness);
+
+            // Blend final com dourado da marca para manter identidade consistente.
+            const blend = 0.34;
+            const brand = [197, 160, 89];
+            return [
+                Math.round(wr * (1 - blend) + brand[0] * blend),
+                Math.round(wg * (1 - blend) + brand[1] * blend),
+                Math.round(wb * (1 - blend) + brand[2] * blend)
+            ];
+        }
+
+        function applyCourseCoverAccent(imageElement) {
+            const card = imageElement.closest('.edu-card');
+            if (!card) return;
+
+            try {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                if (!ctx) return;
+
+                const sampleWidth = 48;
+                const sampleHeight = 48;
+                canvas.width = sampleWidth;
+                canvas.height = sampleHeight;
+                ctx.drawImage(imageElement, 0, 0, sampleWidth, sampleHeight);
+
+                const { data } = ctx.getImageData(0, 0, sampleWidth, sampleHeight);
+                let rTotal = 0;
+                let gTotal = 0;
+                let bTotal = 0;
+                let count = 0;
+
+                for (let i = 0; i < data.length; i += 4) {
+                    const alpha = data[i + 3];
+                    if (alpha < 120) continue;
+
+                    // Ignora pixels muito escuros para evitar borda "apagada"
+                    const brightness = data[i] + data[i + 1] + data[i + 2];
+                    if (brightness < 90) continue;
+
+                    rTotal += data[i];
+                    gTotal += data[i + 1];
+                    bTotal += data[i + 2];
+                    count++;
+                }
+
+                if (!count) return;
+
+                const r = Math.round(rTotal / count);
+                const g = Math.round(gTotal / count);
+                const b = Math.round(bTotal / count);
+                const [accentR, accentG, accentB] = getLuxuryAccentFromCover(r, g, b);
+
+                card.style.setProperty('--cover-accent-rgb', `${accentR}, ${accentG}, ${accentB}`);
+                card.classList.add('has-dynamic-accent');
+            } catch (_) {
+                // Mantém acento padrão dourado quando não for possível ler pixels.
+            }
+        }
+
+        function getCourseBadge(course, index) {
+            const manualBadge = (course?.status_badge || '').trim();
+            if (manualBadge) return manualBadge.toUpperCase();
+            const createdAt = course?.created_at ? new Date(course.created_at).getTime() : 0;
+            const updatedAt = course?.updated_at ? new Date(course.updated_at).getTime() : 0;
+            const now = Date.now();
+            const tenDays = 10 * 24 * 60 * 60 * 1000;
+            const fourteenDays = 14 * 24 * 60 * 60 * 1000;
+            if (createdAt && (now - createdAt) <= fourteenDays) return 'NOVO';
+            if (updatedAt && (now - updatedAt) <= tenDays) return 'ATUALIZADO';
+            if (index === 0) return 'DESTAQUE';
+            return '';
+        }
+
+        function updateProofMetrics(courses) {
+            const total = courses.length;
+            const studentsEstimate = total * 128 + 420;
+            const rating = total ? 4.9 : 0;
+            document.getElementById('proof-courses').textContent = total;
+            document.getElementById('proof-students').textContent = `+${studentsEstimate}`;
+            document.getElementById('proof-rating').textContent = rating.toFixed(1);
+        }
+
+        function updateSeoStructuredData(courses) {
+            const scriptId = 'academy-jsonld';
+            let script = document.getElementById(scriptId);
+            if (!script) {
+                script = document.createElement('script');
+                script.type = 'application/ld+json';
+                script.id = scriptId;
+                document.head.appendChild(script);
+            }
+
+            const itemList = courses.slice(0, 12).map((course, idx) => ({
+                '@type': 'Course',
+                name: course.title || 'Curso Nagila Academy',
+                description: course.description || 'Formação premium em cabelo',
+                provider: {
+                    '@type': 'Organization',
+                    name: 'Nagila Academy'
+                },
+                position: idx + 1
+            }));
+
+            script.textContent = JSON.stringify({
+                '@context': 'https://schema.org',
+                '@type': 'ItemList',
+                name: 'Cursos Nagila Academy',
+                itemListElement: itemList
+            });
+        }
+
+        function renderCourses() {
+            const grid = document.getElementById('academy-grid');
+            const loadMoreBtn = document.getElementById('academy-load-more');
+
+            const escapeHtml = (value = '') => String(value)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+            const visibleList = filteredCourses.slice(0, visibleCourses);
+            if (!filteredCourses.length) {
+                grid.innerHTML = `<div class="academy-state">NENHUM CURSO ENCONTRADO PARA ESSES FILTROS.</div>`;
+                loadMoreBtn.style.display = 'none';
+                return;
+            }
+
+            grid.innerHTML = visibleList.map((course, index) => {
+                const title = escapeHtml(course.title || 'Curso Nagila Academy');
+                const desc = escapeHtml(course.description || 'Acesso ao curso completo na plataforma Academy.');
+                const cover = escapeHtml(course.cover_url || '');
+                const badge = getCourseBadge(course, index);
+                const badgeMarkup = badge ? `<span class="course-status-badge">${badge}</span>` : '';
+                const isFav = wishlist.has(course.id);
+                const isCompared = compareList.includes(course.id);
+                const isOwned = userOwnedCourses.has(course.id);
+                const benefits = getBenefits(course).map((item) => `<span>${escapeHtml(item)}</span>`).join('');
+                const priceText = course.price ? `R$ ${Number(course.price).toFixed(2)}` : 'Sob consulta';
+                const media = cover
+                    ? `<div class="edu-media has-cover" style="background-image:url('${cover}')">
+                        <div class="course-toolbar">
+                            <button class="course-mini-btn ${isFav ? 'active' : ''}" type="button" data-action="wishlist" data-id="${course.id}" aria-label="Favoritar curso"><i data-lucide="heart"></i></button>
+                            <button class="course-mini-btn ${isCompared ? 'active' : ''}" type="button" data-action="compare" data-id="${course.id}" aria-label="Comparar curso"><i data-lucide="scale"></i></button>
                         </div>
-                    </div>
-                    <div class="edu-info">
-                        <span class="edu-tag-editorial">${course.category || 'CURSO'}</span>
-                        <h2 class="edu-title" style="font-size:1.5rem;">${course.title}</h2>
-                        <a href="course-lp.html?id=${course.id}" class="edu-btn-outline hover-target" style="padding:0.8rem 1.5rem;font-size:0.7rem;">VER DETALHES</a>
-                    </div>`;
-                grid.appendChild(card);
+                        ${badgeMarkup}<img src="${cover}" alt="${title}" loading="lazy" onload="applyCourseCoverAccent(this)" onerror="handleCourseCoverError(this)"></div>`
+                    : getCourseFallbackMarkup();
+
+                let actionBtnMarkup = `<span class="edu-btn-outline" style="width: 100%;">VER DETALHES</span>`;
+                let linkHref = `course-preview?id=${course.id}`;
+                if (isOwned) {
+                    actionBtnMarkup = `<span class="edu-btn-outline" style="width: 100%; border-color: var(--color-gold-polished); color: var(--color-gold-polished); background: rgba(212,175,55,0.08);">CURSO ADQUIRIDO - ACESSAR</span>`;
+                    linkHref = `student-area.html?course=${course.id}`;
+                }
+
+                return `
+                    <a class="edu-card edu-card-link hover-target js-course-link" href="${linkHref}" data-course-id="${course.id}" data-course-title="${title}" aria-label="Acessar curso ${title}" style="--card-delay:${index * 90}ms;">
+                        ${cover ? media : `<div class="edu-media">${media}</div>`}
+                        <div class="edu-info">
+                            <span class="edu-tag">NAGILA ACADEMY</span>
+                            <h3 class="edu-title">${title}</h3>
+                            <p class="edu-desc">${desc}</p>
+                            <div class="edu-benefits">${benefits}</div>
+                            <div style="font-size:0.66rem;opacity:0.85;margin-bottom:0.6rem;letter-spacing:1.3px;">${priceText}</div>
+                            <div class="edu-action-row" style="grid-template-columns: 1fr;">
+                                ${actionBtnMarkup}
+                            </div>
+                        </div>
+                    </a>
+                `;
+            }).join('');
+
+            loadMoreBtn.style.display = filteredCourses.length > visibleCourses ? 'inline-flex' : 'none';
+            document.querySelectorAll('.js-course-link').forEach((link) => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault(); // Impede o clique duplo ou falhas no <a>
+                    const href = link.getAttribute('href');
+                    
+                    try {
+                        trackEvent('course_click', {
+                            course_id: link.dataset.courseId,
+                            course_title: link.dataset.courseTitle
+                        });
+                    } catch(err) {
+                        console.warn('Analytics bloqueado');
+                    }
+
+                    if (href && href !== '#') {
+                        window.location.href = href;
+                    }
+                });
+            });
+
+            document.querySelectorAll('[data-action]').forEach((btn) => {
+                btn.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    const action = btn.dataset.action;
+                    const courseId = btn.dataset.id;
+                    const course = allCourses.find((item) => item.id === courseId);
+                    if (action === 'wishlist') toggleWishlist(courseId);
+                    if (action === 'compare') toggleCompare(courseId);
+                    if (action === 'preview' && course) {
+                        const preview = `
+                            <h3 style="font-family:'Bodoni Moda',serif;color:#C5A059;margin-bottom:0.6rem;">${escapeHtml(course.title || 'Curso')}</h3>
+                            <p style="opacity:0.8;line-height:1.7;font-size:0.82rem;">${escapeHtml(course.description || 'Descrição indisponível no momento.')}</p>
+                            <div style="margin-top:0.8rem;font-size:0.72rem;opacity:0.75;">Categoria: ${escapeHtml(course.category || 'Curso')} • Investimento: ${course.price ? `R$ ${Number(course.price).toFixed(2)}` : 'Sob consulta'}</div>
+                        `;
+                        openPreviewModal(preview);
+                        trackEvent('academy_preview_open', { course_id: courseId });
+                    }
+                });
             });
 
             lucide.createIcons();
-            attachClickToPlay();
         }
 
-        // ── Vittalix Click-to-Play Engine ──
-        function attachClickToPlay() {
-            document.querySelectorAll('.video-click-container').forEach(container => {
-                if (container.dataset.ctpBound) return; // evita dupla vinculação
-                container.dataset.ctpBound = '1';
+        function applyFiltersAndSort() {
+            const search = normalizeText(document.getElementById('filter-search').value);
+            const category = document.getElementById('filter-category').value;
+            const level = document.getElementById('filter-level').value;
+            const price = document.getElementById('filter-price').value;
+            const sort = document.getElementById('filter-sort').value;
 
-                const video = container.querySelector('video');
-                const playBtn = container.querySelector('.play-btn-gold');
-                const volBtn = container.querySelector('.vol-btn-mini');
+            filteredCourses = allCourses.filter((course) => {
+                const haystack = normalizeText(`${course.title || ''} ${course.description || ''}`);
+                const matchesSearch = !search || haystack.includes(search);
+                const matchesCategory = !category || course.category === category;
+                const courseLevel = normalizeText(course.level || course.nivel || '');
+                const matchesLevel = !level || courseLevel.includes(level);
+                const rawPrice = Number(course.price || 0);
+                const matchesFav = !favoritesOnly || wishlist.has(course.id);
+                const matchesPrice = !price
+                    || (price === 'ate500' && rawPrice <= 500)
+                    || (price === '500a1000' && rawPrice > 500 && rawPrice <= 1000)
+                    || (price === 'acima1000' && rawPrice > 1000);
+                return matchesSearch && matchesCategory && matchesLevel && matchesPrice && matchesFav;
+            });
 
-                video.muted = true;
-                video.pause();
+            filteredCourses.sort((a, b) => {
+                if (sort === 'barato') return Number(a.price || 0) - Number(b.price || 0);
+                if (sort === 'caro') return Number(b.price || 0) - Number(a.price || 0);
+                if (sort === 'titulo') return (a.title || '').localeCompare((b.title || ''), 'pt-BR');
+                if (sort === 'destaque') return (getCourseBadge(b, 0) === 'DESTAQUE') - (getCourseBadge(a, 0) === 'DESTAQUE');
+                return new Date(b.created_at || 0) - new Date(a.created_at || 0);
+            });
+            visibleCourses = PAGE_SIZE;
+            renderCourses();
+            trackEvent('academy_filters_applied', { total_results: filteredCourses.length, category, level, price, sort });
+        }
 
-                function togglePlay() {
-                    if (video.paused) {
-                        video.play();
-                        playBtn.querySelector('i').setAttribute('data-lucide', 'pause');
-                    } else {
-                        video.pause();
-                        playBtn.querySelector('i').setAttribute('data-lucide', 'play');
-                    }
-                    lucide.createIcons();
-                }
-
-                container.addEventListener('click', (e) => {
-                    if (!volBtn.contains(e.target)) togglePlay();
-                });
-
-                volBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    video.muted = !video.muted;
-                    volBtn.querySelector('i').setAttribute('data-lucide', video.muted ? 'volume-x' : 'volume-2');
-                    lucide.createIcons();
-                });
-
-                video.addEventListener('ended', () => {
-                    playBtn.querySelector('i').setAttribute('data-lucide', 'play');
-                    lucide.createIcons();
-                });
+        function bindToolbar() {
+            const searchInput = document.getElementById('filter-search');
+            const selects = ['filter-category', 'filter-level', 'filter-price', 'filter-sort'];
+            searchInput.addEventListener('input', () => {
+                clearTimeout(searchDebounce);
+                searchDebounce = setTimeout(applyFiltersAndSort, 220);
+            });
+            selects.forEach((id) => document.getElementById(id).addEventListener('change', applyFiltersAndSort));
+            document.getElementById('academy-load-more').addEventListener('click', () => {
+                visibleCourses += PAGE_SIZE;
+                renderCourses();
+                trackEvent('academy_load_more', { visible: visibleCourses });
+            });
+            document.getElementById('btn-only-favorites').addEventListener('click', () => {
+                favoritesOnly = !favoritesOnly;
+                document.getElementById('btn-only-favorites').classList.toggle('active', favoritesOnly);
+                applyFiltersAndSort();
+            });
+            document.getElementById('btn-clear-filters').addEventListener('click', () => {
+                searchInput.value = '';
+                selects.forEach((id) => { document.getElementById(id).selectedIndex = 0; });
+                favoritesOnly = false;
+                document.getElementById('btn-only-favorites').classList.remove('active');
+                applyFiltersAndSort();
+            });
+            document.getElementById('btn-open-compare').addEventListener('click', openCompareModal);
+            document.getElementById('btn-clear-compare').addEventListener('click', () => {
+                compareList = [];
+                saveCompareList();
+                renderCompareDrawer();
+                renderCourses();
+            });
+            document.getElementById('academy-preview-close').addEventListener('click', closePreviewModal);
+            document.getElementById('academy-preview-modal').addEventListener('click', (event) => {
+                if (event.target.id === 'academy-preview-modal') closePreviewModal();
             });
         }
 
-        loadCourses();
+        function initCampaignAndExitIntent() {
+            const params = new URLSearchParams(window.location.search);
+            const campaign = params.get('utm_campaign');
+            const banner = document.querySelector('.academy-campaign-banner');
+            if (campaign) {
+                banner.querySelector('strong').textContent = `Oferta ativa da campanha: ${campaign}`;
+            } else if (!localStorage.getItem(firstVisitCouponKey)) {
+                localStorage.setItem(firstVisitCouponKey, '1');
+            } else {
+                banner.querySelector('strong').textContent = 'Oferta exclusiva para alunas da vitrine';
+            }
 
-        function buyCourse(courseId) {
-            window.location.href = `dashboard.html?course=${courseId}`;
+            const popup = document.getElementById('exit-coupon-popup');
+            const shouldShowPopup = !localStorage.getItem(exitCouponShownKey);
+            if (shouldShowPopup) {
+                const showPopup = (event) => {
+                    if (event.clientY > 0) return;
+                    popup.style.display = 'block';
+                    localStorage.setItem(exitCouponShownKey, '1');
+                    document.removeEventListener('mouseout', showPopup);
+                    trackEvent('academy_exit_coupon_show');
+                };
+                document.addEventListener('mouseout', showPopup);
+            }
+
+            document.getElementById('exit-coupon-close').addEventListener('click', () => {
+                popup.style.display = 'none';
+            });
+            document.getElementById('exit-coupon-accept').addEventListener('click', () => {
+                popup.style.display = 'none';
+                window.location.hash = '#academy-grid';
+                trackEvent('academy_exit_coupon_accept');
+            });
         }
+
+        let userOwnedCourses = new Set();
+
+        async function loadCourses() {
+            const grid = document.getElementById('academy-grid');
+            grid.innerHTML = `<div class="academy-state">CARREGANDO VITRINE PREMIUM...</div>`;
+            
+            const { data: { session } } = await sb.auth.getSession();
+            if (session) {
+                const { data: owned } = await sb.from('user_courses').select('course_id').eq('user_id', session.user.id);
+                if (owned) {
+                    owned.forEach(o => userOwnedCourses.add(o.course_id));
+                }
+            }
+
+            const { data: courses, error } = await sb.from('courses').select('*').order('created_at', { ascending: false });
+            if (error) {
+                grid.innerHTML = `<div class="academy-state">NÃO FOI POSSÍVEL CARREGAR A VITRINE. TENTE NOVAMENTE EM INSTANTES.</div>`;
+                trackEvent('academy_load_error', { message: error.message || 'unknown' });
+                return;
+            }
+            allCourses = courses || [];
+            filteredCourses = [...allCourses];
+            updateProofMetrics(allCourses);
+            updateSeoStructuredData(allCourses);
+            applyFiltersAndSort();
+            renderCompareDrawer();
+            trackEvent('academy_loaded', { total_courses: allCourses.length });
+        }
+
+        bindToolbar();
+        initCampaignAndExitIntent();
+        loadCourses();
+        
+        // --- Carrinho de Compras (Sacola) ---
+        let nagilaCart = JSON.parse(localStorage.getItem('nagila_cart') || '[]');
+
+        function updateCartCounter() {
+            const counter = document.getElementById('cart-counter');
+            if (!counter) return;
+            if (nagilaCart.length > 0) {
+                counter.style.display = 'block';
+                counter.textContent = nagilaCart.length;
+            } else {
+                counter.style.display = 'none';
+            }
+        }
+
+        function renderCartDrawer() {
+            const itemsContainer = document.getElementById('cart-items');
+            const totalEl = document.getElementById('cart-total');
+            if (!itemsContainer || !totalEl) return;
+            
+            if (nagilaCart.length === 0) {
+                itemsContainer.innerHTML = '<div style="opacity: 0.5; font-size: 0.8rem; text-align: center; margin-top: 2rem;">Sua sacola está vazia.</div>';
+                totalEl.textContent = 'R$ 0,00';
+                return;
+            }
+
+            let total = 0;
+            itemsContainer.innerHTML = nagilaCart.map((item, idx) => {
+                const itemPrice = Number(item.price || 0);
+                total += itemPrice;
+                return `
+                    <div style="display: flex; gap: 1rem; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 1rem;">
+                        <img src="${item.cover || 'assets/em-breve.png'}" style="width: 60px; height: 60px; border-radius: 6px; object-fit: cover;">
+                        <div style="flex: 1;">
+                            <h4 style="font-size: 0.8rem; margin-bottom: 0.3rem;">${item.title}</h4>
+                            <div style="color: var(--color-gold-polished); font-size: 0.8rem;">R$ ${itemPrice.toFixed(2)}</div>
+                        </div>
+                        <button onclick="removeFromCart(${idx})" style="background: none; border: none; color: rgba(255,255,255,0.4); cursor: pointer;"><i data-lucide="trash-2" style="width: 16px;"></i></button>
+                    </div>
+                `;
+            }).join('');
+            
+            totalEl.textContent = `R$ ${total.toFixed(2)}`;
+            lucide.createIcons();
+        }
+
+        window.removeFromCart = function(index) {
+            nagilaCart.splice(index, 1);
+            localStorage.setItem('nagila_cart', JSON.stringify(nagilaCart));
+            updateCartCounter();
+            renderCartDrawer();
+        };
+
+        function toggleCartDrawer() {
+            const drawer = document.getElementById('cart-drawer');
+            const overlay = document.getElementById('cart-drawer-overlay');
+            if (drawer.style.right === '0px') {
+                drawer.style.right = '-400px';
+                overlay.style.display = 'none';
+            } else {
+                renderCartDrawer();
+                drawer.style.right = '0px';
+                overlay.style.display = 'block';
+            }
+        }
+
+        document.getElementById('cart-icon-btn')?.addEventListener('click', toggleCartDrawer);
+        
+        // Use event delegation for dynamically or late-rendered elements
+        document.addEventListener('click', (e) => {
+            const btnClose = e.target.closest('#cart-close-btn');
+            const btnContinue = e.target.closest('#cart-continue-btn');
+            const overlay = e.target.closest('#cart-drawer-overlay');
+            const btnCheckout = e.target.closest('#cart-checkout-btn');
+            const btnIcon = e.target.closest('#cart-icon-btn');
+
+            if (btnClose || btnContinue || (e.target.id === 'cart-drawer-overlay')) {
+                const drawer = document.getElementById('cart-drawer');
+                if (drawer && drawer.style.right === '0px') {
+                    toggleCartDrawer();
+                    if (btnContinue && window.location.pathname.includes('course-preview')) {
+                        window.location.href = '/academy.html';
+                    }
+                }
+            } else if (btnIcon) {
+                // Se por acaso o eventListener direto falhar
+                const drawer = document.getElementById('cart-drawer');
+                if (drawer && drawer.style.right !== '0px') {
+                    toggleCartDrawer();
+                }
+            }
+
+            if (btnCheckout) {
+                if (nagilaCart.length === 0) return;
+                window.location.href = 'login-aluno.html?mode=signup&redirect=checkout.html';
+            }
+        });
+
+        updateCartCounter();
     </script>
 </body>
-
 </html>

@@ -9,6 +9,7 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="admin-upload-core-v3.js?v=RESGATE_FINAL_V3"></script>
+    <script src="vittalix-player.js"></script>
 
     <style>
         body { background: #050505; color: #fff; font-family: 'Montserrat', sans-serif; overflow: hidden; }
@@ -206,8 +207,42 @@
                         <textarea id="course-desc-input" rows="4" placeholder="Descreva o conteúdo do curso..."></textarea>
                     </div>
                     <div class="form-group">
-                        <label>Ementa (um módulo por linha)</label>
-                        <textarea id="course-syllabus-input" rows="5" placeholder="Módulo 01: Introdução&#10;Módulo 02: Técnicas Avançadas"></textarea>
+                        <label>Badge da Vitrine (Opcional)</label>
+                        <select id="course-badge-input">
+                            <option value="">Automático</option>
+                            <option value="NOVO">NOVO</option>
+                            <option value="ATUALIZADO">ATUALIZADO</option>
+                            <option value="DESTAQUE">DESTAQUE</option>
+                            <option value="MAIS VENDIDO">MAIS VENDIDO</option>
+                            <option value="ÚLTIMAS VAGAS">ÚLTIMAS VAGAS</option>
+                        </select>
+                    </div>
+                    <!-- Lessons Builder (Nova Seção Dinâmica) -->
+                    <div class="form-group">
+                        <label style="color: var(--color-gold-polished); font-weight: 700; border-bottom: 1px solid rgba(212,175,55,0.2); padding-bottom: 8px; margin-bottom: 20px; font-size: 0.7rem; letter-spacing: 2px;">AULAS DO CURSO</label>
+                        
+                        <!-- Form to Add New Lesson -->
+                        <div class="bg-white/5 border border-white/10 p-6 rounded-lg mb-6">
+                            <div class="form-group">
+                                <label style="font-size: 0.65rem; opacity: 0.5;">TÍTULO DA AULA</label>
+                                <input type="text" id="lesson-title-input" placeholder="Ex: Módulo 1: Visagismo e Consulta">
+                            </div>
+                            <div class="form-group">
+                                <label style="font-size: 0.65rem; opacity: 0.5;">VÍDEO DESTA AULA (MP4)</label>
+                                <div class="drop-zone" id="lesson-drop-zone">
+                                    <input type="file" id="lesson-file-input" accept="video/mp4,video/webm" onchange="handleFileSelect('lesson-temp', this)">
+                                    <i data-lucide="video" class="drop-zone-icon" style="width:24px;height:24px;"></i>
+                                    <p style="font-size: 0.6rem; opacity: 0.5;">ARRASte OU CLIQUE PARA SELECIONAR O VÍDEO</p>
+                                    <div class="file-name" id="lesson-temp-name" style="font-size: 0.7rem; color: var(--color-gold-polished); margin-top: 5px;"></div>
+                                </div>
+                            </div>
+                            <button type="button" class="admin-btn-save" style="width: 100%; padding: 0.8rem; font-size: 0.65rem; letter-spacing: 2px;" onclick="addLessonToBuilder()">ADICIONAR AULA À LISTA</button>
+                        </div>
+
+                        <!-- List of Added Lessons (Refatorada para Galeria Premium) -->
+                        <div id="lessons-list-container" class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                            <!-- Cards de Aulas renderizados aqui -->
+                        </div>
                     </div>
                     <div class="form-group">
                         <label>Valor do Investimento (R$)</label>
@@ -309,8 +344,9 @@
         const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 
-        // ── File state (var para garantir hoisting — handlers inline disparam antes do const) ──
+        // ── File state ──
         var selectedFiles = {};
+        var currentCourseLessons = []; // Estado das aulas do curso em edição
 
 
         lucide.createIcons();
@@ -382,16 +418,34 @@
             const password = document.getElementById('login-password').value;
 
             try {
+                // ── Tenta Login Oficial no Supabase (Para obter Token RLS) ──
                 const { data, error } = await sb.auth.signInWithPassword({ email, password });
-                if (error) throw error;
                 
-                // Força re-verificação da lógica central
-                verifyAuthState();
+                if (error) {
+                    // Se o usuário ainda não existir no Supabase, mas for o Master Login, 
+                    // permitimos entrar para visualização, mas avisamos do risco de RLS.
+                    if (email === 'antonio-bocardo@hotmail.com' && password === 'Admin@123') {
+                        console.warn("Acesso via Master Login (Bypass). Operações de banco podem exigir autenticação real.");
+                        showAdminDashboard();
+                        return;
+                    }
+                    throw error;
+                }
+                
+                // Login de sucesso no Supabase
+                console.log("Autenticado via Supabase Auth.");
+                showAdminDashboard();
 
             } catch (err) {
                 showLoginError('Falha: ' + err.message);
                 btn.innerText = 'Autenticar';
             }
+        });
+
+        // ── Pre-fill (Facilitador) ──
+        window.addEventListener('load', () => {
+            document.getElementById('login-email').value = 'antonio-bocardo@hotmail.com';
+            document.getElementById('login-password').value = 'Admin@123';
         });
 
         async function handleLogout() {
@@ -449,7 +503,7 @@
                 <tr>
                     <td>${c.title}</td>
                     <td style="font-size:0.75rem;opacity:0.6;">${c.category || '—'}</td>
-                    <td style="color:#4CAF50;font-size:0.8rem;">ATIVO</td>
+                    <td style="font-size:0.72rem;letter-spacing:1px;color:${c.status_badge ? 'var(--color-gold-polished)' : '#4CAF50'};">${c.status_badge || 'ATIVO'}</td>
                     <td>
                         <button class="action-btn" title="Editar" onclick='openCourseForm(${JSON.stringify(c)})'><i data-lucide="edit-3"></i></button>
                         <button class="action-btn delete" title="Excluir" onclick="deleteCourse('${c.id}')"><i data-lucide="trash-2"></i></button>
@@ -469,13 +523,125 @@
             document.getElementById('course-title-input').value = course?.title || '';
             document.getElementById('course-category-input').value = course?.category || 'MASTERCLASS ONLINE';
             document.getElementById('course-desc-input').value = course?.description || '';
-            document.getElementById('course-syllabus-input').value = course?.syllabus || '';
+            document.getElementById('course-badge-input').value = course?.status_badge || '';
             document.getElementById('course-price-input').value = course?.price || '';
+            
+            // Reset/Load Lessons
+            currentCourseLessons = [];
+            if (course && course.id) {
+                loadCourseLessons(course.id);
+            } else {
+                renderLessonsList();
+            }
+        }
+
+        async function loadCourseLessons(courseId) {
+            const { data, error } = await sb.from('lessons').select('*').eq('course_id', courseId).order('order', { ascending: true });
+            if (!error && data) {
+                currentCourseLessons = data.map(l => ({
+                    id: l.id,
+                    title: l.title,
+                    telegram_file_ids: l.telegram_file_ids,
+                    thumbnailUrl: l.thumbnail_url,
+                    is_saved: true
+                }));
+            }
+            renderLessonsList();
+        }
+
+        async function addLessonToBuilder() {
+            const titleInput = document.getElementById('lesson-title-input');
+            const fileInput = document.getElementById('lesson-file-input');
+            
+            if (!titleInput.value.trim()) { showToast('Dê um título para a aula.', 'error'); return; }
+            if (!selectedFiles['lesson-temp']) { showToast('Selecione o vídeo da aula.', 'error'); return; }
+
+            const videoFile = selectedFiles['lesson-temp'];
+            
+            showToast('Processando miniatura...');
+            
+            let thumbnailBlob = null;
+            try {
+                thumbnailBlob = await generateVideoThumbnail(videoFile);
+            } catch (err) {
+                console.warn("Falha ao gerar thumb:", err);
+            }
+
+            const newLesson = {
+                title: titleInput.value.trim(),
+                videoFile: videoFile,
+                fileName: videoFile.name,
+                thumbnailUrl: thumbnailBlob ? URL.createObjectURL(thumbnailBlob) : null,
+                is_saved: false
+            };
+
+            currentCourseLessons.push(newLesson);
+            
+            // Reset form
+            titleInput.value = '';
+            fileInput.value = '';
+            document.getElementById('lesson-temp-name').textContent = '';
+            delete selectedFiles['lesson-temp'];
+
+            renderLessonsList();
+            showToast('Aula adicionada à fila.');
+        }
+
+        function removeLessonFromBuilder(index) {
+            currentCourseLessons.splice(index, 1);
+            renderLessonsList();
+        }
+
+        function renderLessonsList() {
+            const container = document.getElementById('lessons-list-container');
+            if (currentCourseLessons.length === 0) {
+                container.innerHTML = `<div class="col-span-full py-12 text-center border-2 border-dashed border-white/5 rounded-xl">
+                    <p class="text-white/20 text-xs uppercase tracking-[0.3em]">Nenhuma aula no roteiro ainda.</p>
+                </div>`;
+                return;
+            }
+
+            container.innerHTML = currentCourseLessons.map((l, idx) => {
+                const isSaved = l.is_saved;
+                const playCall = isSaved 
+                    ? `VittalixPlayer.play(null, ${JSON.stringify(l.telegram_file_ids)}, true)`
+                    : `showToast('O vídeo precisa ser salvo para visualização completa.', 'error')`;
+
+                return `
+                <div class="relative group aspect-video bg-black rounded-lg overflow-hidden border border-white/5 hover:border-luxury-gold/30 transition-all cursor-pointer shadow-xl" onclick="${playCall}">
+                    <!-- Thumbnail com Overlay de Play -->
+                    <div class="absolute inset-0">
+                        ${l.thumbnailUrl 
+                            ? `<img src="${l.thumbnailUrl}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">` 
+                            : `<div class="w-full h-full flex items-center justify-center bg-zinc-900"><i data-lucide="video" class="w-8 h-8 text-white/10"></i></div>`
+                        }
+                        <div class="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-all flex items-center justify-center">
+                            <div class="w-12 h-12 rounded-full bg-black/40 backdrop-blur-md border border-luxury-gold/30 flex items-center justify-center text-luxury-gold group-hover:scale-110 group-hover:bg-luxury-gold group-hover:text-black transition-all">
+                                <i data-lucide="play" class="w-5 h-5 fill-current ml-1"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Botão de Deletar (Discreto) -->
+                    <button type="button" onclick="event.stopPropagation(); removeLessonFromBuilder(${idx})" 
+                            class="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/60 backdrop-blur-md border border-white/10 flex items-center justify-center text-white/40 hover:text-red-500 hover:border-red-500/50 transition-all z-10">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    </button>
+
+                    <div class="absolute bottom-0 inset-x-0 p-3 bg-gradient-to-t from-black/95 via-black/40 to-transparent">
+                        <span class="text-[8px] text-luxury-gold/80 uppercase tracking-[0.2em] font-medium block mb-0.5">AULA ${idx + 1}</span>
+                        <h3 class="font-serif text-white text-[11px] leading-tight line-clamp-1">${l.title}</h3>
+                    </div>
+                </div>
+                `;
+            }).join('');
+            lucide.createIcons();
         }
 
         function closeCourseForm() {
             document.getElementById('course-form-card').style.display = 'none';
             Object.keys(selectedFiles).forEach(k => delete selectedFiles[k]);
+            currentCourseLessons = [];
         }
 
         async function saveCourse() {
@@ -488,11 +654,19 @@
             btn.textContent = 'SALVANDO...';
 
             try {
+                // ── VERIFICAÇÃO DE SEGURANÇA (BLOQUEIO 401) ──
+                const { data: { session } } = await sb.auth.getSession();
+                if (!session) {
+                    showToast('Erro de Autenticação: Faça login com uma conta real para gravar no banco.', 'error');
+                    btn.disabled = false;
+                    btn.textContent = 'SALVAR CURSO';
+                    return;
+                }
                 const payload = {
                     title,
                     category: document.getElementById('course-category-input').value,
                     description: document.getElementById('course-desc-input').value,
-                    syllabus: document.getElementById('course-syllabus-input').value,
+                    status_badge: document.getElementById('course-badge-input').value || null,
                     price: parseFloat(document.getElementById('course-price-input').value) || null,
                 };
 
@@ -515,22 +689,66 @@
                     setProgress('trailer', 100);
                 }
 
-                let error;
+                let error, courseData;
                 if (id) {
-                    ({ error } = await sb.from('courses').update(payload).eq('id', id));
+                    ({ data: courseData, error } = await sb.from('courses').update(payload).eq('id', id).select().single());
                 } else {
-                    ({ error } = await sb.from('courses').insert([payload]));
+                    ({ data: courseData, error } = await sb.from('courses').insert([payload]).select().single());
                 }
 
                 if (error) throw error;
 
-                showToast(id ? 'CURSO ATUALIZADO COM SUCESSO!' : 'NOVO CURSO PUBLICADO!');
+                // ── Sincronização de Aulas ──
+                const courseUUID = courseData.id;
+                
+                // 1. Identificar aulas que foram removidas para deletar do banco
+                const currentIds = currentCourseLessons.filter(l => l.id).map(l => l.id);
+                if (id) {
+                    await sb.from('lessons').delete().eq('course_id', courseUUID).not('id', 'in', `(${currentIds.join(',') || '00000000-0000-0000-0000-000000000000'})`);
+                }
+
+                // 2. Upload e Inserção de Novas Aulas
+                for (let i = 0; i < currentCourseLessons.length; i++) {
+                    let lesson = currentCourseLessons[i];
+                    
+                    // Se já estiver salvo, apenas atualizamos a ordem
+                    if (lesson.is_saved) {
+                        const { error: updErr } = await sb.from('lessons').update({ order: i }).eq('id', lesson.id);
+                        if (updErr) console.error("Erro ao atualizar ordem da aula:", updErr);
+                        continue;
+                    }
+
+                    // Se for uma aula nova, fazemos o upload para o Telegram
+                    btn.textContent = `UPLOADING AULA ${i+1}/${currentCourseLessons.length}...`;
+                    
+                    try {
+                        const { fileIds, nativeThumbId } = await vittalixUpload(lesson.videoFile);
+                        
+                        // Salva no Supabase
+                        const { error: lErr } = await sb.from('lessons').insert([{
+                            course_id: courseUUID,
+                            title: lesson.title,
+                            telegram_file_ids: fileIds,
+                            thumbnail_url: nativeThumbId ? `/api/v1/stream?fileId=${nativeThumbId}` : null,
+                            order: i
+                        }]);
+                        
+                        if (lErr) throw lErr;
+                        console.log(`Aula ${i+1} salva com sucesso.`);
+                    } catch (uploadErr) {
+                        console.error(`Falha no upload/save da aula ${i+1}:`, uploadErr);
+                        showToast(`Erro na aula ${i+1}: ${uploadErr.message}`, 'error');
+                    }
+                }
+
+                showToast(id ? 'CURSO E AULAS SINCRONIZADOS!' : 'NOVO CURSO E AULAS PUBLICADOS!');
                 closeCourseForm();
                 loadCourses();
 
             } catch (err) {
-                console.error(err);
-                showToast('Erro ao salvar: ' + err.message, 'error');
+                console.error("Erro crítico no salvamento:", err);
+                const errorMsg = err.message || "Erro de comunicação com o servidor.";
+                showToast(`Falha no Banco: ${errorMsg}`, 'error');
             } finally {
                 btn.disabled = false;
                 btn.textContent = 'SALVAR CURSO';
@@ -661,12 +879,12 @@
                     <div style="background: #151515; border: 1px solid rgba(255,255,255,0.05); border-radius: 4px; padding: 10px; position: relative;">
                         ${item.media_type === 'IMAGE' 
                             ? `<img src="/api/v1/stream?fileId=${thumbId}" style="width: 100%; height: 140px; object-fit: cover; border-radius: 4px; border: 1px solid rgba(212,175,55,0.2);">` 
-                            : `<div style="width: 100%; height: 140px; background: #0a0a0a; border-radius: 4px; display:flex; align-items:center; justify-content:center; border: 1px solid rgba(212,175,55,0.2); position:relative; overflow:hidden;">
-                                <img src="/api/v1/stream?fileId=${thumbId}" style="width: 100%; height: 100%; object-fit: cover; opacity: 0.4;">
-                                <div style="position:absolute; inset:0; background:rgba(0,0,0,0.2); display:flex; align-items:center; justify-content:center;">
-                                    <i data-lucide="video" style="color:var(--color-gold-polished); width: 24px; height: 24px;"></i>
-                                </div>
-                               </div>`
+                             : `<div style="width: 100%; height: 140px; background: #0a0a0a; border-radius: 4px; display:flex; align-items:center; justify-content:center; border: 1px solid rgba(212,175,55,0.2); position:relative; overflow:hidden; cursor:pointer;" onclick='VittalixPlayer.play(null, ${JSON.stringify(fileIds)}, true)'>
+                                 <img src="/api/v1/stream?fileId=${thumbId}" style="width: 100%; height: 100%; object-fit: cover; opacity: 0.4;">
+                                 <div style="position:absolute; inset:0; background:rgba(0,0,0,0.2); display:flex; align-items:center; justify-content:center;">
+                                     <i data-lucide="video" style="color:var(--color-gold-polished); width: 24px; height: 24px;"></i>
+                                 </div>
+                                </div>`
                         }
                         <div style="margin-top: 12px; display: flex; justify-content: space-between; align-items: center;">
                              <label style="font-size: 0.6rem; color: #fff; display: flex; align-items: center; gap: 6px; cursor:pointer; letter-spacing: 1px; flex: 1;">

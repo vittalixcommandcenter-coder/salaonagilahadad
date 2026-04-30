@@ -1,7 +1,21 @@
 {
     "cleanUrls": true,
     "rewrites": [
-        { "source": "/inicio", "destination": "/" },
-        { "source": "/admin", "destination": "/ateliere-admin" }
+        {
+            "source": "/inicio",
+            "destination": "/"
+        },
+        {
+            "source": "/login",
+            "destination": "/login"
+        },
+        {
+            "source": "/admin",
+            "destination": "/ateliere-admin"
+        },
+        {
+            "source": "/academy",
+            "destination": "/academy"
+        }
     ]
-}
+}

@@ -1,20 +1,26 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Salão Nagila Hadad | Sovereign Luxury</title>
-    
+
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <!-- Google Fonts: Cormorant Garamond (Light/Regular), Bodoni Moda & Montserrat -->
-    <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..700&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Montserrat:wght@200;400&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-    
+    <link
+        href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..700&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Montserrat:wght@200;400&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
+        rel="stylesheet">
+
     <link rel="stylesheet" href="style.css">
+    <!-- Tailwind CSS for utility-first luxury refinements -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide Icons for minimalistic SVGs -->
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
+
 <body>
 
     <!-- Minimalist Preloader -->
@@ -43,105 +49,120 @@
     <!-- Navbar code is outside main to stay global -->
     <main class="lp-nagila-hadad">
 
-    <!-- Hero Section Clean Faded Theme -->
+        <!-- Hero Section Clean Faded Theme -->
 
-    <header class="immersive-hero" id="hero">
-        
-        <!-- O container matemático exato para fazer a borda sumir -->
-        <div class="perfect-image-wrapper">
-            <img src="assets/nagila_hero.jpg" class="perfect-image" data-speed="0.2" alt="Nagila Hadad Wella">
-        </div>
-        
-        <!-- Texto Sagrado na Frente -->
-        <div class="front-text-layer active reveal">
-            <h1 class="hero-name-front">NAGILA HADAD</h1>
-            <p class="hero-tagline">A arte de transformar sua autoestima</p>
-            <a href="https://wa.me/5518997055954" class="contact-btn hero-cta hover-target">AGENDAR AGORA</a>
-        </div>
+        <header class="immersive-hero" id="hero">
 
-
-        
-    </header>
-
-    <!-- Seção Sobre Mim Conectada ao Hero -->
-    <section class="secao-sobre-nagila reveal" id="sobre-mim">
-        <div class="sobre-container">
-            <!-- Imagem Urbana (50/50) -->
-            <div class="sobre-imagem">
-                <img src="assets/sobremim1.jpg" alt="Nagila Hadad — O Legado">
+            <!-- O container matemático exato para fazer a borda sumir -->
+            <div class="perfect-image-wrapper">
+                <img src="assets/nagila_hero.jpg" class="perfect-image" alt="Nagila Hadad Wella">
             </div>
 
-            <!-- Conteúdo Profissional (Autoridade) -->
-            <div class="sobre-texto">
-                <h2 class="sobre-titulo">SOBRE MIM</h2>
-                <div class="sobre-bio">
-                    <p>
-                        A trajetória de Nagila Hadad não é feita apenas de tesouras e cores, mas de uma inquietude silenciosa: o desejo de ver beleza além do óbvio. Há mais de uma década, ela compreendeu que o cabelo não era apenas um acessório, mas uma extensão da alma e da arquitetura do rosto.
-                    </p>
-                    <p>
-                        Especializada em técnicas internacionais, Nagila funde o visagismo clássico com a modernidade digital, criando um método autoral onde a colorimetria é tratada como um tesouro soberano.
-                    </p>
-                </div>
-
-                <!-- Blocos de Autoridade de Marca -->
-                <div class="autoridade-marcas">
-                    <div class="marca-item">
-                        <h3>Wella Professionals Artist</h3>
-                        <p>Faz parte do seleto grupo de artistas da <strong>Wella Professionals</strong>, líder mundial em coloração. Domina tecnologias que entregam cores vibrantes e duradouras, respeitando sempre a saúde e integridade da fibra capilar.</p>
-                    </div>
-                    <div class="marca-item">
-                        <h3>Expert GA.MA Italy Brasil</h3>
-                        <p>Como <strong>Expert Oficial</strong>, utiliza ferramentas de altíssima performance para garantir o acabamento de luxo e a proteção térmica necessária para fios impecáveis e saudáveis.</p>
-                    </div>
-                </div>
-
-                <div class="sobre-assinatura">Nágila Hadad</div>
+            <!-- Texto Sagrado na Frente -->
+            <div class="front-text-layer active reveal">
+                <h1 class="hero-name-front">NAGILA HADAD</h1>
+                <p class="hero-tagline">A arte de transformar sua autoestima</p>
+                <a href="https://wa.me/5518997055954" class="contact-btn hero-cta hover-target">AGENDAR AGORA</a>
             </div>
-        </div>
-    </section>
-
-
-    <!-- Transição de Storytelling Solicitada -->
-    <section class="story-divider reveal">
-        <div class="story-content">
-            <h2 class="story-phrase">Onde a técnica encontra a alma</h2>
-            <div class="story-line"></div>
-        </div>
-    </section>
-
-    <!-- Curadoria Especialista (Vídeos com Controle de Proporção) -->
-    <section class="secao-curadoria-nagila reveal" id="cinema">
-        <div class="curadoria-header">
-            <h2 class="section-title">CURADORIA DA ESPECIALISTA</h2>
-            <p class="section-subtitle">Impacto visual com controle de qualidade absoluto.</p>
-        </div>
-
-        <div class="curadoria-grid" id="video-grid">
-            <p id="videos-loading" style="grid-column:1/-1;text-align:center;padding:4rem 0;opacity:0.4;letter-spacing:4px;font-size:0.8rem;">CARREGANDO VÍ DEOS...</p>
-        </div>
-
-        <a href="galeria-videos.html" class="btn-luxury-solid hover-target">
-            EXPLORAR GALERIA COMPLETA DE VÍ DEOS
-        </a>
-    </section>
 
 
 
+        </header>
 
-    <!-- Galeria de Cortes de Cabelo -->
-    <section class="gallery-section reveal" id="gallery">
-        <div class="gallery-header">
-            <h2 class="section-title">Obras de Arte Visíveis</h2>
-            <p class="section-subtitle">A vitrine do salão. Cada corte é esculpido como uma tela em branco.</p>
-        </div>
-        <div class="gallery-grid" id="gallery-grid">
-            <p id="gallery-loading" style="grid-column:1/-1;text-align:center;padding:4rem 0;opacity:0.4;letter-spacing:4px;font-size:0.8rem;">CARREGANDO PORTFÓLIO...</p>
-        </div>
+        <!-- Seção Sobre Mim Redesenhada (Split-screen Editorial) -->
+        <section class="secao-sobre-nagila reveal py-24 md:py-32" id="sobre-mim">
+            <div
+                class="sobre-container max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-24 items-center">
 
-        <a href="portfolio-completo.html" class="btn-luxury-solid hover-target" style="margin-top: 5rem;">
-            VER TODAS AS TRANSFORMAÇÕES (PORTFÓLIO)
-        </a>
-    </section>
+                <!-- Lado Esquerdo: Imagem Portrait Profissional -->
+                <div class="sobre-imagem-wrapper relative">
+                    <div class="absolute -inset-2 border border-[#C5A059]/30 rounded-2xl -z-10"></div>
+                    <img src="assets/sobremim1.jpg" alt="Nagila Hadad — Sovereign Artist"
+                        class="w-full h-[600px] object-cover rounded-xl border border-[#C5A059]/40 shadow-2xl">
+                </div>
+
+                <!-- Lado Direito: Conteúdo Editorial -->
+                <div class="sobre-texto-editorial">
+                    <h2
+                        class="sobre-titulo font-light text-[#C5A059] tracking-[0.35em] mb-10 text-4xl md:text-5xl uppercase">
+                        SOBRE MIM</h2>
+
+                    <div class="sobre-bio-luxury space-y-8 text-neutral-300 font-light leading-relaxed text-lg">
+                        <p>
+                            A trajetória de Nagila Hadad não é feita apenas de tesouras e cores, mas de uma inquietude
+                            silenciosa: o desejo de ver beleza além do óbvio. Há mais de uma década, ela compreendeu que
+                            o cabelo não era apenas um acessório, mas uma extensão da alma e da arquitetura do rosto.
+                        </p>
+                        <p>
+                            Especializada em técnicas internacionais, Nagila funde o visagismo clássico com a
+                            modernidade digital, criando um método autoral onde a colorimetria é tratada como um tesouro
+                            soberano.
+                        </p>
+                    </div>
+
+                    <!-- Blocos de Autoridade Refinados -->
+                    <div class="autoridade-marcas-grid grid grid-cols-1 gap-8 mt-12 pt-12 border-t border-white/10">
+                        <div class="marca-item-luxury">
+                            <h3 class="text-[#C5A059] text-xs tracking-[0.3em] uppercase mb-3 font-semibold">Wella
+                                Professionals Artist</h3>
+                            <p class="text-sm text-neutral-400 font-light leading-relaxed">Faz parte do seleto grupo de
+                                artistas da <strong>Wella Professionals</strong>, líder mundial em coloração. Domina
+                                tecnologias que entregam cores vibrantes e duradouras.</p>
+                        </div>
+                        <div class="marca-item-luxury">
+                            <h3 class="text-[#C5A059] text-xs tracking-[0.3em] uppercase mb-3 font-semibold">Expert
+                                GA.MA Italy Brasil</h3>
+                            <p class="text-sm text-neutral-400 font-light leading-relaxed">Como <strong>Expert
+                                    Oficial</strong>, utiliza ferramentas de altíssima performance para garantir o
+                                acabamento de luxo e proteção térmica absoluta.</p>
+                        </div>
+                    </div>
+
+                    <div class="sobre-assinatura text-4xl mt-12 italic text-[#E6BE8A]/80 font-serif">Nágila Hadad</div>
+                </div>
+            </div>
+        </section>
+
+
+
+        <!-- Curadoria Especialista (Vídeos com Controle de Proporção) -->
+        <section class="secao-curadoria-nagila reveal" id="cinema">
+            <div class="curadoria-header">
+                <h2 class="section-title">CURADORIA DA ESPECIALISTA</h2>
+                <p class="section-subtitle">Impacto visual com controle de qualidade absoluto.</p>
+            </div>
+
+            <div class="curadoria-grid grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-10 px-4"
+                id="video-grid">
+                <p id="videos-loading"
+                    style="grid-column:1/-1;text-align:center;padding:4rem 0;opacity:0.4;letter-spacing:4px;font-size:0.8rem;">
+                    CARREGANDO VÍDEOS...</p>
+            </div>
+
+            <a href="galeria-videos.html" class="btn-luxury-solid hover-target">
+                EXPLORAR GALERIA COMPLETA DE VÍDEOS
+            </a>
+        </section>
+
+
+
+
+        <!-- Galeria de Cortes de Cabelo -->
+        <section class="gallery-section reveal" id="gallery">
+            <div class="gallery-header">
+                <h2 class="section-title">Obras de Arte Visíveis</h2>
+                <p class="section-subtitle">A vitrine do salão. Cada corte é esculpido como uma tela em branco.</p>
+            </div>
+            <div class="gallery-grid" id="gallery-grid">
+                <p id="gallery-loading"
+                    style="grid-column:1/-1;text-align:center;padding:4rem 0;opacity:0.4;letter-spacing:4px;font-size:0.8rem;">
+                    CARREGANDO PORTFÓLIO...</p>
+            </div>
+
+            <a href="portfolio-completo.html" class="btn-luxury-solid hover-target" style="margin-top: 5rem;">
+                VER TODAS AS TRANSFORMAÇÕES (PORTFÓLIO)
+            </a>
+        </section>
 
 
 
@@ -172,16 +193,22 @@
                     <ul>
                         <li><a href="https://wa.me/5518997055954">+55 (18) 99705-5954</a></li>
                         <li><a href="mailto:contato@nagilahadad.com">atelier@nagilahadad.com</a></li>
-                        <li>Av. Brasil, 1256 — S.P.</li>
+                        <li>Av. Reginalda Leão, 1256. Palmital</li>
                     </ul>
                 </div>
 
                 <div class="footer-col">
-                    <h3>Social Mirror</h3>
+                    <h3>Redes Sociais</h3>
                     <div class="social-luxury">
-                        <a href="#" class="hover-target"><i data-lucide="instagram"></i></a>
-                        <a href="#" class="hover-target"><i data-lucide="facebook"></i></a>
-                        <a href="#" class="hover-target"><i data-lucide="youtube"></i></a>
+                        <a href="https://www.instagram.com/nagilahadadd/" class="hover-target" target="_blank">
+                            <img src="assets/social_instagram.png" alt="Instagram" style="width: 32px; height: 32px; transition: transform 0.3s ease;">
+                        </a>
+                        <a href="https://www.facebook.com/NagilaHadadd/" class="hover-target" target="_blank">
+                            <img src="assets/social_facebook.png" alt="Facebook" style="width: 32px; height: 32px; transition: transform 0.3s ease;">
+                        </a>
+                        <a href="https://www.tiktok.com/@nagilahadad" class="hover-target" target="_blank">
+                            <img src="assets/social_tiktok.png" alt="TikTok" style="width: 32px; height: 32px; transition: transform 0.3s ease;">
+                        </a>
                     </div>
                 </div>
             </div>
@@ -189,6 +216,8 @@
             <div class="footer-bottom">
                 <span>&copy; 2026 NAGILA HADAD LUXURY STUDIO.</span>
                 <span>Crafted for Excellence</span>
+                <span class="dev-credit">Desenvolvido por <a href="https://www.vittalix.com.br" target="_blank"
+                        class="vittalix-link">www.vittalix.com.br</a></span>
                 <span>Todos os direitos reservados.</span>
             </div>
         </div>
@@ -232,9 +261,9 @@
             document.getElementById('gallery-loading')?.remove();
             if (photos && photos.length > 0) {
                 galleryGrid.innerHTML = photos.map(p =>
-                    `<div class="gallery-item hover-target" style="position: relative;">
+                    `<div class="gallery-item hover-target">
                         <img src="/api/v1/stream?fileId=${p.telegram_file_id}" alt="${p.title && p.title !== 'EMPTY' ? p.title : ''}"/>
-                        ${(p.title && p.title !== 'EMPTY') ? `<div style="position:absolute; bottom:0; left:0; right:0; background:rgba(0,0,0,0.6); padding:10px; font-size:0.7rem; letter-spacing:2px; text-transform:uppercase; text-align:center;">${p.title}</div>` : ''}
+                        ${(p.title && p.title !== 'EMPTY') ? `<div class="gallery-info-overlay">${p.title}</div>` : ''}
                      </div>`
                 ).join('');
             } else {
@@ -245,23 +274,31 @@
             const { data: videos } = await sbHome.from('gallery').select('*').eq('media_type', 'VIDEO').eq('is_featured', true).order('created_at', { ascending: false }).limit(4);
             const videoGrid = document.getElementById('video-grid');
             document.getElementById('videos-loading')?.remove();
+
             if (videos && videos.length > 0) {
                 videoGrid.innerHTML = videos.map((v, idx) => {
                     const ids = (v.telegram_file_ids && v.telegram_file_ids.length > 0) ? v.telegram_file_ids : (v.telegram_file_id ? [v.telegram_file_id] : []);
                     const dId = `home-vid-${idx}`;
                     const posterUrl = `/api/v1/stream?fileId=${v.telegram_file_id || ids[0]}`;
-                    
+
                     return `
-                    <div class="curadoria-item" style="position: relative;">
-                        <div style="background:#111; position:relative; aspect-ratio:16/9; overflow:hidden; border-radius:8px;">
-                            <video id="${dId}" playsinline muted controls style="width:100%; height:100%; object-fit:cover;" poster="${posterUrl}"></video>
-                            <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.3); cursor:pointer;" onclick='VittalixPlayer.play("${dId}", ${JSON.stringify(ids)})'>
-                                <div style="padding:1.5rem; background:rgba(212,175,55,0.1); border-radius:50%; backdrop-filter:blur(8px); border:1px solid rgba(212,175,55,0.2);">
-                                    <i data-lucide="play" style="color:#fff; width:32px; height:32px;"></i>
+                    <div class="curadoria-item group transition-transform duration-500 hover:scale-[1.03]">
+                        <div class="video-click-container aspect-[9/16] rounded-[2rem] border border-white/10 shadow-xl shadow-black/40 relative">
+                            <video id="${dId}" playsinline muted class="w-full h-full object-cover" poster="${posterUrl}"></video>
+                            
+                            <!-- Custom Overlay Refinado (Controles Soberanos) -->
+                            <div class="video-click-overlay absolute inset-0 transition-all duration-500 flex items-center justify-center">
+                                <div class="play-btn-gold bg-[#C5A059] text-white w-16 h-16 rounded-full flex items-center justify-center shadow-lg shadow-black/40" onclick='VittalixPlayer.play("${dId}", ${JSON.stringify(ids)})'>
+                                    <i data-lucide="play" class="fill-current ml-1"></i>
                                 </div>
+                                <!-- Botão de Volume — Um Só, Elegante -->
+                                <button class="vol-btn-mini absolute bottom-5 right-5 w-9 h-9 rounded-full bg-black/50 backdrop-blur-sm border border-white/10 flex items-center justify-center text-white/70 hover:text-[#C5A059] hover:border-[#C5A059]/40 hover:bg-black/70 transition-all duration-300"
+                                        onclick='VittalixPlayer.toggleMute("${dId}")'>
+                                    <i data-lucide="volume-x" class="w-4 h-4"></i>
+                                </button>
                             </div>
                         </div>
-                        ${v.title && v.title !== 'EMPTY' ? `<div style="padding: 1rem 0; font-size: 0.8rem; opacity: 0.8; letter-spacing: 2px; text-transform:uppercase;">${v.title}</div>` : ''}
+                        ${v.title && v.title !== 'EMPTY' ? `<div class="curadoria-title mt-4 text-[#C5A059] font-light tracking-[0.2em] text-xs uppercase opacity-70 group-hover:opacity-100 transition-opacity">${v.title}</div>` : ''}
                     </div>`;
                 }).join('');
             } else {
@@ -269,9 +306,16 @@
             }
 
             if (window.lucide) lucide.createIcons();
+
+            // Definir volume inicial de 40% para os vídeos da home
+            videos?.forEach((_, idx) => {
+                const vid = document.getElementById(`home-vid-${idx}`);
+                if (vid) vid.volume = 0.4;
+            });
         }
 
         loadHomeContent();
     </script>
 </body>
+
 </html>

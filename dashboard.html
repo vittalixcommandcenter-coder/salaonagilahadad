@@ -3,375 +3,292 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Minha Aula | Nagila Academy LMS</title>
+    <title>Meu Painel | Nagila Academy</title>
     
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:wght@400;700&family=Montserrat:wght@200;400;600&family=Cormorant+Garamond:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:wght@400;700&family=Montserrat:wght@200;400;600&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="vittalix-player.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <style>
-        .lms-wrapper {
-            display: grid;
-            grid-template-columns: 320px 1fr;
-            min-height: 100vh;
-            background: #080808;
+        body {
+            background: #050505;
             color: white;
-            padding-top: 80px; /* Navbar height */
+            font-family: 'Montserrat', sans-serif;
+            padding-top: 100px;
         }
 
-        /* Sidebar: Grade do Moodle */
-        .lms-sidebar {
-            background: #0c0c0c;
-            border-right: 1px solid rgba(212, 175, 55, 0.1);
-            overflow-y: auto;
-            height: calc(100vh - 80px);
-            position: sticky;
-            top: 80px;
+        .dashboard-container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 2rem 5%;
         }
 
-        .sidebar-header {
-            padding: 2.5rem 1.5rem;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
+        .dashboard-header {
+            margin-bottom: 4rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.15);
+            padding-bottom: 2rem;
         }
 
-        .sidebar-header h3 {
+        .dashboard-header h1 {
             font-family: 'Bodoni Moda', serif;
+            font-size: 2.5rem;
             color: var(--color-champagne);
-            font-size: 1.2rem;
-            letter-spacing: 0.1rem;
+            letter-spacing: 0.15em;
             text-transform: uppercase;
         }
 
-        .module-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
+        .dashboard-header p {
+            font-size: 0.8rem;
+            letter-spacing: 3px;
+            opacity: 0.6;
+            margin-top: 10px;
+            text-transform: uppercase;
         }
 
-        .module-item {
-            padding: 1.5rem;
-            border-bottom: 1px solid rgba(255,255,255,0.02);
+        .logout-btn {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
             cursor: pointer;
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
-            gap: 15px;
-            position: relative;
+            gap: 10px;
         }
 
-        .module-item:hover {
-            background: rgba(212, 175, 55, 0.05);
-        }
-
-        .module-item.active {
-            background: rgba(212, 175, 55, 0.1);
-            border-left: 3px solid var(--color-champagne);
-        }
-
-        .module-item.locked {
-            opacity: 0.4;
-            cursor: not-allowed;
-        }
-
-        .module-status {
+        .logout-btn:hover {
+            border-color: var(--color-champagne);
             color: var(--color-champagne);
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            font-weight: 700;
-            margin-bottom: 5px;
-            display: block;
         }
 
-        .module-title {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 0.9rem;
-            font-weight: 400;
-            letter-spacing: 0.05rem;
-            line-height: 1.4;
+        .courses-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 2rem;
         }
 
-        /* Conteúdo Principal */
-        .lms-content {
-            padding: 3rem 5%;
-            max-width: 1200px;
-            margin: 0 auto;
-            width: 100%;
-        }
-
-        .player-wrapper {
-            width: 100%;
-            aspect-ratio: 16/9;
-            background: black;
-            border: 1px solid rgba(212, 175, 55, 0.2);
+        .course-card {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(212, 175, 55, 0.1);
             border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 40px 100px rgba(0,0,0,0.8);
-            margin-bottom: 3rem;
-            position: relative;
+            transition: all 0.4s ease;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            text-decoration: none;
+            color: inherit;
         }
 
-        .main-video {
+        .course-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--color-champagne);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        }
+
+        .course-cover {
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: #111;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .course-cover img {
             width: 100%;
             height: 100%;
-            object-fit: contain;
+            object-fit: cover;
+            transition: transform 0.6s ease;
         }
 
-        .lesson-info {
-            text-align: center;
-            max-width: 900px;
-            margin: 0 auto;
+        .course-card:hover .course-cover img {
+            transform: scale(1.05);
         }
 
-        .lesson-info h1 {
+        .course-cover-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+        }
+
+        .course-info {
+            padding: 1.8rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .course-tag {
+            font-size: 0.6rem;
+            letter-spacing: 3px;
+            color: var(--color-gold-delicate);
+            text-transform: uppercase;
+            margin-bottom: 0.8rem;
+        }
+
+        .course-title {
             font-family: 'Bodoni Moda', serif;
-            font-size: 3.5rem;
+            font-size: 1.3rem;
             color: var(--color-champagne);
-            margin-bottom: 2rem;
-            line-height: 1.2;
-            letter-spacing: -0.02em;
+            margin-bottom: 1rem;
+            line-height: 1.3;
         }
 
-        .lesson-info p {
-            font-family: 'Cormorant Garamond', serif;
+        .course-progress {
+            margin-top: auto;
+            width: 100%;
+            height: 4px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--color-champagne);
+            width: 0%;
+        }
+
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 5rem 2rem;
+            border: 1px dashed rgba(212, 175, 55, 0.2);
+            border-radius: 15px;
+        }
+
+        .empty-state h3 {
+            font-family: 'Bodoni Moda', serif;
+            color: var(--color-champagne);
             font-size: 1.5rem;
-            color: var(--color-pearl);
-            line-height: 1.6;
-            margin-bottom: 4rem;
-            opacity: 0.8;
+            margin-bottom: 1rem;
         }
 
-        .materials-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-            margin: 3rem 0 5rem 0;
-            text-align: left;
+        .empty-state a {
+            display: inline-block;
+            margin-top: 1.5rem;
+            padding: 1rem 2rem;
+            background: var(--color-gold-polished);
+            color: black;
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: 6px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 0.7rem;
         }
 
         @media (max-width: 768px) {
-            .materials-grid { grid-template-columns: 1fr; }
-        }
-
-        .material-card {
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(212, 175, 55, 0.1);
-            padding: 2rem;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-
-        .material-card:hover {
-            border-color: var(--color-champagne);
-            background: rgba(212, 175, 55, 0.05);
-            transform: translateY(-5px);
-        }
-
-        .material-card i {
-            color: var(--color-champagne);
-            padding: 15px;
-            background: rgba(212, 175, 55, 0.1);
-            border-radius: 8px;
-        }
-
-        /* Progress Bar Sutil */
-        .progress-container {
-            position: fixed;
-            top: 78px;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background: rgba(255,255,255,0.05);
-            z-index: 1001;
-        }
-
-        .progress-bar {
-            height: 100%;
-            background: var(--color-champagne);
-            width: 35%; /* Simulado */
-            box-shadow: 0 0 10px var(--color-champagne);
-        }
-
-        .cert-btn-lms {
-            background: var(--color-champagne);
-            color: var(--color-obsidian);
-            border: none;
-            padding: 1.2rem 2.5rem;
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.15rem;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-top: 2rem;
-            transition: all 0.3s ease;
-        }
-
-        .cert-btn-lms:hover {
-            background: white;
-            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
-        }
-
-        /* Mobile Fixes */
-        @media (max-width: 1000px) {
-            .lms-wrapper { grid-template-columns: 1fr; }
-            .lms-sidebar { height: 300px; position: relative; top: 0; }
+            .dashboard-header { flex-direction: column; align-items: flex-start; gap: 1.5rem; }
+            .dashboard-header h1 { font-size: 2rem; }
         }
     </style>
 </head>
 <body>
 
-
-    <!-- Global Nav Fix (Same for all) -->
-    <nav class="navbar scrolled" id="navbar">
-        <button class="nav-hamburger" id="nav-hamburger" aria-label="Menu">
-            <span></span><span></span><span></span>
-        </button>
-        <ul class="nav-links" id="nav-links">
-            <li><a href="/inicio" class="hover-target">INÍCIO</a></li>
-            <li><a href="/inicio#sobre-mim" class="hover-target">SOBRE</a></li>
-            <li><a href="/inicio#cinema" class="hover-target">VÍDEOS</a></li>
-            <li><a href="/inicio#gallery" class="hover-target">GALERIA</a></li>
-            <li><a href="/academy" class="hover-target">ACADEMY</a></li>
+    <nav class="navbar" id="navbar">
+        <ul class="nav-links" style="display:flex;">
+            <li><a href="/academy.html" class="hover-target">VITRINE DE CURSOS</a></li>
         </ul>
-
-
     </nav>
 
-    <div class="progress-container">
-        <div class="progress-bar"></div>
-    </div>
-
-    <div class="lms-wrapper">
-        <!-- GRADE DO MOODLE (SIDEBAR) -->
-        <aside class="lms-sidebar">
-            <div class="sidebar-header">
-                <h3>CONTEÚDO DO CURSO</h3>
-                <p style="font-size: 0.7rem; opacity: 0.5; margin-top: 10px;">35% CONCLUÍDO</p>
+    <main class="dashboard-container">
+        <header class="dashboard-header">
+            <div>
+                <h1 id="user-greeting">MEU PAINEL</h1>
+                <p>ACERVO DE OBRAS ADQUIRIDAS</p>
             </div>
-            
-            <ul class="module-list">
-                <li class="module-item active">
-                    <i data-lucide="check-circle" style="color: #4CAF50;"></i>
-                    <div>
-                        <span class="module-status">Módulo 01</span>
-                        <div class="module-title">Introdução e Mentalidade de Luxo</div>
-                    </div>
-                </li>
-                <li class="module-item">
-                    <i data-lucide="play-circle"></i>
-                    <div>
-                        <span class="module-status">Módulo 02 (Assistindo)</span>
-                        <div class="module-title">Aplicação de Técnica Maestria</div>
-                    </div>
-                </li>
-                <li class="module-item locked">
-                    <i data-lucide="lock"></i>
-                    <div>
-                        <span class="module-status">Módulo 03</span>
-                        <div class="module-title">Colorimetria: O Segredo do Tonalizante</div>
-                    </div>
-                </li>
-                <li class="module-item locked">
-                    <i data-lucide="lock"></i>
-                    <div>
-                        <span class="module-status">Módulo 04</span>
-                        <div class="module-title">Finalização Cinematográfica</div>
-                    </div>
-                </li>
-            </ul>
-        </aside>
+            <button class="logout-btn" onclick="logout()">
+                <i data-lucide="log-out" style="width: 16px; height: 16px;"></i> SAIR
+            </button>
+        </header>
 
-        <!-- ÁREA DO PLAYER -->
-        <main class="lms-content">
-            <div class="player-wrapper">
-                <video class="main-video" id="course-video">
-                    <source src="assets/aula1.mp4" type="video/mp4">
-                    Seu navegador não suporta vídeos.
-                </video>
-                <div class="video-controls-overlay">
-                    <button class="control-btn-circle edu-play-pause"><i data-lucide="play"></i></button>
-                    <button class="vol-btn-mini edu-mute"><i data-lucide="volume-x"></i></button>
-                </div>
-            </div>
-
-            <div class="lesson-info">
-                <h1 id="lesson-title">CARREGANDO...</h1>
-                <p id="lesson-desc">Nesta aula, Nagila Hadad revela o processo criativo por trás das maiores transformações do estúdio, focando em anatomia facial e visagismo aplicado.</p>
-                
-                <!-- Materiais de Apoio (Grid Alinhado) -->
-                <h3 style="font-family: 'Bodoni Moda', serif; color: var(--color-champagne); margin-top: 4rem; margin-bottom: 2rem; text-transform: uppercase; letter-spacing: 2px;">MATERIAIS DE APOIO</h3>
-                
-                <div class="materials-grid">
-                    <div class="material-card" onclick="alert('Fazendo download do PDF...')">
-                        <i data-lucide="file-text"></i>
-                        <div>
-                            <div style="font-weight: 600;">Apostila Técnica.pdf</div>
-                            <div style="font-size: 0.8rem; opacity: 0.5;">4.2 MB • Documento</div>
-                        </div>
-                    </div>
-                    <div class="material-card" onclick="alert('Abrindo Guia de Cores...')">
-                        <i data-lucide="palette"></i>
-                        <div>
-                            <div style="font-weight: 600;">Guia de Cores 2026.png</div>
-                            <div style="font-size: 0.8rem; opacity: 0.5;">1.1 MB • Imagem</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Seção de Certificado Finalizada e Alinhada -->
-                <div style="margin-top: 6rem; border-top: 1px solid rgba(212, 175, 55, 0.1); padding-top: 4rem; padding-bottom: 5rem;">
-                    <i data-lucide="award" style="color: var(--color-champagne); width: 40px; height: 40px; margin-bottom: 1.5rem; opacity: 0.8;"></i>
-                    <p style="opacity: 0.7; margin-bottom: 2.5rem; font-family: 'Montserrat', sans-serif; letter-spacing: 1.5px; text-transform: uppercase; font-size: 0.8rem;">Conclua todos os módulos para liberar seu certificado.</p>
-                    <button class="cert-btn-lms" onclick="window.location.href='certificate.html'">GERAR MEU CERTIFICADO</button>
-                </div>
-            </div>
-        </main>
-    </div>
+        <section class="courses-grid" id="courses-grid">
+            <div style="font-size: 0.8rem; opacity: 0.5;">Buscando seus acessos...</div>
+        </section>
+    </main>
 
     <script>
-        // Vittalix-HD: Sincronização Segura
-        const supabase = supabase.createClient(
-            'https://fjuiiivmsfdwsrqiobdu.supabase.co',
-            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZqdWlpaXZtc2Zkd3NycWlvYmR1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2ODIyNjAsImV4cCI6MjA5MTI1ODI2MH0.-FyHmwxUJsloYRD6Wl6fjYrOHGf5CiFcaVgTT89bGMo'
-        );
+        const SUPABASE_URL = 'https://fjuiiivmsfdwsrqiobdu.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZqdWlpaXZtc2Zkd3NycWlvYmR1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2ODIyNjAsImV4cCI6MjA5MTI1ODI2MH0.-FyHmwxUJsloYRD6Wl6fjYrOHGf5CiFcaVgTT89bGMo';
+        const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-
-        const params = new URLSearchParams(window.location.search);
-        const courseId = params.get('course') || 'loiro';
-
-        async function loadCourseContent() {
-            const h1 = document.getElementById('lesson-title');
-            const { data, error } = await supabase
-                .from('lessons')
-                .select('*')
-                .eq('course_id', courseId)
-                .single();
-
-            if (data && !error) {
-                h1.innerText = data.title;
-                // Inicializa o Player Seguro com os chunks do Telegram
-                window.initVittalixSecurePlayer('course-video', data.telegram_file_ids);
+        async function initDashboard() {
+            // Verifica sessão real
+            const { data: { session } } = await sb.auth.getSession();
+            if (!session) {
+                window.location.href = 'login-aluno.html';
+                return;
             }
+
+            const userName = session.user.user_metadata?.full_name || session.user.email.split('@')[0];
+            document.getElementById('user-greeting').innerText = `OLÁ, ${userName.toUpperCase()}`;
+
+            // Busca os cursos adquiridos
+            const { data: userCourses, error } = await sb
+                .from('user_courses')
+                .select('course_id')
+                .eq('user_id', session.user.id);
+
+            const grid = document.getElementById('courses-grid');
+
+            if (error || !userCourses || userCourses.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <h3>Nenhum curso encontrado</h3>
+                        <p style="font-size: 0.8rem; opacity: 0.6;">Você ainda não possui obras em seu acervo.</p>
+                        <a href="academy.html">EXPLORAR ACADEMY</a>
+                    </div>
+                `;
+                return;
+            }
+
+            const courseIds = userCourses.map(uc => uc.course_id);
+            const { data: courses } = await sb.from('courses').select('*').in('id', courseIds);
+
+            if (!courses || courses.length === 0) {
+                grid.innerHTML = `<div class="empty-state"><h3>Cursos indisponíveis no momento.</h3></div>`;
+                return;
+            }
+
+            grid.innerHTML = courses.map(course => `
+                <a href="student-area.html?course=${course.id}" class="course-card">
+                    <div class="course-cover">
+                        <img src="${course.cover_url || 'assets/em-breve.png'}" alt="Capa">
+                        <div class="course-cover-overlay"></div>
+                    </div>
+                    <div class="course-info">
+                        <span class="course-tag">${course.category || 'ACADEMY'}</span>
+                        <h3 class="course-title">${course.title}</h3>
+                        <div class="course-progress">
+                            <div class="progress-fill" style="width: 0%;"></div>
+                        </div>
+                        <div style="font-size: 0.6rem; opacity: 0.5; margin-top: 10px; letter-spacing: 2px;">CONTINUAR ESTUDOS</div>
+                    </div>
+                </a>
+            `).join('');
+
+            lucide.createIcons();
         }
-        
-        loadCourseContent();
+
+        async function logout() {
+            await sb.auth.signOut();
+            window.location.href = 'login-aluno.html';
+        }
+
+        initDashboard();
         lucide.createIcons();
     </script>
-
-
-    <!-- Script Global (Cursor + Animações) -->
-    <script src="script.js"></script>
-    
-    <!-- Custom Cursor (Final do Body para Garantir Visibilidade) -->
-    <div class="custom-cursor"></div>
-    <div class="cursor-follower"></div>
 </body>
 </html>

@@ -10,6 +10,7 @@
     
     <link rel="stylesheet" href="style.css">
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         .checkout-page {
             min-height: 100vh;
@@ -152,8 +153,11 @@
                     <input type="text" id="course-display" value="CARREGANDO..." readonly>
                 </div>
                 <div class="form-group">
-                    <label>NOME DO PORTADOR</label>
-                    <input type="text" value="GUSTAVO M." readonly>
+                    <label style="display: flex; justify-content: space-between; align-items: center;">
+                        NOME DO ALUNO
+                        <a href="#" onclick="logoutCheckout()" style="color: var(--color-gold-polished); text-decoration: underline; font-size: 0.6rem; text-transform: uppercase;">Trocar de Conta</a>
+                    </label>
+                    <input type="text" id="checkout-user-name" value="Carregando..." readonly>
                 </div>
                 <div class="form-group">
                     <label>NÚMERO DO CARTÃO</label>
@@ -181,28 +185,160 @@
         </div>
     </div>
 
+    <!-- Custom Luxury Alert -->
+    <div id="custom-alert-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(10px);">
+        <div style="background: rgba(15,15,15,0.95); border: 1px solid rgba(212,175,55,0.3); padding: 3rem; text-align: center; border-radius: 12px; max-width: 400px; box-shadow: 0 20px 50px rgba(0,0,0,0.5);">
+            <i data-lucide="check-circle" id="custom-alert-icon" style="color: var(--color-gold-polished); width: 48px; height: 48px; margin-bottom: 1rem; margin-left: auto; margin-right: auto; display: block;"></i>
+            <h3 id="custom-alert-title" style="font-family: 'Bodoni Moda', serif; color: var(--color-champagne); font-size: 1.5rem; margin-bottom: 0.5rem; letter-spacing: 2px; text-transform: uppercase;">Sucesso</h3>
+            <p id="custom-alert-msg" style="color: rgba(255,255,255,0.7); font-size: 0.8rem; line-height: 1.6; margin-bottom: 2rem;">Sua operação foi realizada.</p>
+            <button id="custom-alert-btn" class="checkout-btn" style="margin-top: 0; padding: 1rem;">CONTINUAR</button>
+        </div>
+    </div>
+
     <script src="script.js"></script>
     <script>
-        // Lógica de Redirecionamento 100% Funcional
+        // Lógica de Redirecionamento 100% Funcional (Demo de Fluxo)
+        const SUPABASE_URL = 'https://fjuiiivmsfdwsrqiobdu.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZqdWlpaXZtc2Zkd3NycWlvYmR1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2ODIyNjAsImV4cCI6MjA5MTI1ODI2MH0.-FyHmwxUJsloYRD6Wl6fjYrOHGf5CiFcaVgTT89bGMo';
+        const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
         const params = new URLSearchParams(window.location.search);
-        const courseId = params.get('course') || 'loiro';
+        const courseIdParam = params.get('course');
         const display = document.getElementById('course-display');
+        let currentUser = null;
+        
+        let itemsToBuy = [];
 
-        if (courseId === 'loiro') display.value = "O CÓDIGO DO LOIRO PERFEITO";
-        else display.value = "ARQUITETURA DE CORTE";
+        function showCustomAlert(title, msg, type, callback) {
+            const modal = document.getElementById('custom-alert-modal');
+            const titleEl = document.getElementById('custom-alert-title');
+            const msgEl = document.getElementById('custom-alert-msg');
+            const iconEl = document.getElementById('custom-alert-icon');
+            const btn = document.getElementById('custom-alert-btn');
 
-        document.getElementById('checkout-form-final').addEventListener('submit', (e) => {
+            titleEl.textContent = title;
+            msgEl.textContent = msg;
+
+            if (type === 'error') {
+                iconEl.setAttribute('data-lucide', 'x-circle');
+                iconEl.style.color = '#ff4d4d';
+            } else if (type === 'warning') {
+                iconEl.setAttribute('data-lucide', 'alert-circle');
+                iconEl.style.color = '#FFA500';
+            } else {
+                iconEl.setAttribute('data-lucide', 'check-circle');
+                iconEl.style.color = 'var(--color-gold-polished)';
+            }
+            lucide.createIcons();
+
+            modal.style.display = 'flex';
+
+            btn.onclick = () => {
+                modal.style.display = 'none';
+                if (callback) callback();
+            };
+        }
+
+        async function initCheckout() {
+            const { data: { session } } = await sb.auth.getSession();
+            if (!session) {
+                showCustomAlert("Acesso Restrito", "Para acessar o checkout, você precisa fazer login ou criar sua conta.", "warning", () => {
+                    const redirectUrl = courseIdParam ? `checkout.html?course=${courseIdParam}` : 'checkout.html';
+                    window.location.href = `login-aluno.html?mode=signup&redirect=${encodeURIComponent(redirectUrl)}`;
+                });
+                return;
+            }
+            
+            currentUser = session.user;
+            const userName = currentUser.user_metadata?.full_name || currentUser.email.split('@')[0];
+            document.getElementById('checkout-user-name').value = userName.toUpperCase();
+
+            // Puxar da sacola ou da URL (para compatibilidade)
+            let cart = JSON.parse(localStorage.getItem('nagila_cart') || '[]');
+            if (cart.length > 0) {
+                itemsToBuy = cart;
+            } else if (courseIdParam) {
+                const { data: course } = await sb.from('courses').select('*').eq('id', courseIdParam).single();
+                if (course) {
+                    itemsToBuy = [{ id: course.id, title: course.title, price: course.price }];
+                }
+            }
+
+            if (itemsToBuy.length === 0) {
+                display.value = 'SACOLA VAZIA';
+                return;
+            }
+
+            if (itemsToBuy.length === 1) {
+                display.value = itemsToBuy[0].title.toUpperCase();
+            } else {
+                const total = itemsToBuy.reduce((sum, item) => sum + Number(item.price || 0), 0);
+                display.value = `${itemsToBuy.length} CURSOS NA SACOLA - R$ ${total.toFixed(2)}`;
+            }
+        }
+        
+        initCheckout();
+
+        document.getElementById('checkout-form-final').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('pay-btn');
             btn.innerHTML = "PROCESSANDO TRANSAÇÃO...";
             btn.disabled = true;
             btn.style.opacity = "0.6";
 
-            setTimeout(() => {
-                alert("PAGAMENTO APROVADO! Redirecionando para sua área de estudo...");
-                window.location.href = `dashboard.html?course=${courseId}`;
-            }, 2000);
+            if (!currentUser) return;
+
+            try {
+                if (itemsToBuy.length === 0) {
+                    throw new Error("Sua sacola está vazia ou o curso não foi selecionado corretamente.");
+                }
+
+                // Aguarda 2 segundos para dar sensação de processamento
+                await new Promise(resolve => setTimeout(resolve, 2000));
+
+                const inserts = itemsToBuy.map(item => ({
+                    user_id: currentUser.id,
+                    course_id: item.id
+                }));
+
+                // Inserir todos no banco, ignora se já tiver (onConflict handling manual seria o ideal, mas let's loop or insert array)
+                for (const row of inserts) {
+                    const { error } = await sb.from('user_courses').insert([row]);
+                    if (error && error.code !== '23505') { // 23505 = duplicate key
+                        throw error;
+                    }
+                }
+
+                // Limpa a sacola local
+                localStorage.removeItem('nagila_cart');
+
+                showCustomAlert(
+                    "PAGAMENTO APROVADO!", 
+                    "Sua transação foi processada com sucesso. Redirecionando para o seu painel...", 
+                    "success", 
+                    () => {
+                        window.location.href = `dashboard.html`;
+                    }
+                );
+            } catch (error) {
+                console.error("Erro no checkout:", error);
+                showCustomAlert(
+                    "Erro na Transação", 
+                    "Falha ao processar: " + (error.message || "Erro desconhecido") + ". Tente novamente.", 
+                    "error", 
+                    () => {
+                        btn.innerHTML = "CONFIRMAR PAGAMENTO";
+                        btn.disabled = false;
+                        btn.style.opacity = "1";
+                    }
+                );
+            }
         });
+
+        async function logoutCheckout() {
+            await sb.auth.signOut();
+            window.location.href = `login-aluno.html?mode=signup&redirect=${encodeURIComponent(`checkout.html?course=${courseId}`)}`;
+        }
 
         lucide.createIcons();
     </script>

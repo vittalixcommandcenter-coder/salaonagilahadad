@@ -54,6 +54,7 @@ CREATE TABLE IF NOT EXISTS public.courses (
     title TEXT NOT NULL,
     category TEXT DEFAULT 'CURSO',
     description TEXT,
+    status_badge TEXT,      -- Badge manual da vitrine (ex: NOVO, DESTAQUE)
     syllabus TEXT,
     price NUMERIC(10,2),
     cover_url TEXT,         -- URL da capa via proxy /api/v1/stream
@@ -85,3 +86,26 @@ ALTER TABLE public.gallery ADD COLUMN IF NOT EXISTS is_featured BOOLEAN DEFAULT 
 COMMENT ON TABLE public.gallery IS 'Galeria de transformações e curadoria de vídeos da academia.';
 
 COMMENT ON TABLE public.courses IS 'CMS de cursos — alimenta dinamicamente a Academy e Landing Pages.';
+
+-- 6. Tabela de Compras (Acesso de Alunos aos Cursos)
+CREATE TABLE IF NOT EXISTS public.user_courses (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES auth.users(id) NOT NULL,
+    course_id UUID REFERENCES public.courses(id) NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    UNIQUE(user_id, course_id)
+);
+
+ALTER TABLE public.user_courses ENABLE ROW LEVEL SECURITY;
+
+-- Alunos veem seus próprios cursos
+CREATE POLICY "Alunos veem seus proprios cursos" 
+ON public.user_courses FOR SELECT 
+USING (auth.uid() = user_id);
+
+-- Para permitir que o checkout insira a compra
+CREATE POLICY "Permitir insercao de compra" 
+ON public.user_courses FOR INSERT 
+WITH CHECK (auth.uid() = user_id);
+
+COMMENT ON TABLE public.user_courses IS 'Tabela de relacionamento entre alunos (auth.users) e cursos adquiridos.';
