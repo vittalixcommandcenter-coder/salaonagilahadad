@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
+    if (window.lucide) lucide.createIcons();
 
     // --- Preloader ---
     const fastLoad = () => {
@@ -62,17 +63,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Hamburger Menu ---
     const hamburger = document.getElementById('nav-hamburger');
-    const navLinks = document.getElementById('nav-links');
+    const navLinks = document.getElementById('nav-links') || document.querySelector('.nav-links');
     if (hamburger && navLinks) {
-        hamburger.addEventListener('click', () => {
+        hamburger.addEventListener('click', (e) => {
+            e.stopPropagation();
             hamburger.classList.toggle('active');
             navLinks.classList.toggle('open');
+            document.body.style.overflow = navLinks.classList.contains('open') ? 'hidden' : '';
         });
+
         navLinks.querySelectorAll('a').forEach(link => {
             link.addEventListener('click', () => {
                 hamburger.classList.remove('active');
                 navLinks.classList.remove('open');
+                document.body.style.overflow = '';
             });
+        });
+
+        // Fechar ao clicar fora
+        document.addEventListener('click', (e) => {
+            if (navLinks.classList.contains('open') && !navLinks.contains(e.target) && !hamburger.contains(e.target)) {
+                hamburger.classList.remove('active');
+                navLinks.classList.remove('open');
+                document.body.style.overflow = '';
+            }
         });
     }
 

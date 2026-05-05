@@ -237,17 +237,6 @@
     <script src="vittalix-player.js?v=ZERO_BANDA"></script>
     <script src="script.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            if (window.lucide) lucide.createIcons();
-
-            const hamburger = document.getElementById('nav-hamburger');
-            const navLinks = document.getElementById('nav-links');
-            if (hamburger && navLinks) {
-                hamburger.onclick = () => { navLinks.classList.toggle('open'); hamburger.classList.toggle('active'); };
-                navLinks.querySelectorAll('a').forEach(a => { a.onclick = () => { navLinks.classList.remove('open'); hamburger.classList.remove('active'); }; });
-            }
-        });
-
         // ── Dynamic Content Loaders ──
         const SUPABASE_URL = 'https://fjuiiivmsfdwsrqiobdu.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZqdWlpaXZtc2Zkd3NycWlvYmR1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2ODIyNjAsImV4cCI6MjA5MTI1ODI2MH0.-FyHmwxUJsloYRD6Wl6fjYrOHGf5CiFcaVgTT89bGMo';

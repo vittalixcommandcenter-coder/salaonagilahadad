@@ -145,9 +145,15 @@
 
         .academy-proof-row {
             display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
+            grid-template-columns: 1fr;
             gap: 0.8rem;
             margin-bottom: 0.9rem;
+        }
+
+        @media (min-width: 640px) {
+            .academy-proof-row {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
         }
 
         .proof-item {
@@ -176,9 +182,15 @@
 
         .academy-toolbar {
             display: grid;
-            grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+            grid-template-columns: 1fr;
             gap: 0.7rem;
             margin-bottom: 1.25rem;
+        }
+
+        @media (min-width: 769px) {
+            .academy-toolbar {
+                grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+            }
         }
 
         .academy-toolbar input,
@@ -397,8 +409,14 @@
         .testimonials-grid {
             margin-top: 1.8rem;
             display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
+            grid-template-columns: 1fr;
             gap: 0.8rem;
+        }
+
+        @media (min-width: 900px) {
+            .testimonials-grid {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
         }
 
         .testimonial-card {
@@ -508,8 +526,14 @@
         .academy-trust-row {
             margin-top: 2.2rem;
             display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
+            grid-template-columns: 1fr;
             gap: 0.8rem;
+        }
+
+        @media (min-width: 769px) {
+            .academy-trust-row {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
         }
 
         .trust-card {
@@ -1295,13 +1319,7 @@
         lucide.createIcons();
         window.dataLayer = window.dataLayer || [];
 
-        // Hamburger
-        const hamburger = document.getElementById('nav-hamburger');
-        const navLinks = document.getElementById('nav-links');
-        if (hamburger && navLinks) {
-            hamburger.addEventListener('click', () => { navLinks.classList.toggle('open'); hamburger.classList.toggle('active'); });
-            navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => { navLinks.classList.remove('open'); hamburger.classList.remove('active'); }));
-        }
+        // Hamburger script removed - handled by script.js
 
         const academyNavbar = document.getElementById('navbar');
         if (academyNavbar) {

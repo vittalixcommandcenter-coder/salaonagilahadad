@@ -138,8 +138,12 @@
     <div class="login-bg"></div>
     
     <nav class="navbar" id="navbar">
-        <ul class="nav-links" style="display:flex;">
-            <li><a href="/academy" class="hover-target"><i data-lucide="chevron-left" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> VOLTAR PARA VITRINE</a></li>
+        <button class="nav-hamburger" id="nav-hamburger" aria-label="Menu">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="/academy" class="hover-target"><i data-lucide="chevron-left" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> VITRINE</a></li>
+            <li><a href="/inicio" class="hover-target">INÍCIO</a></li>
         </ul>
     </nav>
 
@@ -169,6 +173,20 @@
             <a class="toggle-mode" id="toggle-mode-btn" onclick="toggleMode()">Não tem uma conta? Cadastre-se</a>
         </div>
     </div>
+
+    <style>
+        @media (max-width: 480px) {
+            .login-card {
+                padding: 3rem 1.5rem;
+                border: none;
+                background: transparent;
+                box-shadow: none;
+            }
+            .login-logo {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
 
     <script>
         const SUPABASE_URL = 'https://fjuiiivmsfdwsrqiobdu.supabase.co';
