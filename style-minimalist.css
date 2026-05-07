@@ -1010,6 +1010,26 @@ body {
     cursor: pointer;
 }
 
+/* Buttons: Minimalist Outline */
+.btn-outline-minimal {
+    display: inline-block;
+    padding: 1.25rem 3rem;
+    border: 1px solid rgba(0,0,0,0.1);
+    font-size: 9px;
+    letter-spacing: 0.6em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: #000;
+    transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+    background: transparent;
+}
+
+.btn-outline-minimal:hover {
+    background: #000;
+    color: #fff;
+    border-color: #000;
+}
+
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
@@ -1059,6 +1079,42 @@ body {
 @keyframes alertPop {
     from { opacity: 0; transform: scale(0.9) translateY(20px); }
     to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* Stage Section: Authority Grid */
+.stage-section .stage-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6rem;
+    align-items: center;
+}
+
+.stage-section .stage-content {
+    order: 1;
+}
+
+.stage-section .stage-image {
+    order: 2;
+}
+
+.stage-section .stage-image .image-wrapper {
+    position: relative;
+}
+
+.stage-section .stage-image .image-border {
+    position: absolute;
+    inset: -1rem;
+    border: 1px solid rgba(197, 160, 89, 0.2);
+    z-index: -1;
+}
+
+@media (max-width: 992px) {
+    .stage-section .stage-grid {
+        grid-template-columns: 1fr;
+        gap: 4rem;
+    }
+    .stage-section .stage-content { order: 1; }
+    .stage-section .stage-image { order: 2; }
 }
 
 /* Responsive Fixes */
