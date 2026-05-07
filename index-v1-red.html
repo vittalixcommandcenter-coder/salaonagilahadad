@@ -268,24 +268,13 @@
                 videoGrid.innerHTML = videos.map((v, idx) => {
                     const ids = (v.telegram_file_ids && v.telegram_file_ids.length > 0) ? v.telegram_file_ids : (v.telegram_file_id ? [v.telegram_file_id] : []);
                     const dId = `home-vid-${idx}`;
-                    const posterUrl = `/api/v1/stream?fileId=${v.telegram_file_id || ids[0]}`;
+                    const posterUrl = `/api/v1/stream?fileId=${v.telegram_file_id || ids[0]}#t=1`;
+                    const videoUrl = `/api/v1/stream?fileId=${ids[0]}#t=1`;
 
                     return `
                     <div class="curadoria-item group transition-transform duration-500 hover:scale-[1.03]">
-                        <div class="video-click-container aspect-[9/16] rounded-[2rem] border border-white/10 shadow-xl shadow-black/40 relative">
-                            <video id="${dId}" playsinline muted class="w-full h-full object-cover" poster="${posterUrl}"></video>
-                            
-                            <!-- Custom Overlay Refinado (Controles Soberanos) -->
-                            <div class="video-click-overlay absolute inset-0 transition-all duration-500 flex items-center justify-center">
-                                <div class="play-btn-gold bg-[#C5A059] text-white w-16 h-16 rounded-full flex items-center justify-center shadow-lg shadow-black/40" onclick='VittalixPlayer.play("${dId}", ${JSON.stringify(ids)})'>
-                                    <i data-lucide="play" class="fill-current ml-1"></i>
-                                </div>
-                                <!-- Botão de Volume — Um Só, Elegante -->
-                                <button class="vol-btn-mini absolute bottom-5 right-5 w-9 h-9 rounded-full bg-black/50 backdrop-blur-sm border border-white/10 flex items-center justify-center text-white/70 hover:text-[#C5A059] hover:border-[#C5A059]/40 hover:bg-black/70 transition-all duration-300"
-                                        onclick='VittalixPlayer.toggleMute("${dId}")'>
-                                    <i data-lucide="volume-x" class="w-4 h-4"></i>
-                                </button>
-                            </div>
+                        <div class="video-click-container aspect-[9/16] rounded-[2rem] border border-white/10 shadow-xl shadow-black/40 relative overflow-hidden">
+                            <video id="${dId}" playsinline muted loop autoplay class="w-full h-full object-cover" src="${videoUrl}" poster="${posterUrl}"></video>
                         </div>
                         ${v.title && v.title !== 'EMPTY' ? `<div class="curadoria-title mt-4 text-[#C5A059] font-light tracking-[0.2em] text-xs uppercase opacity-70 group-hover:opacity-100 transition-opacity">${v.title}</div>` : ''}
                     </div>`;
@@ -306,7 +295,7 @@
         loadHomeContent();
     </script>
 
-    <!-- Sovereign Switcher (Only for Presentation) -->
+    <!-- Sovereign Switcher (Presentation Only) -->
     <div id="sovereign-switcher" style="position: fixed; bottom: 20px; right: 20px; z-index: 9999; display: flex; gap: 10px;">
         <a href="index-minimalist.html" style="background: #F9F7F2; color: #000; padding: 10px 15px; border-radius: 5px; font-size: 10px; text-decoration: none; border: 1px solid #000; font-family: 'Montserrat'; letter-spacing: 2px;">MINIMALIST</a>
         <a href="index-v1-red.html" style="background: #cc0022; color: #fff; padding: 10px 15px; border-radius: 5px; font-size: 10px; text-decoration: none; border: 1px solid #fff; font-family: 'Montserrat'; letter-spacing: 2px;">LUXURY RED</a>

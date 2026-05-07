@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nágila Hadad | ERP Center</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,300;1,300&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --color-gold: #C5A059;
+            --bg-admin: #FBFBF9;
+            --color-text: #111111;
+            --color-success: #15803d;
+            --color-danger: #b91c1c;
+            --color-pending: #d97706;
+        }
+        body { background: var(--bg-admin); color: var(--color-text); font-family: 'Inter', sans-serif; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+        
+        /* Custom Alert UI */
+        .custom-alert { position: fixed; inset: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(5px); z-index: 9999; display: none; align-items: center; justify-content: center; opacity: 0; transition: all 0.3s; }
+        .custom-alert.active { display: flex; opacity: 1; }
+        .alert-content { background: #fff; padding: 3rem; border-radius: 12px; max-width: 400px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.1); border: 1px solid var(--color-gold); }
+        .alert-content p { font-size: 1rem; margin-bottom: 2rem; color: #333; line-height: 1.5; }
+        .btn-confirm { background: #111; color: #fff; border: none; padding: 1rem 2rem; border-radius: 6px; cursor: pointer; text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.7rem; font-weight: 600; }
+
+        .admin-layout { display: grid; grid-template-columns: 300px 1fr; min-height: 100vh; }
+
+        /* Sidebar */
+        .admin-sidebar { background: #fff; padding: 4rem 2.5rem; border-right: 1px solid rgba(0,0,0,0.06); position: sticky; top: 0; height: 100vh; }
+        .admin-logo { font-family: 'Cormorant Garamond', serif; font-size: 2.2rem; font-style: italic; margin-bottom: 5rem; display: block; color: var(--color-gold); }
+        .admin-nav a { display: flex; align-items: center; gap: 1.2rem; padding: 1.4rem 0; text-decoration: none; color: var(--color-text); font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.5; transition: all 0.3s; cursor: pointer; font-weight: 500; }
+        .admin-nav a.active { opacity: 1; color: var(--color-text); font-weight: 700; }
+
+        /* Main */
+        .admin-main { padding: 5rem 6%; }
+        .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5rem; }
+        .admin-title { font-family: 'Cormorant Garamond', serif; font-size: 3.5rem; font-weight: 300; line-height: 1; }
+
+        /* Stats */
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2.5rem; margin-bottom: 5rem; }
+        .stat-card { background: #fff; padding: 2.5rem; border-radius: 12px; border: 1px solid rgba(0,0,0,0.03); box-shadow: 0 4px 20px rgba(0,0,0,0.02); }
+        .stat-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.15em; opacity: 0.5; font-weight: 600; display: block; margin-bottom: 1.2rem; }
+        .stat-value { font-size: 2.2rem; font-family: 'Cormorant Garamond', serif; font-style: italic; color: #000; }
+
+        /* Tabs */
+        .admin-tabs { display: flex; gap: 3rem; margin-bottom: 3rem; border-bottom: 1px solid rgba(0,0,0,0.06); }
+        .tab-link { padding: 1rem 0; cursor: pointer; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.4; transition: all 0.3s; border-bottom: 2px solid transparent; font-weight: 600; }
+        .tab-link.active { opacity: 1; border-color: var(--color-gold); color: var(--color-gold); }
+
+        .admin-panel { display: none; }
+        .admin-panel.active { display: block; animation: fadeIn 0.5s; }
+
+        /* Tables */
+        .content-card { background: #fff; padding: 4rem; border-radius: 16px; box-shadow: 0 4px 24px rgba(0,0,0,0.03); }
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; padding: 1.8rem 0; border-bottom: 1px solid rgba(0,0,0,0.06); opacity: 0.6; font-weight: 700; }
+        td { padding: 2rem 0; border-bottom: 1px solid rgba(0,0,0,0.03); font-size: 0.95rem; }
+
+        .service-tag { font-size: 0.7rem; color: var(--color-gold); text-transform: uppercase; font-weight: 600; letter-spacing: 0.05em; }
+        .status-pill { font-size: 0.6rem; padding: 0.4rem 1rem; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700; }
+        .status-Agendado { background: #FFF7ED; color: #9A3412; }
+        .status-Concluído { background: #F0FDF4; color: #166534; }
+        .status-Cancelado { background: #FEF2F2; color: #991B1B; }
+
+        .action-btn { border: none; background: #F5F5F5; padding: 0.6rem; border-radius: 8px; cursor: pointer; transition: all 0.3s; margin-left: 0.5rem; color: #666; }
+        .action-btn:hover { background: #000; color: #fff; }
+        .action-btn.success:hover { background: var(--color-success); }
+        .action-btn.danger:hover { background: var(--color-danger); }
+
+        /* Finance Split View */
+        .finance-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; }
+        .finance-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+        .finance-title { font-size: 1rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; display: flex; align-items: center; gap: 0.8rem; }
+        .in-label { color: var(--color-success); }
+        .out-label { color: var(--color-danger); }
+
+        /* Forms */
+        .finance-form { display: grid; grid-template-columns: 1fr 1fr 1fr 100px; gap: 1rem; margin-bottom: 4rem; }
+        .input-group label { display: block; font-size: 0.6rem; text-transform: uppercase; margin-bottom: 0.5rem; opacity: 0.5; }
+        input, select { width: 100%; padding: 1rem; border: 1px solid rgba(0,0,0,0.1); border-radius: 8px; font-family: inherit; font-size: 0.9rem; }
+        .btn-lancar { background: #111; color: #fff; border: none; padding: 1rem; border-radius: 8px; cursor: pointer; font-size: 0.7rem; text-transform: uppercase; font-weight: 700; }
+
+        /* Salon Management */
+        .hours-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 1rem; margin-top: 2rem; }
+        .hour-card { background: #FBFBF9; padding: 1.5rem; border-radius: 8px; border: 1px solid rgba(0,0,0,0.05); text-align: center; }
+        .hour-card.inactive { opacity: 0.4; background: #eee; }
+        .day-label { font-weight: 700; font-size: 0.7rem; display: block; margin-bottom: 1rem; }
+        .time-input { font-size: 0.7rem; border: none; background: transparent; text-align: center; width: 100%; font-weight: 600; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+    <div id="custom-alert" class="custom-alert">
+        <div class="alert-content">
+            <p id="alert-msg"></p>
+            <button class="btn-confirm" onclick="closeAlert()">Ok</button>
+        </div>
+    </div>
+
+    <div class="admin-layout">
+        <aside class="admin-sidebar">
+            <span class="admin-logo">N. Hadad</span>
+            <nav class="admin-nav">
+                <a onclick="switchPanel('bookings')" id="nav-bookings" class="active"><i data-lucide="calendar"></i> Agendas</a>
+                <a onclick="switchPanel('finance')" id="nav-finance"><i data-lucide="wallet"></i> Financeiro</a>
+                <a onclick="switchPanel('clients')" id="nav-clients"><i data-lucide="users"></i> Clientes</a>
+                <a onclick="switchPanel('salon')" id="nav-salon"><i data-lucide="home"></i> Gestão do Salão</a>
+                <a onclick="switchPanel('settings')" id="nav-settings"><i data-lucide="settings"></i> Configurações</a>
+            </nav>
+        </aside>
+
+        <main class="admin-main">
+            <header class="admin-header">
+                <h1 class="admin-title" id="panel-title">Painel de <i>Gestão</i></h1>
+                <button class="btn-confirm" onclick="syncAll()">Sincronizar</button>
+            </header>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-label">Agendados Hoje</span>
+                    <span class="stat-value" id="stat-count">0</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Saldo em Caixa</span>
+                    <span class="stat-value" id="stat-balance">R$ 0,00</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Entradas (Mês)</span>
+                    <span class="stat-value" id="stat-in" style="color: var(--color-success)">R$ 0,00</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Saídas (Mês)</span>
+                    <span class="stat-value" id="stat-out" style="color: var(--color-danger)">R$ 0,00</span>
+                </div>
+            </div>
+
+            <!-- PANEL: BOOKINGS -->
+            <div id="panel-bookings" class="admin-panel active">
+                <div class="admin-tabs">
+                    <div class="tab-link active" onclick="switchBookingTab('Agendado', this)">Agendados</div>
+                    <div class="tab-link" onclick="switchBookingTab('Concluído', this)">Concluídos</div>
+                    <div class="tab-link" onclick="switchBookingTab('Cancelado', this)">Cancelados</div>
+                </div>
+                <div class="content-card">
+                    <table id="booking-table">
+                        <thead>
+                            <tr>
+                                <th>Cliente</th>
+                                <th>Serviço</th>
+                                <th>Data/Hora</th>
+                                <th>Telefone</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="booking-tbody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- PANEL: FINANCE -->
+            <div id="panel-finance" class="admin-panel">
+                <div class="content-card mb-12" style="margin-bottom: 3rem;">
+                    <div class="finance-form">
+                        <div class="input-group">
+                            <label>Descrição</label>
+                            <input type="text" id="fin-desc" placeholder="Ex: Aluguel, Compra Wella...">
+                        </div>
+                        <div class="input-group">
+                            <label>Valor (R$)</label>
+                            <input type="number" id="fin-amount" placeholder="0.00">
+                        </div>
+                        <div class="input-group">
+                            <label>Tipo</label>
+                            <select id="fin-type">
+                                <option value="IN">Entrada</option>
+                                <option value="OUT">Saída</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>&nbsp;</label>
+                            <button class="btn-lancar" onclick="addTransaction()">Lançar</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="finance-grid">
+                    <div class="content-card">
+                        <div class="finance-header">
+                            <span class="finance-title in-label"><i data-lucide="trending-up"></i> Entradas</span>
+                        </div>
+                        <table>
+                            <thead><tr><th>Data</th><th>Desc.</th><th>Valor</th></tr></thead>
+                            <tbody id="finance-in-tbody"></tbody>
+                        </table>
+                    </div>
+                    <div class="content-card">
+                        <div class="finance-header">
+                            <span class="finance-title out-label"><i data-lucide="trending-down"></i> Saídas</span>
+                        </div>
+                        <table>
+                            <thead><tr><th>Data</th><th>Desc.</th><th>Valor</th></tr></thead>
+                            <tbody id="finance-out-tbody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PANEL: CLIENTS -->
+            <div id="panel-clients" class="admin-panel">
+                <div class="content-card">
+                    <table>
+                        <thead><tr><th>Nome</th><th>Telefone</th><th>Último Agendamento</th></tr></thead>
+                        <tbody id="clients-tbody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- PANEL: SALON -->
+            <div id="panel-salon" class="admin-panel">
+                <div class="content-card">
+                    <h3 class="font-bold mb-6">Horários de Funcionamento</h3>
+                    <div class="hours-grid" id="hours-grid">
+                        <!-- Rendered via JS -->
+                    </div>
+                    <button class="btn-confirm mt-12" onclick="saveHours()">Salvar Alterações</button>
+                </div>
+            </div>
+
+            <!-- PANEL: SETTINGS -->
+            <div id="panel-settings" class="admin-panel">
+                <div class="content-card">
+                    <h3 class="mb-8 font-bold">Configurações do Sistema</h3>
+                    <div class="input-group mb-6">
+                        <label>Nome do Estabelecimento</label>
+                        <input type="text" value="Nagila Hadad | L'Atelier Muse" disabled>
+                    </div>
+                    <p class="opacity-50 text-[0.7rem] uppercase mt-12">Módulo de gestão de serviços em desenvolvimento.</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const SUPABASE_URL = 'https://fjuiiivmsfdwsrqiobdu.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZqdWlpaXZtc2Zkd3NycWlvYmR1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2ODIyNjAsImV4cCI6MjA5MTI1ODI2MH0.-FyHmwxUJsloYRD6Wl6fjYrOHGf5CiFcaVgTT89bGMo';
+        const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        let currentBookingStatus = 'Agendado';
+        let businessHours = {};
+
+        function showAlert(msg) {
+            document.getElementById('alert-msg').innerText = msg;
+            document.getElementById('custom-alert').classList.add('active');
+        }
+        function closeAlert() { document.getElementById('custom-alert').classList.remove('active'); }
+
+        function switchPanel(p) {
+            document.querySelectorAll('.admin-panel').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.admin-nav a').forEach(el => el.classList.remove('active'));
+            document.getElementById(`panel-${p}`).classList.add('active');
+            document.getElementById(`nav-${p}`).classList.add('active');
+            
+            const titles = { bookings: 'Agendas', finance: 'Financeiro', clients: 'Clientes', salon: 'Gestão do Salão', settings: 'Configurações' };
+            document.getElementById('panel-title').innerHTML = `Painel de <i>${titles[p]}</i>`;
+            lucide.createIcons();
+        }
+
+        function switchBookingTab(status, el) {
+            currentBookingStatus = status;
+            document.querySelectorAll('.tab-link').forEach(t => t.classList.remove('active'));
+            el.classList.add('active');
+            loadBookings();
+        }
+
+        async function syncAll() {
+            await loadBookings();
+            await loadTransactions();
+            await loadClients();
+            await loadSalonSettings();
+            lucide.createIcons();
+            showAlert('Dados sincronizados com sucesso.');
+        }
+
+        async function loadBookings() {
+            const { data, error } = await sb.from('bookings').select('*').eq('status', currentBookingStatus).order('created_at', { ascending: false });
+            if (error) return;
+            const tbody = document.getElementById('booking-tbody');
+            tbody.innerHTML = data.map(b => `
+                <tr>
+                    <td><span class="font-bold">${b.client_name}</span></td>
+                    <td><span class="service-tag">${b.service}</span></td>
+                    <td>${b.date} às ${b.time}</td>
+                    <td>${b.phone || '-'}</td>
+                    <td>
+                        <div class="flex">
+                            ${currentBookingStatus === 'Agendado' ? `
+                                <button class="action-btn success" title="Concluir Atendimento" onclick="completeBooking('${b.id}', '${b.client_name}', '${b.service}')"><i data-lucide="check"></i></button>
+                                <button class="action-btn danger" title="Cancelar" onclick="updateBookingStatus('${b.id}', 'Cancelado')"><i data-lucide="x"></i></button>
+                            ` : ''}
+                            <button class="action-btn" title="Excluir Registro" onclick="deleteBooking('${b.id}')"><i data-lucide="trash-2"></i></button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+            document.getElementById('stat-count').innerText = data.length;
+            lucide.createIcons();
+        }
+
+        async function loadTransactions() {
+            const { data, error } = await sb.from('transactions').select('*').order('created_at', { ascending: false });
+            if (error) return;
+            const inTbody = document.getElementById('finance-in-tbody');
+            const outTbody = document.getElementById('finance-out-tbody');
+            let balance = 0, inc = 0, exp = 0;
+
+            const inRows = [], outRows = [];
+            data.forEach(t => {
+                const amt = parseFloat(t.amount);
+                const row = `<tr><td>${new Date(t.created_at).toLocaleDateString()}</td><td>${t.description}</td><td class="font-bold">R$ ${amt.toLocaleString()}</td></tr>`;
+                if(t.type === 'IN') { inRows.push(row); inc += amt; balance += amt; }
+                else { outRows.push(row); exp += amt; balance -= amt; }
+            });
+
+            inTbody.innerHTML = inRows.join('');
+            outTbody.innerHTML = outRows.join('');
+            document.getElementById('stat-balance').innerText = `R$ ${balance.toLocaleString()}`;
+            document.getElementById('stat-in').innerText = `R$ ${inc.toLocaleString()}`;
+            document.getElementById('stat-out').innerText = `R$ ${exp.toLocaleString()}`;
+        }
+
+        async function loadClients() {
+            const { data, error } = await sb.from('customers').select('*').order('name');
+            if (error) return;
+            document.getElementById('clients-tbody').innerHTML = data.map(c => `
+                <tr><td>${c.name}</td><td>${c.phone}</td><td>${new Date(c.created_at).toLocaleDateString()}</td></tr>
+            `).join('');
+        }
+
+        async function loadSalonSettings() {
+            const { data, error } = await sb.from('salon_settings').select('*').eq('key', 'business_hours').single();
+            if (error) return;
+            businessHours = data.value;
+            renderHours();
+        }
+
+        function renderHours() {
+            const grid = document.getElementById('hours-grid');
+            grid.innerHTML = Object.keys(businessHours).map(day => `
+                <div class="hour-card ${businessHours[day].active ? '' : 'inactive'}">
+                    <span class="day-label">${day}</span>
+                    <input type="text" class="time-input" value="${businessHours[day].open}" onchange="updateHour('${day}', 'open', this.value)">
+                    <span class="opacity-20 text-[0.6rem]">—</span>
+                    <input type="text" class="time-input" value="${businessHours[day].close}" onchange="updateHour('${day}', 'close', this.value)">
+                    <div class="mt-4">
+                        <input type="checkbox" ${businessHours[day].active ? 'checked' : ''} onchange="updateHour('${day}', 'active', this.checked)">
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateHour(day, key, val) {
+            businessHours[day][key] = val;
+        }
+
+        async function saveHours() {
+            const { error } = await sb.from('salon_settings').upsert({ key: 'business_hours', value: businessHours });
+            if (!error) showAlert('Horários de funcionamento salvos!');
+        }
+
+        async function updateBookingStatus(id, status) {
+            const { error } = await sb.from('bookings').update({ status }).eq('id', id);
+            if (!error) loadBookings();
+        }
+
+        async function completeBooking(id, name, service) {
+            const val = prompt(`Finalizar atendimento de ${name}? Edite o valor final se necessário:`, "350.00");
+            if(val) {
+                await updateBookingStatus(id, 'Concluído');
+                await addTransaction(`Atendimento: ${name} (${service})`, val, 'IN');
+            }
+        }
+
+        async function addTransaction(d, a, t) {
+            const description = d || document.getElementById('fin-desc').value;
+            const amount = a || document.getElementById('fin-amount').value;
+            const type = t || document.getElementById('fin-type').value;
+            if(!description || !amount) return showAlert('Preencha os dados da movimentação.');
+            const { error } = await sb.from('transactions').insert([{ description, amount, type }]);
+            if(!error) {
+                if(!d) { document.getElementById('fin-desc').value = ''; document.getElementById('fin-amount').value = ''; }
+                loadTransactions();
+            }
+        }
+
+        async function deleteBooking(id) {
+            if(confirm('Excluir permanentemente este registro?')) {
+                const { error } = await sb.from('bookings').delete().eq('id', id);
+                if(!error) loadBookings();
+            }
+        }
+
+        syncAll();
+        lucide.createIcons();
+        sb.channel('realtime').on('postgres_changes', { event: '*', schema: 'public' }, () => {
+            loadBookings();
+            loadTransactions();
+            loadClients();
+        }).subscribe();
+    </script>
+</body>
+</html>

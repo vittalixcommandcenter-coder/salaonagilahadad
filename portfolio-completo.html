@@ -42,6 +42,7 @@
             border-radius: 4px;
             aspect-ratio: 1 / 1;
             transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            cursor: zoom-in;
         }
         .photo-card-full img {
             width: 100%;
@@ -75,6 +76,122 @@
             letter-spacing: 0.4em;
             text-transform: uppercase;
         }
+
+        /* Modal de Imagem (Organic Cinema Overhaul) */
+        .image-modal-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 10000;
+            background: rgba(0, 0, 0, 0.99);
+            backdrop-filter: blur(35px);
+            -webkit-backdrop-filter: blur(35px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .image-modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+        .image-modal-content {
+            width: 95vw;
+            height: 90vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            cursor: default;
+        }
+        .image-stage {
+            flex-grow: 1;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        .image-stage img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            box-shadow: 0 30px 100px rgba(0,0,0,1);
+            transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* Navigation Arrows (Pure Floating Icons) */
+        .modal-nav-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 120px;
+            height: 100%; /* Área de clique alta para facilitar */
+            background: transparent;
+            border: none;
+            outline: none;
+            color: var(--color-gold-polished);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 100;
+            transition: all 0.5s ease;
+            opacity: 0.2;
+        }
+
+        .modal-nav-arrow:hover {
+            opacity: 1;
+            color: #fff;
+        }
+
+        .modal-nav-arrow.left { left: 0; }
+        .modal-nav-arrow.right { right: 0; }
+
+        .modal-nav-arrow i { 
+            width: 56px; 
+            height: 56px; 
+            stroke-width: 0.8px; /* Mais fino ainda */
+            filter: drop-shadow(0 0 15px rgba(197, 160, 89, 0.4));
+            transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .modal-nav-arrow:hover i {
+            transform: scale(1.2);
+            filter: drop-shadow(0 0 25px rgba(197, 160, 89, 0.8));
+        }
+
+        .close-image-btn-top {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            z-index: 200;
+            background: transparent;
+            border: none;
+            color: rgba(255,255,255,0.4);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .close-image-btn-top:hover {
+            color: #fff;
+            transform: rotate(90deg);
+        }
+        .close-image-btn-top i { width: 32px; height: 32px; stroke-width: 1px; }
+
+        .modal-footer-caption {
+            padding: 25px 0;
+            text-align: center;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.4rem;
+            color: var(--color-gold-polished);
+            letter-spacing: 0.15em;
+            font-style: italic;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 768px) {
+            .modal-nav-arrow { display: none; }
+            .image-modal-content { height: 80vh; }
+        }
     </style>
 </head>
 <body class="lp-nagila-hadad">
@@ -91,6 +208,27 @@
         </div>
     </main>
 
+    <!-- Modal Lightbox Organic Gallery -->
+    <div id="image-modal" class="image-modal-overlay" onclick="closeImageModal()">
+        <div class="image-modal-content" onclick="event.stopPropagation()">
+            <button class="close-image-btn-top" onclick="closeImageModal()">
+                <i data-lucide="x"></i>
+            </button>
+            
+            <button class="modal-nav-arrow left" onclick="prevImage()">
+                <i data-lucide="chevron-left"></i>
+            </button>
+            <button class="modal-nav-arrow right" onclick="nextImage()">
+                <i data-lucide="chevron-right"></i>
+            </button>
+
+            <div class="image-stage">
+                <img id="modal-img-target" src="" alt="Ampliado">
+            </div>
+
+            <div id="modal-caption" class="modal-footer-caption"></div>
+        </div>
+    </div>
 
     <footer class="footer-bottom" style="padding: 4rem 5%; text-align: center; opacity: 0.5; font-size: 0.7rem;">
         &copy; 2026 NAGILA HADAD LUXURY STUDIO. Desenvolvido por <a href="https://www.vittalix.com.br" target="_blank" style="color: inherit; text-decoration: none; border-bottom: 1px solid rgba(212,175,55,0.2);">www.vittalix.com.br</a>. TODOS OS DIREITOS RESERVADOS.
@@ -102,6 +240,9 @@
 
         const sb = supabase.createClient('https://fjuiiivmsfdwsrqiobdu.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZqdWlpaXZtc2Zkd3NycWlvYmR1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2ODIyNjAsImV4cCI6MjA5MTI1ODI2MH0.-FyHmwxUJsloYRD6Wl6fjYrOHGf5CiFcaVgTT89bGMo');
 
+        let allPhotos = [];
+        let currentIndex = 0;
+
         async function loadPortfolio() {
             const grid = document.getElementById('portfolio-grid');
             const { data, error } = await sb.from('gallery').select('*').eq('media_type', 'IMAGE').order('order');
@@ -109,30 +250,74 @@
             document.getElementById('portfolio-loading')?.remove();
 
             if (error || !data || data.length === 0) {
-                grid.innerHTML = `
-                    <div style="grid-column:1/-1; text-align:center; padding:10rem 0;">
-                        <p style="font-family:'Cormorant Garamond',serif; font-size:2rem; color:rgba(212,175,55,0.3); letter-spacing:0.2em; margin-bottom:1rem;">PORTFÓLIO EM CONSTRUÇÃO</p>
-                        <p style="font-size:0.75rem; letter-spacing:4px; opacity:0.3; text-transform:uppercase;">Nenhuma foto publicada ainda.</p>
-                    </div>`;
+                grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:10rem 0;"><p>Sem fotos.</p></div>`;
                 return;
             }
 
-            data.forEach(p => {
-                const card = document.createElement('div');
-                card.className = 'photo-card-full';
+            allPhotos = data;
+
+            grid.innerHTML = data.map((p, idx) => {
                 const src = p.thumbnail_url || `/api/v1/stream?fileId=${p.telegram_file_id}`;
-                card.innerHTML = `
-                    <img src="${src}" alt="${p.title && p.title !== 'EMPTY' ? p.title : ''}" loading="lazy">
-                    ${(p.title && p.title !== 'EMPTY') ? `
-                    <div class="photo-info-overlay">
-                        <div class="photo-info-text">${p.title}</div>
-                    </div>` : ''}
-                `;grid.appendChild(card);
-            });
+                const title = p.title && p.title !== 'EMPTY' ? p.title : '';
+                return `
+                    <div class="photo-card-full" onclick="openImageModal(${idx})">
+                        <img src="${src}" alt="${title}" loading="lazy">
+                        ${title ? `<div class="photo-info-overlay"><div class="photo-info-text">${title}</div></div>` : ''}
+                    </div>
+                `;
+            }).join('');
         }
+
+        function openImageModal(index) {
+            currentIndex = index;
+            const modal = document.getElementById('image-modal');
+            const img = document.getElementById('modal-img-target');
+            const caption = document.getElementById('modal-caption');
+            
+            const photo = allPhotos[currentIndex];
+            const src = photo.thumbnail_url || `/api/v1/stream?fileId=${photo.telegram_file_id}`;
+            
+            img.src = src;
+            caption.innerText = photo.title && photo.title !== 'EMPTY' ? photo.title : 'Obra de Arte';
+            
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function closeImageModal() {
+            const modal = document.getElementById('image-modal');
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        function nextImage() {
+            if (currentIndex < allPhotos.length - 1) {
+                openImageModal(currentIndex + 1);
+            } else {
+                openImageModal(0); // Infinite loop
+            }
+        }
+
+        function prevImage() {
+            if (currentIndex > 0) {
+                openImageModal(currentIndex - 1);
+            } else {
+                openImageModal(allPhotos.length - 1); // Infinite loop
+            }
+        }
+
+        // Keyboard support
+        document.addEventListener('keydown', (e) => {
+            const modal = document.getElementById('image-modal');
+            if (!modal.classList.contains('active')) return;
+            
+            if (e.key === 'ArrowRight') nextImage();
+            if (e.key === 'ArrowLeft') prevImage();
+            if (e.key === 'Escape') closeImageModal();
+        });
 
         loadPortfolio();
     </script>
-
 </body>
 </html>

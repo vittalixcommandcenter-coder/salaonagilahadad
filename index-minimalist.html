@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nágila Hadad | L'Atelier Muse</title>
+    
+    <link rel="stylesheet" href="style-minimalist.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+    <!-- Custom Alert Modal -->
+    <div id="custom-alert" class="custom-alert">
+        <div class="alert-content">
+            <p id="alert-msg"></p>
+            <button class="btn-finalize" onclick="closeAlert()">Ok</button>
+        </div>
+    </div>
+
+    <!-- Booking Modal -->
+    <div id="booking-modal" class="booking-modal">
+        <div class="booking-modal-content">
+            <button class="close-booking" onclick="closeBooking()"><i data-lucide="x"></i></button>
+            
+            <!-- Step 1: Services -->
+            <div id="booking-step-1" class="booking-step active">
+                <span class="category">Passo 01</span>
+                <h2 class="booking-step-title">Escolha sua <i>Experiência</i></h2>
+                <div class="service-grid">
+                    <div class="service-option" onclick="nextBookingStep(2, 'Transformação Alabastre')">
+                        <h3>Transformação Alabastre</h3>
+                        <p>Mudança radical com visagismo.</p>
+                    </div>
+                    <div class="service-option" onclick="nextBookingStep(2, 'Consultoria de Visagismo')">
+                        <h3>Consultoria de Visagismo</h3>
+                        <p>Análise de identidade e design.</p>
+                    </div>
+                    <div class="service-option" onclick="nextBookingStep(2, 'Coloração Premium')">
+                        <h3>Coloração Premium</h3>
+                        <p>Técnicas exclusivas Wella.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2: Calendar & Time -->
+            <div id="booking-step-2" class="booking-step">
+                <span class="category">Passo 02</span>
+                <h2 class="booking-step-title">Selecione <i>Data e Hora</i></h2>
+                <div class="booking-flex-layout">
+                    <div class="calendar-mini">
+                        <div class="calendar-header">
+                            <span>Junho 2026</span>
+                        </div>
+                        <div class="calendar-days" id="calendar-days"></div>
+                    </div>
+                    <div class="time-slots-container">
+                        <span class="time-label">Horários Disponíveis</span>
+                        <div class="time-grid" id="time-grid">
+                            <div class="time-slot" onclick="selectTime('09:00')">09:00</div>
+                            <div class="time-slot" onclick="selectTime('11:00')">11:00</div>
+                            <div class="time-slot" onclick="selectTime('14:00')">14:00</div>
+                            <div class="time-slot" onclick="selectTime('16:00')">16:00</div>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn-back" onclick="prevBookingStep(1)">Voltar</button>
+            </div>
+
+            <!-- Step 3: Contact -->
+            <div id="booking-step-3" class="booking-step">
+                <span class="category">Passo 03</span>
+                <h2 class="booking-step-title">Seus <i>Dados</i></h2>
+                <div class="booking-form">
+                    <input type="text" id="client-name" placeholder="Nome Completo">
+                    <input type="tel" id="client-phone" placeholder="WhatsApp (DDD + Número)">
+                    <button class="btn-finalize" onclick="finalizeBooking()">Confirmar Agendamento</button>
+                </div>
+                <button class="btn-back" onclick="prevBookingStep(2)">Voltar</button>
+            </div>
+            
+            <!-- Step 4: Success -->
+            <div id="booking-step-4" class="booking-step">
+                <div class="success-animation">
+                    <i data-lucide="check-circle" style="width: 80px; height: 80px; color: var(--color-gold); margin: 0 auto 2rem;"></i>
+                </div>
+                <h2 class="booking-step-title">Agendamento <i>Confirmado</i></h2>
+                <p class="text-center opacity-60 mb-8">Sua experiência foi registrada com sucesso em nosso sistema. Nágila já recebeu sua solicitação.</p>
+                <button class="btn-finalize" id="whatsapp-trigger" style="margin-bottom: 1rem;">Enviar Lembrete via WhatsApp</button>
+                <button class="btn-back" style="width: 100%; border: 1px solid rgba(0,0,0,0.1); padding: 1.2rem; opacity: 1; font-weight: 700;" onclick="window.location.reload()">Voltar ao Início</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="marble-texture"></div>
+    <div class="custom-cursor"></div>
+    <div class="custom-cursor-outline"></div>
+
+    <nav class="navbar-capsule-wrapper">
+        <div class="navbar-capsule">
+            <div class="nav-links">
+                <a href="#atelier" onclick="smoothScroll(event, 'atelier')">Atelier</a>
+                <a href="#obras" onclick="smoothScroll(event, 'obras')">Acervo</a>
+                <a href="#cinema" onclick="smoothScroll(event, 'cinema')">Cinema</a>
+                <a href="javascript:void(0)" onclick="openBooking()" class="nav-cta-gold">Agendar</a>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <!-- Hero: Full-Bleed Editorial -->
+        <section class="hero">
+            <div class="hero-canvas-wrapper">
+                <div class="hero-content">
+                    <h1 class="hero-title">
+                        <span class="word">Nágila</span>
+                        <span class="word">Hadad</span>
+                    </h1>
+                    <p class="hero-slogan-editorial">A ARTE DE TRANSFORMAR SUA AUTOESTIMA</p>
+                </div>
+                <div class="hero-portrait-canvas">
+                    <img src="assets/nagila_portrait_new.jpg" alt="Nagila Hadad" class="hero-portrait-img">
+                </div>
+            </div>
+        </section>
+
+        <!-- Section: Authority Strip -->
+        <div class="authority-strip">
+            <span class="logo-item">WELLA PROFESSIONALS ARTIST</span>
+            <span class="dot"></span>
+            <span class="logo-item">DESTAQUE BEAUTY FAIR 2024</span>
+            <span class="dot"></span>
+            <span class="logo-item">THE HAIR CONGRESS SPEAKER</span>
+        </div>
+
+        <!-- Section: The Stage (Authority Recognition) -->
+        <section class="stage-section section-magazine">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-24 items-center">
+                <div class="reveal order-2 md:order-1">
+                    <span class="category">Reconhecimento Global</span>
+                    <h2 class="font-['Cormorant_Garamond'] text-6xl italic mb-8">No Palco do <i>The Hair</i></h2>
+                    <p class="text-lg font-light leading-relaxed opacity-70 mb-8">
+                        Destaque na <b>Beauty Fair 2024</b>, Nágila Hadad subiu ao palco do maior congresso de cabeleireiros das Américas como Artista Oficial Wella Professionals. Sua trajetória é marcada pela inovação e pelo compromisso em elevar o padrão da educação na beleza brasileira.
+                    </p>
+                    <blockquote class="border-l-2 border-[#C5A059] pl-8 italic opacity-80 text-xl font-light">
+                        "Para crescer, é preciso que a equipe tenha o mesmo propósito que você. A educação é o que transforma o nosso mercado."
+                    </blockquote>
+                </div>
+                <div class="reveal order-1 md:order-2">
+                    <div class="relative">
+                        <div class="absolute -inset-4 border border-[#C5A059]/20 -z-10"></div>
+                        <img src="assets/nagila_beauty_fair_ultra.png" alt="Nagila Hadad no Palco Beauty Fair 2024" class="w-full shadow-2xl" style="image-rendering: high-quality;">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section: Manifesto -->
+        <section class="manifesto-section">
+            <p class="reveal">"A beleza não é copiada, ela é <span class="italic text-[#C5A059]">revelada</span> através do visagismo."</p>
+        </section>
+
+        <!-- Section 1: O Atelier (Editorial Layout) -->
+        <section id="atelier" class="section-magazine" style="background: #fff;">
+            <div class="atelier-layered-container">
+                <div class="atelier-image-block reveal">
+                    <img src="https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&q=80&w=1200" alt="Atelier de Maestria Capilar">
+                </div>
+                <div class="atelier-content-block reveal delay-1">
+                    <span class="category">O Legado</span>
+                    <h2 class="atelier-title">O Ateliê <i>Alabastre</i></h2>
+                    <p class="atelier-description">
+                        Um santuário dedicado à <span class="gold-text">pureza estética</span>. Onde o visagismo transcende a técnica e se torna uma assinatura de identidade. Cada traço é pensado para revelar a sua versão mais soberana.
+                    </p>
+                    <div class="atelier-stats">
+                        <div class="stat-item">
+                            <span class="stat-num">Wella Artist</span>
+                            <span class="stat-label">Global Partner</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Portfólio (Asymmetric Masonry) -->
+        <section id="obras" class="section-magazine">
+            <div class="mb-20">
+                <h2 class="font-['Cormorant_Garamond'] text-6xl font-light">Portfólio <i>Editorial</i></h2>
+            </div>
+            
+            <div id="asymmetric-grid" class="editorial-grid">
+                <!-- Fotos dinâmicas -->
+            </div>
+            
+            <div class="mt-20 text-right">
+                <a href="portfolio-minimalist.html" class="inline-block px-12 py-5 border border-black/5 text-[9px] tracking-[0.6em] uppercase hover:bg-black hover:text-white transition-all duration-700">Explorar Todo o Acervo</a>
+            </div>
+        </section>
+
+        <!-- Section 3: Cinema (Compact Film Strip) -->
+        <section id="cinema" class="section-magazine">
+            <div class="mb-20">
+                <h2 class="font-['Cormorant_Garamond'] text-6xl font-light">Cinema <i>High Fidelity</i></h2>
+            </div>
+            
+            <div id="cinema-wall" class="cinema-strip-container">
+                <!-- Vídeos compactos -->
+            </div>
+        </section>
+        <!-- Section: Voices of Excellence (Testimonials) -->
+        <section class="section-magazine bg-white">
+            <div class="text-center mb-20">
+                <span class="category">Voices of Excellence</span>
+                <h2 class="font-['Cormorant_Garamond'] text-6xl italic mt-4">Depoimentos</h2>
+            </div>
+            <div class="testimonial-magazine-grid">
+                <div class="testimonial-card reveal">
+                    <p>"O olhar da Nágila sobre o meu cabelo mudou a forma como eu me vejo no espelho. Uma artista do visagismo."</p>
+                    <cite>— Helena S.</cite>
+                </div>
+                <div class="testimonial-card reveal delay-1">
+                    <p>"Mais que um corte, uma aula de autoconhecimento. O Ateliê é o meu refúgio de autocuidado e luxo."</p>
+                    <cite>— Mariana B.</cite>
+                </div>
+                <div class="testimonial-card reveal delay-2">
+                    <p>"A precisão e a sofisticação que ela entrega são inigualáveis. Uma experiência de nível internacional."</p>
+                    <cite>— Ana Paula R.</cite>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer: The Grand Finale -->
+    <footer class="footer-minimalist">
+        <div class="footer-content reveal">
+            <h2 class="footer-cta-title">Seu momento de <i>Transformação</i> começa agora.</h2>
+            <a href="javascript:void(0)" onclick="openBooking()" class="footer-cta-btn">Agendar Experiência</a>
+            
+            <div class="footer-bottom">
+                <div class="footer-links">
+                    <a href="https://instagram.com/nagilahadad">Instagram</a>
+                    <a href="#">Wella Academy</a>
+                    <a href="#">Privacy</a>
+                </div>
+                <p class="copyright">&copy; 2026 Nágila Hadad Atelier. Design by Vittalix.</p>
+            </div>
+        </div>
+    </footer>
+
+
+    <!-- Switcher -->
+    <div id="sovereign-switcher" class="fixed bottom-6 right-6 z-[2000] flex gap-2">
+        <a href="index-minimalist.html" class="bg-black text-white px-4 py-2 text-[8px] tracking-[0.2em] uppercase font-bold shadow-sm">Minimalist</a>
+        <a href="index-v1-red.html" class="bg-white text-black px-4 py-2 text-[8px] tracking-[0.2em] uppercase border border-black/10 shadow-lg">Red</a>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="vittalix-player.js"></script>
+    <script>
+        const SUPABASE_URL = 'https://fjuiiivmsfdwsrqiobdu.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZqdWlpaXZtc2Zkd3NycWlvYmR1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2ODIyNjAsImV4cCI6MjA5MTI1ODI2MH0.-FyHmwxUJsloYRD6Wl6fjYrOHGf5CiFcaVgTT89bGMo';
+        const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        async function loadContent() {
+            // Photos
+            const { data: photos } = await sb.from('gallery').select('*').eq('media_type', 'IMAGE').eq('is_featured', true).order('created_at', { ascending: false }).limit(6);
+            if (photos) {
+                const classes = ['item-large', 'item-tall', 'item-wide', 'item-wide', 'item-tall', 'item-large'];
+                document.getElementById('asymmetric-grid').innerHTML = photos.map((p, i) => `
+                    <div class="grid-item ${classes[i % classes.length]} reveal" onclick="location.href='portfolio-minimalist.html'">
+                        <img src="/api/v1/stream?fileId=${p.telegram_file_id}" alt="Editorial">
+                    </div>
+                `).join('');
+            }
+
+            // Videos
+            const { data: videos } = await sb.from('gallery').select('*').eq('media_type', 'VIDEO').eq('is_featured', true).order('created_at', { ascending: false }).limit(8);
+            if (videos) {
+                window.allGalleryVideos = videos;
+                document.getElementById('cinema-wall').innerHTML = videos.map((v, i) => {
+                    const ids = (v.telegram_file_ids && v.telegram_file_ids.length > 0) ? v.telegram_file_ids : (v.telegram_file_id ? [v.telegram_file_id] : []);
+                    return `
+                        <div class="cinema-item-compact reveal group cursor-pointer" onclick='VittalixPlayer.openGallery(window.allGalleryVideos, ${i})'>
+                            <video src="/api/v1/stream?fileId=${ids[0]}#t=1" class="w-full h-full object-cover" playsinline muted loop autoplay></video>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            if (window.lucide) lucide.createIcons();
+            initReveal();
+        }
+
+        function initReveal() {
+            const obs = new IntersectionObserver(es => es.forEach(e => e.isIntersecting && e.target.classList.add('active')), {threshold: 0.1});
+            document.querySelectorAll('.reveal').forEach(r => obs.observe(r));
+        }
+
+        // Custom Cursor Logic
+        const cursor = document.querySelector('.custom-cursor');
+        const cursorOutline = document.querySelector('.custom-cursor-outline');
+
+        window.addEventListener('mousemove', (e) => {
+            const posX = e.clientX;
+            const posY = e.clientY;
+
+            cursor.style.transform = `translate3d(${posX}px, ${posY}px, 0)`;
+            
+            cursorOutline.animate({
+                left: `${posX}px`,
+                top: `${posY}px`
+            }, { duration: 500, fill: "forwards" });
+        });
+
+        // Hover Effect on Links/Buttons
+        document.body.addEventListener('mouseover', (e) => {
+            if (e.target.closest('a, button, .grid-item, .cinema-item-compact')) {
+                cursor.style.transform += ' scale(2.5)';
+                cursor.style.backgroundColor = 'var(--color-gold)';
+                cursor.style.opacity = '0.3';
+                cursorOutline.style.opacity = '0';
+            }
+        });
+
+        document.body.addEventListener('mouseout', (e) => {
+            if (e.target.closest('a, button, .grid-item, .cinema-item-compact')) {
+                cursor.style.transform = cursor.style.transform.replace(' scale(2.5)', '');
+                cursor.style.backgroundColor = 'transparent';
+                cursor.style.opacity = '1';
+                cursorOutline.style.opacity = '1';
+            }
+        });
+
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.querySelector('.hero-title').classList.add('active');
+            }, 500);
+        });
+
+        function smoothScroll(e, id) {
+            e.preventDefault();
+            const el = document.getElementById(id);
+            if (el) {
+                const offset = 100; // Desconto da altura do menu fixo
+                const bodyRect = document.body.getBoundingClientRect().top;
+                const elementRect = el.getBoundingClientRect().top;
+                const elementPosition = elementRect - bodyRect;
+                const offsetPosition = elementPosition - offset;
+
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: 'smooth'
+                });
+            }
+        }
+
+        loadContent();
+
+        // --- Booking Modal Logic ---
+        let bookingData = {
+            service: '',
+            date: '',
+            time: ''
+        };
+
+        function openBooking() {
+            document.getElementById('booking-modal').classList.add('active');
+            renderCalendar();
+        }
+
+        function closeBooking() {
+            document.getElementById('booking-modal').classList.remove('active');
+        }
+
+        function nextBookingStep(step, val) {
+            if (val) bookingData.service = val;
+            document.querySelectorAll('.booking-step').forEach(s => s.classList.remove('active'));
+            document.getElementById(`booking-step-${step}`).classList.add('active');
+        }
+
+        function prevBookingStep(step) {
+            document.querySelectorAll('.booking-step').forEach(s => s.classList.remove('active'));
+            document.getElementById(`booking-step-${step}`).classList.add('active');
+        }
+
+        function selectDate(day, el) {
+            document.querySelectorAll('.calendar-days .day').forEach(d => d.classList.remove('selected'));
+            el.classList.add('selected');
+            bookingData.date = `${day} de Junho`;
+        }
+
+        function selectTime(time) {
+            if (!bookingData.date) return alert('Selecione uma data primeiro.');
+            bookingData.time = time;
+            nextBookingStep(3);
+        }
+
+        function renderCalendar() {
+            const container = document.getElementById('calendar-days');
+            container.innerHTML = '';
+            for(let i=1; i<=30; i++) {
+                const isBusy = [2, 5, 8, 12, 15, 19, 22, 26].includes(i);
+                container.innerHTML += `<div class="day ${isBusy ? 'busy' : ''}" onclick="${isBusy ? '' : `selectDate(${i}, this)`}">${i}</div>`;
+            }
+        }
+
+        function showAlert(msg) {
+            document.getElementById('alert-msg').innerText = msg;
+            document.getElementById('custom-alert').classList.add('active');
+        }
+
+        function closeAlert() {
+            document.getElementById('custom-alert').classList.remove('active');
+        }
+
+        async function finalizeBooking() {
+            const name = document.getElementById('client-name').value;
+            const phone = document.getElementById('client-phone').value;
+            if(!name || !phone) return showAlert('Por favor, preencha nome e telefone.');
+            
+            // Save to Database (Supabase)
+            const { error } = await sb.from('bookings').insert([
+                { 
+                    client_name: name, 
+                    phone: phone,
+                    service: bookingData.service, 
+                    date: bookingData.date, 
+                    time: bookingData.time,
+                    status: 'Agendado'
+                }
+            ]);
+
+            // Save to Customers
+            await sb.from('customers').upsert({ name, phone }, { onConflict: 'phone' });
+
+            if (error) {
+                console.error('Error saving booking:', error);
+                showAlert('Erro ao processar agendamento. Tente novamente.');
+                return;
+            }
+            
+            // Show Success Step
+            nextBookingStep(4);
+            
+            // Prepare WhatsApp Trigger
+            const text = `Olá Nágila! Acabo de agendar: *${bookingData.service}* para o dia *${bookingData.date}* às *${bookingData.time}*. Meu nome é ${name}.`;
+            document.getElementById('whatsapp-trigger').onclick = () => {
+                window.open(`https://wa.me/5518997055954?text=${encodeURIComponent(text)}`);
+            };
+        }
+    </script>
+</body>
+</html>

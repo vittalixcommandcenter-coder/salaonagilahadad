@@ -243,13 +243,13 @@
                 
                 if (fileIds.length === 0) return '';
 
-                const posterUrl = `/api/v1/stream?fileId=${fileIds[0]}`;
-                const title = v.title && v.title !== 'EMPTY' ? v.title : 'OBRA SEM TÍTULO';
-                const tag = v.tag || 'PORTFOLIO';
+                const videoUrl = `/api/v1/stream?fileId=${fileIds[0]}#t=1`;
+                const title = v.title && v.title !== 'EMPTY' ? v.title : 'OBRA CINEMATOGRÁFICA';
+                const tag = v.tag || 'SOVEREIGN EDITORIAL';
 
                 return `
-                    <div class="video-card-premium group" onclick='VittalixPlayer.openGallery(allGalleryVideos, ${idx})'>
-                        <video src="${posterUrl}#t=0.1" preload="metadata" muted playsinline></video>
+                    <div class="video-card-premium group" onclick='VittalixPlayer.openGallery(window.allGalleryVideos, ${idx})'>
+                        <video src="${videoUrl}" preload="auto" muted playsinline loop autoplay></video>
                         
                         <div class="play-overlay-premium">
                             <div class="play-icon-circle">

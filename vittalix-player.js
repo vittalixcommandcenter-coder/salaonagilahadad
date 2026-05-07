@@ -110,33 +110,55 @@ window.VittalixPlayer = {
         if (!overlay) {
             overlay = document.createElement('div');
             overlay.className = 'video-modal-overlay';
+            overlay.style.zIndex = "10000"; // Garante que fica acima do menu
             overlay.innerHTML = `
-                <div class="video-modal-content flex flex-col bg-black/90 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="event.stopPropagation()">
-                    <!-- Top Area (Video + Close + Nav) -->
-                    <div class="relative flex-grow flex items-center justify-center min-h-[400px]">
-                        <button class="close-modal-btn" onclick="VittalixPlayer.closeModal()">
-                            <i data-lucide="x"></i> FECHAR ACERVO
+                <div class="video-modal-content" onclick="event.stopPropagation()">
+                    <!-- Palco do Vídeo -->
+                    <div class="modal-main-stage">
+                        <button class="close-modal-btn-top" onclick="VittalixPlayer.closeModal()">
+                            <i data-lucide="x"></i>
                         </button>
                         
-                        <!-- Navigation Arrows -->
-                        <button id="modal-prev-btn" class="modal-nav-btn prev" onclick="VittalixPlayer.prev()">
+                        <button id="modal-prev-btn" class="modal-nav-arrow left" onclick="VittalixPlayer.prev()">
                             <i data-lucide="chevron-left"></i>
                         </button>
-                        <button id="modal-next-btn" class="modal-nav-btn next" onclick="VittalixPlayer.next()">
+                        <button id="modal-next-btn" class="modal-nav-arrow right" onclick="VittalixPlayer.next()">
                             <i data-lucide="chevron-right"></i>
                         </button>
 
-                        <div id="modal-video-container" class="w-full h-full flex items-center justify-center">
-                            <!-- Video element will be injected here -->
+                        <!-- Fundo Ambient (Aura de Cor) -->
+                        <div id="modal-ambient-bg" class="ambient-backdrop"></div>
+
+                        <div id="modal-video-container"></div>
+
+                        <!-- Barra de Controles Customizada (Estilo Sovereign) -->
+                        <div class="video-controls-bar">
+                            <div class="flex items-center gap-4">
+                                <button onclick="VittalixPlayer.togglePlayPause()" class="control-trigger">
+                                    <i id="play-pause-icon" data-lucide="pause"></i>
+                                </button>
+                                <div class="time-display" id="modal-time-display">0:00 / 0:00</div>
+                            </div>
+                            
+                            <div class="progress-container" onclick="VittalixPlayer.seek(event)">
+                                <div class="progress-bar-bg">
+                                    <div id="progress-fill" class="progress-bar-fill"></div>
+                                </div>
+                            </div>
+
+                            <button onclick="VittalixPlayer.toggleMuteModal()" class="control-trigger">
+                                <i id="mute-icon" data-lucide="volume-2"></i>
+                            </button>
                         </div>
                     </div>
 
                     <!-- Barra de Informações Premium (Footer) -->
-                    <div class="flex flex-row items-center justify-between px-8 py-5 border-t border-white/10 bg-black/60 backdrop-blur-xl">
+                    <div class="modal-footer-info">
                         <div class="flex flex-col">
-                            <h2 id="modal-title" class="font-serif text-[#C5A059] text-base md:text-lg tracking-[0.2em] italic opacity-90"></h2>
+                            <span class="category">Obra Cinematográfica</span>
+                            <h2 id="modal-title" class="font-serif"></h2>
                         </div>
-                        <div id="modal-counter" class="font-sans text-white/40 text-[10px] uppercase tracking-[0.4em] font-light"></div>
+                        <div id="modal-counter"></div>
                     </div>
                 </div>
             `;
@@ -145,6 +167,7 @@ window.VittalixPlayer = {
         }
 
         overlay.classList.add('active');
+        document.body.style.overflow = 'hidden'; // Trava o scroll do site
         this.loadCurrentVideo();
     },
 
@@ -164,18 +187,35 @@ window.VittalixPlayer = {
         const title = videoData.title && videoData.title !== 'EMPTY' ? videoData.title : 'Obra Cinematográfica';
 
         // Forcing "Remount" (Essential for clean state)
+        const ambient = document.getElementById('modal-ambient-bg');
+        
         container.innerHTML = `
             <video id="modal-video-root" 
                    key="${videoData.id || this.currentIndex}" 
                    src="${streamUrl}" 
                    playsinline 
-                   controls 
-                   class="w-full h-full object-contain"></video>
+                   class="video-main-focus"></video>
         `;
+
+        if (ambient) {
+            ambient.innerHTML = `
+                <div class="ambient-mirror left">
+                    <video src="${streamUrl}" muted playsinline loop autoplay></video>
+                </div>
+                <div class="ambient-mirror right">
+                    <video src="${streamUrl}" muted playsinline loop autoplay></video>
+                </div>
+            `;
+        }
 
         const video = document.getElementById('modal-video-root');
         video.volume = 0.4;
         video.play();
+
+        // Listeners para a Barra de Progresso
+        video.ontimeupdate = () => this.updateProgressBar();
+        video.onloadedmetadata = () => this.updateProgressBar();
+        
         this.setupListeners(video);
 
         // Update UI
@@ -210,14 +250,15 @@ window.VittalixPlayer = {
 
     closeModal() {
         const overlay = document.querySelector('.video-modal-overlay');
-        if (overlay) {
-            overlay.classList.remove('active');
-            const video = document.getElementById('modal-video-root');
-            if (video) {
-                video.pause();
-                video.src = "";
+            if (overlay) {
+                overlay.classList.remove('active');
+                document.body.style.overflow = 'auto'; // Libera o scroll do site
+                const video = document.getElementById('modal-video-root');
+                if (video) {
+                    video.pause();
+                    video.src = "";
+                }
             }
-        }
     },
 
     showLoader(video) {
@@ -241,5 +282,61 @@ window.VittalixPlayer = {
             loader.style.opacity = '0';
             setTimeout(() => loader.remove(), 500);
         }
+    },
+
+    /**
+     * Custom Control Logic
+     */
+    togglePlayPause() {
+        const video = document.getElementById('modal-video-root');
+        const icon = document.getElementById('play-pause-icon');
+        if (!video || !icon) return;
+
+        if (video.paused) {
+            video.play();
+            icon.innerHTML = `<i data-lucide="pause"></i>`;
+        } else {
+            video.pause();
+            icon.innerHTML = `<i data-lucide="play"></i>`;
+        }
+        if (window.lucide) lucide.createIcons();
+    },
+
+    updateProgressBar() {
+        const video = document.getElementById('modal-video-root');
+        const fill = document.getElementById('progress-fill');
+        const timeDisplay = document.getElementById('modal-time-display');
+        if (!video || !fill || !timeDisplay) return;
+
+        const percent = (video.currentTime / video.duration) * 100;
+        fill.style.width = `${percent}%`;
+
+        const current = this.formatTime(video.currentTime);
+        const total = this.formatTime(video.duration || 0);
+        timeDisplay.innerText = `${current} / ${total}`;
+    },
+
+    formatTime(seconds) {
+        const mins = Math.floor(seconds / 60);
+        const secs = Math.floor(seconds % 60);
+        return `${mins}:${secs.toString().padStart(2, '0')}`;
+    },
+
+    seek(e) {
+        const video = document.getElementById('modal-video-root');
+        if (!video) return;
+        const rect = e.currentTarget.getBoundingClientRect();
+        const pos = (e.clientX - rect.left) / rect.width;
+        video.currentTime = pos * video.duration;
+    },
+
+    toggleMuteModal() {
+        const video = document.getElementById('modal-video-root');
+        const icon = document.getElementById('mute-icon');
+        if (!video || !icon) return;
+
+        video.muted = !video.muted;
+        icon.innerHTML = `<i data-lucide="${video.muted ? 'volume-x' : 'volume-2'}"></i>`;
+        if (window.lucide) lucide.createIcons();
     }
 };
