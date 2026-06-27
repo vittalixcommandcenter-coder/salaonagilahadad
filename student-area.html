@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Área do Aluno | Nagila Academy</title>
+    <title>Área do Aluno | Isabella Academy</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:wght@400;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
@@ -50,7 +50,7 @@
             <div id="video-viewport"></div>
             <div class="video-footer">
                 <div class="video-title" id="current-lesson-title">Carregando aula...</div>
-                <div class="video-desc" id="current-lesson-desc">Aula prática com metodologia Nagila Academy.</div>
+                <div class="video-desc" id="current-lesson-desc">Aula prática com metodologia Isabella Academy.</div>
             </div>
         </section>
         <aside class="playlist-sidebar">
@@ -63,9 +63,9 @@
     </div>
 
     <script>
-        const SUPABASE_URL = 'https://fjuiiivmsfdwsrqiobdu.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZqdWlpaXZtc2Zkd3NycWlvYmR1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2ODIyNjAsImV4cCI6MjA5MTI1ODI2MH0.-FyHmwxUJsloYRD6Wl6fjYrOHGf5CiFcaVgTT89bGMo';
-        const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const SUPABASE_URL = 'https://cypatfudsresohfznqij.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN5cGF0ZnVkc3Jlc29oZnpucWlqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ5OTk5MjIsImV4cCI6MjA5MDU3NTkyMn0.3So1sNl7jANqg0t4lwvD06A2qdHjvJQD7weMjBFVX5g';
+        const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, { db: { schema: 'salao' } });
         const urlParams = new URLSearchParams(window.location.search);
         const courseId = urlParams.get('course') || urlParams.get('id');
         let allLessons = [];
@@ -125,7 +125,7 @@
             const lesson = allLessons[index];
             if (!lesson) return;
             document.getElementById('current-lesson-title').innerText = lesson.title;
-            document.getElementById('current-lesson-desc').innerText = lesson.description || 'Aula prática com metodologia Nagila Academy.';
+            document.getElementById('current-lesson-desc').innerText = lesson.description || 'Aula prática com metodologia Isabella Academy.';
             const fileId = Array.isArray(lesson.telegram_file_ids) ? lesson.telegram_file_ids[0] : null;
             const videoUrl = fileId ? `/api/v1/stream?fileId=${fileId}` : '';
             document.getElementById('video-viewport').innerHTML = videoUrl

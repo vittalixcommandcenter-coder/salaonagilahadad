@@ -1,316 +1,960 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Salão Nagila Hadad | Sovereign Luxury</title>
-
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- Google Fonts: Cormorant Garamond (Light/Regular), Bodoni Moda & Montserrat -->
-    <link
-        href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..700&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Montserrat:wght@200;400&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
-        rel="stylesheet">
-
-    <link rel="stylesheet" href="style.css">
-    <!-- Tailwind CSS for utility-first luxury refinements -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Lucide Icons for minimalistic SVGs -->
+    <title>Isabella Lumière | L'Atelier Muse</title>
+    
+    <link rel="stylesheet" href="style-minimalist.css">
+    <style>
+        @keyframes badgePulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 0 3px rgba(229,62,62,0.25); }
+            50% { transform: scale(1.15); box-shadow: 0 0 0 6px rgba(229,62,62,0.1); }
+        }
+    </style>
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
-
 <body>
 
-    <!-- Minimalist Preloader -->
-    <div class="preloader-overlay" id="preloader">
-        <div class="preloader-logo" id="preloader-logo">NAGILA HADAD</div>
+    <!-- Custom Alert Modal -->
+    <div id="custom-alert" class="custom-alert">
+        <div class="alert-content">
+            <p id="alert-msg"></p>
+            <button class="btn-finalize" onclick="closeAlert()">Ok</button>
+        </div>
     </div>
 
+    <!-- Booking Modal -->
+    <div id="booking-modal" class="booking-modal">
+        <div class="booking-modal-content">
+            <button class="close-booking" onclick="closeBooking()"><i data-lucide="x"></i></button>
+            
+            <!-- Step 1: Services -->
+            <div id="booking-step-1" class="booking-step active">
+                <span class="category">Passo 01</span>
+                <h2 class="booking-step-title">Escolha sua <i>Experiência</i></h2>
+                <div class="service-grid">
+                    <div class="service-option" onclick="nextBookingStep(2, 'Transformação Alabastre')">
+                        <h3>Transformação Alabastre</h3>
+                        <p>Mudança radical com visagismo.</p>
+                    </div>
+                    <div class="service-option" onclick="nextBookingStep(2, 'Consultoria de Visagismo')">
+                        <h3>Consultoria de Visagismo</h3>
+                        <p>Análise de identidade e design.</p>
+                    </div>
+                    <div class="service-option" onclick="nextBookingStep(2, 'Coloração Premium')">
+                        <h3>Coloração Premium</h3>
+                        <p>Técnicas exclusivas L'Oréal.</p>
+                    </div>
+                </div>
+            </div>
 
-    <nav class="navbar" id="navbar">
-        <button class="nav-hamburger" id="nav-hamburger" aria-label="Menu">
-            <span></span><span></span><span></span>
-        </button>
-        <ul class="nav-links" id="nav-links">
-            <li><a href="/inicio" class="hover-target">INÍCIO</a></li>
-            <li><a href="/inicio#sobre-mim" class="hover-target">SOBRE</a></li>
+            <!-- Step 2: Calendar & Time -->
+            <div id="booking-step-2" class="booking-step">
+                <span class="category">Passo 02</span>
+                <h2 class="booking-step-title">Selecione <i>Data e Hora</i></h2>
+                <div class="booking-flex-layout">
+                    <div class="calendar-mini">
+                        <div class="calendar-header">
+                            <span>Junho 2026</span>
+                        </div>
+                        <div class="calendar-days" id="calendar-days"></div>
+                    </div>
+                    <div class="time-slots-container">
+                        <span class="time-label">Horários Disponíveis</span>
+                        <div class="time-grid" id="time-grid">
+                            <div class="time-slot" onclick="selectTime('09:00')">09:00</div>
+                            <div class="time-slot" onclick="selectTime('11:00')">11:00</div>
+                            <div class="time-slot" onclick="selectTime('14:00')">14:00</div>
+                            <div class="time-slot" onclick="selectTime('16:00')">16:00</div>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn-back" onclick="prevBookingStep(1)">Voltar</button>
+            </div>
 
-            <li><a href="/inicio#cinema" class="hover-target">VÍDEOS</a></li>
-            <li><a href="/inicio#gallery" class="hover-target">GALERIA</a></li>
-            <li><a href="/academy" class="hover-target">ACADEMY</a></li>
-        </ul>
+            <!-- Step 3: Contact -->
+            <div id="booking-step-3" class="booking-step">
+                <span class="category">Passo 03</span>
+                <h2 class="booking-step-title">Seus <i>Dados</i></h2>
+                <div class="booking-form">
+                    <input type="text" id="client-name" placeholder="Nome Completo">
+                    <input type="tel" id="client-phone" placeholder="WhatsApp (DDD + Número)">
+                    <button class="btn-finalize" onclick="finalizeBooking()">Confirmar Agendamento</button>
+                </div>
+                <button class="btn-back" onclick="prevBookingStep(2)">Voltar</button>
+            </div>
+            
+            <!-- Step 4: Success -->
+            <div id="booking-step-4" class="booking-step">
+                <div class="success-animation">
+                    <i data-lucide="check-circle" style="width: 80px; height: 80px; color: var(--color-gold); margin: 0 auto 2rem;"></i>
+                </div>
+                <h2 class="booking-step-title">Agendamento <i>Confirmado</i></h2>
+                <p class="text-center opacity-60 mb-8">Sua experiência foi registrada com sucesso em nosso sistema. A equipe já recebeu sua solicitação.</p>
+                <button class="btn-finalize" id="whatsapp-trigger" style="margin-bottom: 1rem;">Enviar Lembrete via WhatsApp</button>
+                <button class="btn-back" style="width: 100%; border: 1px solid rgba(0,0,0,0.1); padding: 1.2rem; opacity: 1; font-weight: 700;" onclick="window.location.reload()">Voltar ao Início</button>
+            </div>
+        </div>
+    </div>
 
+    <div class="marble-texture"></div>
+    <div class="custom-cursor"></div>
+    <div class="custom-cursor-outline"></div>
 
-
+    <nav class="navbar-capsule-wrapper">
+        <div class="navbar-capsule">
+            <div class="nav-links">
+                <a href="#atelier" onclick="smoothScroll(event, 'atelier')">Atelier</a>
+                <a href="#obras" onclick="smoothScroll(event, 'obras')">Acervo</a>
+                <a href="#cinema" onclick="smoothScroll(event, 'cinema')">Cinema</a>
+                <a href="boutique.html">Boutique</a>
+                <a href="javascript:void(0)" onclick="openCart()" class="nav-cart-btn" style="display: inline-flex; align-items: center; gap: 0.3rem; position: relative;">
+                    <i data-lucide="shopping-bag" style="width: 16px; height: 16px;"></i>
+                    <span id="cart-badge" style="position: absolute; top: -8px; right: -8px; background: var(--color-gold); color: #fff; border-radius: 50%; width: 14px; height: 14px; font-size: 8px; display: flex; align-items: center; justify-content: center; font-weight: bold; opacity: 0; transition: opacity 0.3s;">0</span>
+                </a>
+                <a href="admin-minimalist.html" class="nav-cta-admin" id="nav-gestao-link" style="position: relative;">
+                    Gestão
+                    <span id="gestao-notif-badge" style="display:none; position: absolute; top: -8px; right: -8px; background: #e53e3e; color: #fff; border-radius: 50%; min-width: 18px; height: 18px; font-size: 9px; font-weight: 800; align-items: center; justify-content: center; padding: 0 3px; letter-spacing: 0; animation: badgePulse 1.5s ease-in-out infinite; box-shadow: 0 0 0 3px rgba(229,62,62,0.25);">0</span>
+                </a>
+                <a href="javascript:void(0)" onclick="openBooking()" class="nav-cta-gold">Agendar</a>
+            </div>
+        </div>
     </nav>
 
-    <!-- Navbar code is outside main to stay global -->
-    <main class="lp-nagila-hadad">
+    <!-- Mobile Navigation Bar (Bottom) -->
+    <nav class="mobile-nav-bottom">
+        <a href="#atelier" onclick="smoothScroll(event, 'atelier')" class="mobile-nav-item">
+            <i data-lucide="home"></i>
+            <span>Atelier</span>
+        </a>
+        <a href="#obras" onclick="smoothScroll(event, 'obras')" class="mobile-nav-item">
+            <i data-lucide="image"></i>
+            <span>Acervo</span>
+        </a>
+        <a href="boutique.html" class="mobile-nav-item">
+            <i data-lucide="store"></i>
+            <span>Boutique</span>
+        </a>
+        <a href="admin-minimalist.html" class="mobile-nav-item">
+            <i data-lucide="layout-dashboard"></i>
+            <span>Painel</span>
+        </a>
+        <a href="javascript:void(0)" onclick="openCart()" class="mobile-nav-item" style="position: relative;">
+            <i data-lucide="shopping-bag"></i>
+            <span>Sacola</span>
+            <span id="cart-badge-mobile" style="position: absolute; top: 2px; right: 18px; background: var(--color-gold); color: #fff; border-radius: 50%; width: 12px; height: 12px; font-size: 7px; display: flex; align-items: center; justify-content: center; font-weight: bold; opacity: 0; transition: opacity 0.3s;">0</span>
+        </a>
+        <a href="javascript:void(0)" onclick="openBooking()" class="mobile-nav-item nav-cta-gold">
+            <i data-lucide="calendar"></i>
+            <span>Agendar</span>
+        </a>
+    </nav>
 
-        <!-- Hero Section Clean Faded Theme -->
-
-        <header class="immersive-hero" id="hero">
-
-            <!-- O container matemático exato para fazer a borda sumir -->
-            <div class="perfect-image-wrapper">
-                <img src="assets/nagila_hero.jpg" class="perfect-image" alt="Nagila Hadad Wella">
-            </div>
-
-            <!-- Texto Sagrado na Frente -->
-            <div class="front-text-layer active reveal">
-                <h1 class="hero-name-front">NAGILA HADAD</h1>
-                <p class="hero-tagline">A arte de transformar sua autoestima</p>
-                <a href="https://wa.me/5518997055954" class="contact-btn hero-cta hover-target">AGENDAR AGORA</a>
-            </div>
-
-
-
-        </header>
-
-        <!-- Seção Sobre Mim Redesenhada (Split-screen Editorial) -->
-        <section class="secao-sobre-nagila reveal py-24 md:py-32" id="sobre-mim">
-            <div
-                class="sobre-container max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-24 items-center">
-
-                <!-- Lado Esquerdo: Imagem Portrait Profissional -->
-                <div class="sobre-imagem-wrapper relative">
-                    <div class="absolute -inset-2 border border-[#C5A059]/30 rounded-2xl -z-10"></div>
-                    <img src="assets/sobremim1.jpg" alt="Nagila Hadad — Sovereign Artist"
-                        class="w-full h-[600px] object-cover rounded-xl border border-[#C5A059]/40 shadow-2xl">
+    <main>
+        <!-- Hero: Full-Bleed Editorial -->
+        <section class="hero">
+            <div class="hero-canvas-wrapper">
+                <div class="hero-content">
+                    <h1 class="hero-title">
+                        <span class="word">Isabella</span>
+                        <span class="word">Lumière</span>
+                    </h1>
+                    <p class="hero-slogan-editorial">A ARTE DE TRANSFORMAR SUA AUTOESTIMA</p>
                 </div>
-
-                <!-- Lado Direito: Conteúdo Editorial -->
-                <div class="sobre-texto-editorial">
-                    <h2
-                        class="sobre-titulo font-light text-[#C5A059] tracking-[0.35em] mb-10 text-4xl md:text-5xl uppercase">
-                        SOBRE MIM</h2>
-
-                    <div class="sobre-bio-luxury space-y-8 text-neutral-300 font-light leading-relaxed text-lg">
-                        <p>
-                            A trajetória de Nagila Hadad não é feita apenas de tesouras e cores, mas de uma inquietude
-                            silenciosa: o desejo de ver beleza além do óbvio. Há mais de uma década, ela compreendeu que
-                            o cabelo não era apenas um acessório, mas uma extensão da alma e da arquitetura do rosto.
-                        </p>
-                        <p>
-                            Especializada em técnicas internacionais, Nagila funde o visagismo clássico com a
-                            modernidade digital, criando um método autoral onde a colorimetria é tratada como um tesouro
-                            soberano.
-                        </p>
-                    </div>
-
-                    <!-- Blocos de Autoridade Refinados -->
-                    <div class="autoridade-marcas-grid grid grid-cols-1 gap-8 mt-12 pt-12 border-t border-white/10">
-                        <div class="marca-item-luxury">
-                            <h3 class="text-[#C5A059] text-xs tracking-[0.3em] uppercase mb-3 font-semibold">Wella
-                                Professionals Artist</h3>
-                            <p class="text-sm text-neutral-400 font-light leading-relaxed">Faz parte do seleto grupo de
-                                artistas da <strong>Wella Professionals</strong>, líder mundial em coloração. Domina
-                                tecnologias que entregam cores vibrantes e duradouras.</p>
-                        </div>
-                        <div class="marca-item-luxury">
-                            <h3 class="text-[#C5A059] text-xs tracking-[0.3em] uppercase mb-3 font-semibold">Expert
-                                GA.MA Italy Brasil</h3>
-                            <p class="text-sm text-neutral-400 font-light leading-relaxed">Como <strong>Expert
-                                    Oficial</strong>, utiliza ferramentas de altíssima performance para garantir o
-                                acabamento de luxo e proteção térmica absoluta.</p>
-                        </div>
-                    </div>
-
-                    <div class="sobre-assinatura text-4xl mt-12 italic text-[#E6BE8A]/80 font-serif">Nágila Hadad</div>
+                <div class="hero-portrait-canvas">
+                    <img src="assets/isabella_lumiere.png" alt="Isabella Lumière" class="hero-portrait-img">
                 </div>
             </div>
         </section>
 
+        <!-- Section: Authority Strip -->
+        <div class="authority-strip">
+            <span class="logo-item">L'Oréal Professionnel Expert</span>
+            <span class="dot"></span>
+            <span class="logo-item">DESTAQUE Fashion Week 2024</span>
+            <span class="dot"></span>
+            <span class="logo-item">THE HAIR CONGRESS SPEAKER</span>
+        </div>
 
-
-        <!-- Curadoria Especialista (Vídeos com Controle de Proporção) -->
-        <section class="secao-curadoria-nagila reveal" id="cinema">
-            <div class="curadoria-header">
-                <h2 class="section-title">CURADORIA DA ESPECIALISTA</h2>
-                <p class="section-subtitle">Impacto visual com controle de qualidade absoluto.</p>
+        <!-- Section: The Stage (Authority Recognition) -->
+        <section class="stage-section section-magazine">
+            <div class="stage-grid">
+                <div class="stage-content reveal">
+                    <span class="category">Reconhecimento Global</span>
+                    <h2 class="font-['Cormorant_Garamond'] text-6xl italic mb-8">No Palco do <i>The Hair</i></h2>
+                    <p class="text-lg font-light leading-relaxed opacity-70 mb-8">
+                        Destaque na <b>Fashion Week 2024</b>, Isabella Lumière subiu ao palco do maior congresso de cabeleireiros das Américas como Artista Oficial L'Oréal Professionals. Sua trajetória é marcada pela inovação e pelo compromisso em elevar o padrão da educação na beleza brasileira.
+                    </p>
+                    <blockquote class="border-l-2 border-[#C5A059] pl-8 italic opacity-80 text-xl font-light">
+                        "Para crescer, é preciso que a equipe tenha o mesmo propósito que você. A educação é o que transforma o nosso mercado."
+                    </blockquote>
+                </div>
+                <div class="stage-image reveal">
+                    <div class="image-wrapper">
+                        <div class="image-border"></div>
+                        <img src="assets/isabella_stage.png" alt="Fashion Week 2024" class="w-full shadow-2xl" style="image-rendering: high-quality;">
+                    </div>
+                </div>
             </div>
-
-            <div class="curadoria-grid grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-10 px-4"
-                id="video-grid">
-                <p id="videos-loading"
-                    style="grid-column:1/-1;text-align:center;padding:4rem 0;opacity:0.4;letter-spacing:4px;font-size:0.8rem;">
-                    CARREGANDO VÍDEOS...</p>
-            </div>
-
-            <a href="galeria-videos.html" class="btn-luxury-solid hover-target">
-                EXPLORAR GALERIA COMPLETA DE VÍDEOS
-            </a>
         </section>
 
-
-
-
-        <!-- Galeria de Cortes de Cabelo -->
-        <section class="gallery-section reveal" id="gallery">
-            <div class="gallery-header">
-                <h2 class="section-title">Obras de Arte Visíveis</h2>
-                <p class="section-subtitle">A vitrine do salão. Cada corte é esculpido como uma tela em branco.</p>
-            </div>
-            <div class="gallery-grid" id="gallery-grid">
-                <p id="gallery-loading"
-                    style="grid-column:1/-1;text-align:center;padding:4rem 0;opacity:0.4;letter-spacing:4px;font-size:0.8rem;">
-                    CARREGANDO PORTFÓLIO...</p>
-            </div>
-
-            <a href="portfolio-completo.html" class="btn-luxury-solid hover-target" style="margin-top: 5rem;">
-                VER TODAS AS TRANSFORMAÇÕES (PORTFÓLIO)
-            </a>
+        <!-- Section: Manifesto -->
+        <section class="manifesto-section">
+            <p class="reveal">"A beleza não é copiada, ela é <span class="italic text-[#C5A059]">revelada</span> através do visagismo."</p>
         </section>
 
+        <!-- Section 1: O Atelier (Editorial Layout) -->
+        <section id="atelier" class="section-magazine" style="background: #fff;">
+            <div class="atelier-layered-container">
+                <div class="atelier-image-block reveal">
+                    <img src="https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&q=80&w=1200" alt="Atelier de Maestria Capilar">
+                </div>
+                <div class="atelier-content-block reveal delay-1">
+                    <span class="category">O Legado</span>
+                    <h2 class="atelier-title">O Ateliê <i>Alabastre</i></h2>
+                    <p class="atelier-description">
+                        Um santuário dedicado à <span class="gold-text">pureza estética</span>. Onde o visagismo transcende a técnica e se torna uma assinatura de identidade. Cada traço é pensado para revelar a sua versão mais soberana.
+                    </p>
+                    <div class="atelier-stats">
+                        <div class="stat-item">
+                            <span class="stat-num">L'Oréal Artist</span>
+                            <span class="stat-label">Global Partner</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
 
+        <!-- Section 2: Portfólio (Asymmetric Masonry) -->
+        <section id="obras" class="section-magazine">
+            <div class="mb-20">
+                <h2 class="font-['Cormorant_Garamond'] text-6xl font-light">Portfólio <i>Editorial</i></h2>
+            </div>
+            
+            <div id="asymmetric-grid" class="editorial-grid">
+                <!-- Fotos dinâmicas -->
+            </div>
+            
+            <div class="mt-20 text-right">
+                <a href="portfolio-minimalist.html" class="btn-outline-minimal">Explorar Todo o Acervo</a>
+            </div>
+        </section>
+
+        <!-- Section 3: Cinema (Compact Film Strip) -->
+        <section id="cinema" class="section-magazine">
+            <div class="mb-20">
+                <h2 class="font-['Cormorant_Garamond'] text-6xl font-light">Cinema <i>High Fidelity</i></h2>
+            </div>
+            
+            <div id="cinema-wall" class="cinema-strip-container">
+                <!-- Vídeos compactos -->
+            </div>
+            
+            <!-- Scroll Indicator -->
+            <div class="cinema-scroll-indicator">
+                <div class="cinema-scroll-progress" id="cinema-scroll-progress"></div>
+            </div>
+        </section>
+
+        <!-- Section 4: Boutique (Minimalist Shop) -->
+        <section id="boutique" class="section-magazine">
+            <div class="mb-20">
+                <span class="category">Curadoria L'Oréal Professionals</span>
+                <h2 class="font-['Cormorant_Garamond'] text-6xl font-light">L'Atelier <i>Boutique</i></h2>
+            </div>
+            
+            <div id="product-grid" class="shop-grid">
+                <!-- Produtos dinâmicos -->
+            </div>
+
+            <div class="mt-20 text-center" style="margin-top: 5rem; text-align: center;">
+                <a href="boutique.html" target="_blank" class="btn-outline-minimal" style="display: inline-block;">Ver Loja Completa</a>
+            </div>
+        </section>
+        <!-- Section: Voices of Excellence (Testimonials) -->
+        <section class="section-magazine bg-white">
+            <div class="text-center mb-20">
+                <span class="category">Voices of Excellence</span>
+                <h2 class="font-['Cormorant_Garamond'] text-6xl italic mt-4">Depoimentos</h2>
+            </div>
+            <div class="testimonial-magazine-grid">
+                <div class="testimonial-card reveal">
+                    <p>"O olhar da Isabella sobre o meu cabelo mudou a forma como eu me vejo no espelho. Uma artista do visagismo."</p>
+                    <cite>— Helena S.</cite>
+                </div>
+                <div class="testimonial-card reveal delay-1">
+                    <p>"Mais que um corte, uma aula de autoconhecimento. O Ateliê é o meu refúgio de autocuidado e luxo."</p>
+                    <cite>— Mariana B.</cite>
+                </div>
+                <div class="testimonial-card reveal delay-2">
+                    <p>"A precisão e a sofisticação que ela entrega são inigualáveis. Uma experiência de nível internacional."</p>
+                    <cite>— Ana Paula R.</cite>
+                </div>
+            </div>
+        </section>
 
     </main>
 
-    <!-- Super-Luxury Footer -->
-
-    <footer class="luxury-footer">
-        <div class="footer-container">
-            <div class="footer-header">
-                <h2 class="footer-logo">NAGILA HADAD</h2>
-                <div class="footer-motto">The Art of Sovereign Beauty</div>
-            </div>
-
-            <div class="footer-main-grid">
-                <div class="footer-col">
-                    <h3>Atelier</h3>
-                    <ul>
-                        <li><a href="#hero">Início</a></li>
-                        <li><a href="#cinema">Cinema Experience</a></li>
-                        <li><a href="#gallery">Galeria de Arte</a></li>
-                        <li><a href="academy.html">Academy Education</a></li>
-                    </ul>
-                </div>
-
-                <div class="footer-col">
-                    <h3>Contato Direto</h3>
-                    <ul>
-                        <li><a href="https://wa.me/5518997055954">+55 (18) 99705-5954</a></li>
-                        <li><a href="mailto:contato@nagilahadad.com">atelier@nagilahadad.com</a></li>
-                        <li>Av. Reginalda Leão, 1256. Palmital</li>
-                    </ul>
-                </div>
-
-                <div class="footer-col">
-                    <h3>Redes Sociais</h3>
-                    <div class="social-luxury">
-                        <a href="https://www.instagram.com/nagilahadadd/" class="hover-target" target="_blank">
-                            <img src="assets/social_instagram.png" alt="Instagram" style="width: 32px; height: 32px; transition: transform 0.3s ease;">
-                        </a>
-                        <a href="https://www.facebook.com/NagilaHadadd/" class="hover-target" target="_blank">
-                            <img src="assets/social_facebook.png" alt="Facebook" style="width: 32px; height: 32px; transition: transform 0.3s ease;">
-                        </a>
-                        <a href="https://www.tiktok.com/@nagilahadad" class="hover-target" target="_blank">
-                            <img src="assets/social_tiktok.png" alt="TikTok" style="width: 32px; height: 32px; transition: transform 0.3s ease;">
-                        </a>
-                    </div>
-                </div>
-            </div>
-
+    <!-- Footer: The Grand Finale -->
+    <footer class="footer-minimalist">
+        <div class="footer-content reveal">
+            <h2 class="footer-cta-title">Seu momento de <i>Transformação</i> começa agora.</h2>
+            <a href="javascript:void(0)" onclick="openBooking()" class="footer-cta-btn">Agendar Experiência</a>
+            
             <div class="footer-bottom">
-                <span>&copy; 2026 NAGILA HADAD LUXURY STUDIO.</span>
-                <span>Crafted for Excellence</span>
-                <span class="dev-credit">Desenvolvido por <a href="https://www.vittalix.com.br" target="_blank"
-                        class="vittalix-link">www.vittalix.com.br</a></span>
-                <span>Todos os direitos reservados.</span>
+                <div class="footer-links">
+                    <a href="https://instagram.com/isabellalumiere">Instagram</a>
+                    <a href="#">L'Oréal Academy</a>
+                    <a href="#">Privacy</a>
+                </div>
+                <p class="copyright">&copy; 2026 Isabella Lumière Atelier. Design by Vittalix.</p>
             </div>
         </div>
     </footer>
 
-    <!-- Foto Modal (Lightbox) -->
-    <div id="photo-modal" class="modal">
-        <span class="modal-close hover-target">&times;</span>
-        <button class="modal-btn modal-prev hover-target"><i data-lucide="chevron-left"></i></button>
-        <div class="modal-content">
-            <img id="modal-img" src="" alt="">
+
+    <!-- Cart Drawer -->
+    <div id="cart-drawer-overlay" class="cart-drawer-overlay" onclick="closeCart()"></div>
+    <div id="cart-drawer" class="cart-drawer">
+        <div class="cart-header">
+            <h2 class="cart-title">Sacola de <i>Compras</i></h2>
+            <button class="close-cart" onclick="closeCart()">
+                <i data-lucide="x" style="width: 24px; height: 24px;"></i>
+            </button>
         </div>
-        <button class="modal-btn modal-next hover-target"><i data-lucide="chevron-right"></i></button>
+        <div id="cart-items-container" class="cart-items-container">
+            <!-- Items rendered dynamically -->
+        </div>
+        <div class="cart-footer">
+            <div class="cart-subtotal">
+                <span>Subtotal:</span>
+                <span id="cart-subtotal-val" class="cart-subtotal-val">R$ 0,00</span>
+            </div>
+            <button class="btn-checkout" onclick="openCheckout()">Finalizar Compra</button>
+        </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="vittalix-player.js?v=ZERO_BANDA"></script>
-    <script src="script.js"></script>
-    <script>
-        // ── Dynamic Content Loaders ──
-        const SUPABASE_URL = 'https://fjuiiivmsfdwsrqiobdu.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZqdWlpaXZtc2Zkd3NycWlvYmR1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2ODIyNjAsImV4cCI6MjA5MTI1ODI2MH0.-FyHmwxUJsloYRD6Wl6fjYrOHGf5CiFcaVgTT89bGMo';
+    <!-- Checkout Modal -->
+    <div id="checkout-modal" class="checkout-modal-overlay" onclick="closeCheckout()">
+        <div class="checkout-modal-box" onclick="event.stopPropagation()">
+            <button class="close-checkout-btn" onclick="closeCheckout()">
+                <i data-lucide="x" style="width: 24px; height: 24px;"></i>
+            </button>
 
-        const sbHome = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+            <!-- Step 1: Identificação -->
+            <div id="checkout-step-1" class="checkout-step active">
+                <span class="category" style="font-size: 0.55rem; letter-spacing: 0.5em; text-transform: uppercase; color: var(--color-gold); display: block; margin-bottom: 1.5rem;">Passo 01 / 03</span>
+                <h2 class="checkout-title">Identificação</h2>
+                <div class="checkout-input-group">
+                    <label for="checkout-name">Nome Completo</label>
+                    <input type="text" id="checkout-name" placeholder="Seu nome">
+                </div>
+                <div class="checkout-input-group">
+                    <label for="checkout-email">E-mail</label>
+                    <input type="email" id="checkout-email" placeholder="seuemail@exemplo.com">
+                </div>
+                <div class="checkout-input-group">
+                    <label for="checkout-phone">WhatsApp</label>
+                    <input type="tel" id="checkout-phone" placeholder="(11) 99999-9999" value="+55 (11) 99999-9999">
+                </div>
+                <div class="checkout-nav-buttons" style="margin-top: 2rem;">
+                    <button class="btn-checkout" onclick="nextCheckoutStep(2)">Continuar para Pagamento</button>
+                </div>
+            </div>
 
-        async function loadHomeContent() {
-            // Gallery Photos
-            const { data: photos } = await sbHome.from('gallery').select('*').eq('media_type', 'IMAGE').eq('is_featured', true).order('created_at', { ascending: false }).limit(6);
-            const galleryGrid = document.getElementById('gallery-grid');
-            document.getElementById('gallery-loading')?.remove();
-            if (photos && photos.length > 0) {
-                galleryGrid.innerHTML = photos.map(p =>
-                    `<div class="gallery-item hover-target">
-                        <img src="/api/v1/stream?fileId=${p.telegram_file_id}" alt="${p.title && p.title !== 'EMPTY' ? p.title : ''}"/>
-                        ${(p.title && p.title !== 'EMPTY') ? `<div class="gallery-info-overlay">${p.title}</div>` : ''}
-                     </div>`
-                ).join('');
-            } else {
-                galleryGrid.innerHTML = `<p style="grid-column:1/-1;text-align:center;padding:4rem 0;opacity:0.3;letter-spacing:4px;font-size:0.8rem;">PORTFÓLIO EM BREVE</p>`;
-            }
+            <!-- Step 2: Pagamento -->
+            <div id="checkout-step-2" class="checkout-step">
+                <span class="category" style="font-size: 0.55rem; letter-spacing: 0.5em; text-transform: uppercase; color: var(--color-gold); display: block; margin-bottom: 1.5rem;">Passo 02 / 03</span>
+                <h2 class="checkout-title">Pagamento</h2>
+                
+                <div class="payment-methods">
+                    <button id="btn-pay-pix" class="payment-method-btn active" onclick="selectPaymentMethod('pix')">Pix</button>
+                    <button id="btn-pay-card" class="payment-method-btn" onclick="selectPaymentMethod('card')">Cartão</button>
+                </div>
 
-            // Curadoria Videos
-            const { data: videos } = await sbHome.from('gallery').select('*').eq('media_type', 'VIDEO').eq('is_featured', true).order('created_at', { ascending: false }).limit(4);
-            const videoGrid = document.getElementById('video-grid');
-            document.getElementById('videos-loading')?.remove();
-
-            if (videos && videos.length > 0) {
-                videoGrid.innerHTML = videos.map((v, idx) => {
-                    const ids = (v.telegram_file_ids && v.telegram_file_ids.length > 0) ? v.telegram_file_ids : (v.telegram_file_id ? [v.telegram_file_id] : []);
-                    const dId = `home-vid-${idx}`;
-                    const posterUrl = `/api/v1/stream?fileId=${v.telegram_file_id || ids[0]}`;
-
-                    return `
-                    <div class="curadoria-item group transition-transform duration-500 hover:scale-[1.03]">
-                        <div class="video-click-container aspect-[9/16] rounded-[2rem] border border-white/10 shadow-xl shadow-black/40 relative">
-                            <video id="${dId}" playsinline muted class="w-full h-full object-cover" poster="${posterUrl}"></video>
-                            
-                            <!-- Custom Overlay Refinado (Controles Soberanos) -->
-                            <div class="video-click-overlay absolute inset-0 transition-all duration-500 flex items-center justify-center">
-                                <div class="play-btn-gold bg-[#C5A059] text-white w-16 h-16 rounded-full flex items-center justify-center shadow-lg shadow-black/40" onclick='VittalixPlayer.play("${dId}", ${JSON.stringify(ids)})'>
-                                    <i data-lucide="play" class="fill-current ml-1"></i>
-                                </div>
-                                <!-- Botão de Volume — Um Só, Elegante -->
-                                <button class="vol-btn-mini absolute bottom-5 right-5 w-9 h-9 rounded-full bg-black/50 backdrop-blur-sm border border-white/10 flex items-center justify-center text-white/70 hover:text-[#C5A059] hover:border-[#C5A059]/40 hover:bg-black/70 transition-all duration-300"
-                                        onclick='VittalixPlayer.toggleMute("${dId}")'>
-                                    <i data-lucide="volume-x" class="w-4 h-4"></i>
-                                </button>
-                            </div>
+                <!-- Pix Layout -->
+                <div id="payment-pix-details" class="pix-payment-details">
+                    <div class="pix-qr-container">
+                        <div class="pix-qr-code">
+                            <svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <rect width="120" height="120" rx="4" fill="white"/>
+                                <path d="M10 10H40V20H20V40H10V10Z" fill="#C5A059"/>
+                                <path d="M80 10H110V40H100V20H80V10Z" fill="#C5A059"/>
+                                <path d="M10 80V110H40V100H20V80H10Z" fill="#C5A059"/>
+                                <path d="M110 80V110H80V100H100V80H110Z" fill="#C5A059"/>
+                                <rect x="30" y="30" width="15" height="15" fill="#1A1A1A"/>
+                                <rect x="75" y="30" width="15" height="15" fill="#1A1A1A"/>
+                                <rect x="30" y="75" width="15" height="15" fill="#1A1A1A"/>
+                                <rect x="52" y="52" width="16" height="16" fill="#C5A059"/>
+                                <rect x="75" y="75" width="6" height="6" fill="#1A1A1A"/>
+                                <rect x="85" y="85" width="6" height="6" fill="#1A1A1A"/>
+                                <rect x="85" y="75" width="6" height="6" fill="#1A1A1A"/>
+                                <rect x="75" y="85" width="6" height="6" fill="#1A1A1A"/>
+                            </svg>
                         </div>
-                        ${v.title && v.title !== 'EMPTY' ? `<div class="curadoria-title mt-4 text-[#C5A059] font-light tracking-[0.2em] text-xs uppercase opacity-70 group-hover:opacity-100 transition-opacity">${v.title}</div>` : ''}
-                    </div>`;
-                }).join('');
-            } else {
-                videoGrid.innerHTML = `<p style="grid-column:1/-1;text-align:center;padding:4rem 0;opacity:0.3;letter-spacing:4px;font-size:0.8rem;">CURADORIA EM BREVE</p>`;
+                        <p style="font-size: 0.7rem; opacity: 0.6; margin-bottom: 1rem;">Escaneie o código acima ou copie a chave Pix abaixo.</p>
+                        <button class="btn-copy-pix" onclick="copyPixKey()">Copiar Código Pix</button>
+                    </div>
+                </div>
+
+                <!-- Card Layout -->
+                <div id="payment-card-details" class="card-payment-details" style="display: none;">
+                    <div class="checkout-input-group">
+                        <label for="card-number">Número do Cartão</label>
+                        <input type="text" id="card-number" placeholder="0000 0000 0000 0000" maxlength="19">
+                    </div>
+                    <div style="display: flex; gap: 1rem;">
+                        <div class="checkout-input-group" style="flex: 1;">
+                            <label for="card-expiry">Validade</label>
+                            <input type="text" id="card-expiry" placeholder="MM/AA" maxlength="5">
+                        </div>
+                        <div class="checkout-input-group" style="flex: 1;">
+                            <label for="card-cvv">CVV</label>
+                            <input type="text" id="card-cvv" placeholder="000" maxlength="4">
+                        </div>
+                    </div>
+                    <div class="checkout-input-group">
+                        <label for="card-name">Nome Impresso</label>
+                        <input type="text" id="card-name" placeholder="Como no cartão">
+                    </div>
+                </div>
+
+                <div class="checkout-nav-buttons" style="margin-top: 2rem;">
+                    <button class="btn-copy-pix" style="border: 1px solid rgba(0,0,0,0.1); opacity: 0.6;" onclick="prevCheckoutStep(1)">Voltar</button>
+                    <button class="btn-buy-now" style="width: auto; padding: 0.8rem 2rem;" onclick="finalizePurchase()">Confirmar Pedido</button>
+                </div>
+            </div>
+
+            <!-- Step 3: Sucesso -->
+            <div id="checkout-step-3" class="checkout-step">
+                <div style="text-align: center;">
+                    <i data-lucide="check-circle" style="width: 70px; height: 70px; color: var(--color-gold); margin: 0 auto 1.5rem;"></i>
+                    <h2 class="checkout-title" style="margin-bottom: 1rem;">Pedido <i>Confirmado</i></h2>
+                    <p style="font-size: 0.85rem; opacity: 0.6; line-height: 1.6; margin-bottom: 2rem;">
+                        Sua compra foi processada com sucesso! O número do seu pedido é <strong id="order-number">#LUMI-12345</strong>. Em breve você receberá as atualizações no e-mail cadastrado.
+                    </p>
+                    <button class="btn-checkout" onclick="resetToHome()">Voltar ao Início</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="vittalix-player.js"></script>
+    <script>
+        const SUPABASE_URL = 'https://cypatfudsresohfznqij.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN5cGF0ZnVkc3Jlc29oZnpucWlqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ5OTk5MjIsImV4cCI6MjA5MDU3NTkyMn0.3So1sNl7jANqg0t4lwvD06A2qdHjvJQD7weMjBFVX5g';
+        const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, { db: { schema: 'salao' } });
+
+        async function loadContent() {
+            // Photos (Hardcoded Unsplash)
+            const classes = ['item-large', 'item-tall', 'item-wide', 'item-wide', 'item-tall', 'item-large'];
+            const portfolioPhotos = [
+                { url: 'https://images.unsplash.com/photo-1562322140-8baeececf3df?auto=format&fit=crop&q=80&w=600' },
+                { url: 'https://images.unsplash.com/photo-1519699047748-de8e457a634e?auto=format&fit=crop&q=80&w=600' },
+                { url: 'https://images.unsplash.com/photo-1600948836101-f9ffda59d250?auto=format&fit=crop&q=80&w=600' },
+                { url: 'assets/isabella_lumiere.png' },
+                { url: 'https://images.unsplash.com/photo-1620331311520-246422fd82f9?auto=format&fit=crop&q=80&w=600' },
+                { url: 'https://images.unsplash.com/photo-1527799820374-dcf8d9d4a388?auto=format&fit=crop&q=80&w=600' }
+            ];
+            
+            document.getElementById('asymmetric-grid').innerHTML = portfolioPhotos.map((p, i) => `
+                <div class="grid-item ${classes[i % classes.length]} reveal">
+                    <img src="${p.url}" alt="Editorial">
+                </div>
+            `).join('');
+
+            // Products (Hardcoded Unsplash)
+            const portfolioProducts = [
+                { name: 'Shampoo & Condicionador Nutritivo', description: 'Limpeza suave e nutrição lipídica profunda para cabelos secos.', price: '120.00', image: 'https://images.unsplash.com/photo-1535585209827-a15fcdbc4c2d?auto=format&fit=crop&q=80&w=600' },
+                { name: 'Máscara de Reconstrução Intensa', description: 'Restauração lipídica profunda para fios fragilizados e pós-química.', price: '185.00', image: 'https://images.unsplash.com/photo-1526947425960-945c6e72858f?auto=format&fit=crop&q=80&w=600' },
+                { name: 'Elixir Nutritivo & Protetor Térmico', description: 'Selagem instantânea de cutículas e proteção térmica até 230°C.', price: '95.00', image: 'https://images.unsplash.com/photo-1617897903246-719242758050?auto=format&fit=crop&q=80&w=600' }
+            ];
+
+            document.getElementById('product-grid').innerHTML = portfolioProducts.map(p => `
+                <div class="product-card reveal">
+                    <div class="product-image">
+                        <img src="${p.image}" alt="${p.name}">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">${p.name}</h3>
+                        <p class="product-desc">${p.description}</p>
+                        <span class="product-price">R$ ${parseFloat(p.price).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</span>
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 1.5rem;">
+                            <button class="btn-add-to-cart" onclick="addToCart('${p.name}', ${p.price}, '${p.image}')">Adicionar à Sacola</button>
+                            <button class="btn-buy-now" onclick="buyNow('${p.name}', ${p.price}, '${p.image}')">Comprar Agora</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            // Videos (Dynamic load from Supabase with Vimeo fallback)
+            const fallbackVideos = [
+                { url: 'https://vimeo.com/493392058', title: 'Cabelo & Estilo 1' },
+                { url: 'https://vimeo.com/1004772080', title: 'Cabelo & Estilo 2' },
+                { url: 'https://vimeo.com/121708849', title: 'Cabelo & Estilo 3' },
+                { url: 'https://vimeo.com/891062829', title: 'Cabelo & Estilo 4' }
+            ];
+
+            let dbVideos = [];
+            try {
+                const { data, error } = await sb
+                    .from('gallery')
+                    .select('*')
+                    .eq('media_type', 'VIDEO')
+                    .order('order', { ascending: true });
+                if (!error && data && data.length > 0) {
+                    dbVideos = data.map(v => {
+                        const fileIds = (v.telegram_file_ids && v.telegram_file_ids.length > 0) 
+                            ? v.telegram_file_ids 
+                            : (v.telegram_file_id ? [v.telegram_file_id] : []);
+                        const url = (fileIds[0] && fileIds[0].startsWith('http')) ? fileIds[0] : `/api/v1/stream?fileId=${fileIds[0]}#t=1`;
+                        return {
+                            url: url,
+                            title: v.title && v.title !== 'EMPTY' ? v.title : 'Obra Cinematográfica'
+                        };
+                    });
+                }
+            } catch (e) {
+                console.error("Error loading videos from Supabase:", e);
             }
+
+            window.portfolioVideos = dbVideos.length > 0 ? dbVideos : fallbackVideos;
+
+            document.getElementById('cinema-wall').innerHTML = window.portfolioVideos.map((v, i) => {
+                const isVimeo = v.url.includes('vimeo.com') && !v.url.includes('player.vimeo.com/external');
+                let mediaHtml = '';
+                if (isVimeo) {
+                    const match = v.url.match(/vimeo\.com\/(\d+)/);
+                    const id = match ? match[1] : '';
+                    mediaHtml = `<iframe src="https://player.vimeo.com/video/${id}?background=1&autoplay=1&loop=1&muted=1&autopause=0&quality=1080p&playlist=${id}" class="w-full h-full object-cover pointer-events-none" style="width: 100%; height: 100%; border: none;" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
+                } else {
+                    mediaHtml = `<video src="${v.url}" class="w-full h-full object-cover" muted loop playsinline autoplay></video>`;
+                }
+                return `
+                    <div class="cinema-item-compact reveal group cursor-pointer" onclick="VittalixPlayer.openGallery(window.portfolioVideos, ${i})">
+                        ${mediaHtml}
+                    </div>
+                `;
+            }).join('');
 
             if (window.lucide) lucide.createIcons();
+            initReveal();
+            initCinemaScroll();
+        }
 
-            // Definir volume inicial de 40% para os vídeos da home
-            videos?.forEach((_, idx) => {
-                const vid = document.getElementById(`home-vid-${idx}`);
-                if (vid) vid.volume = 0.4;
+        function initReveal() {
+            const obs = new IntersectionObserver(es => es.forEach(e => e.isIntersecting && e.target.classList.add('active')), {threshold: 0.1});
+            document.querySelectorAll('.reveal').forEach(r => obs.observe(r));
+        }
+
+        function initCinemaScroll() {
+            const cinemaWall = document.getElementById('cinema-wall');
+            const scrollProgress = document.getElementById('cinema-scroll-progress');
+            if (!cinemaWall || !scrollProgress) return;
+
+            function updateProgress() {
+                const maxScroll = cinemaWall.scrollWidth - cinemaWall.clientWidth;
+                if (maxScroll <= 0) {
+                    scrollProgress.style.width = '0%';
+                    return;
+                }
+                const visibleRatio = cinemaWall.clientWidth / cinemaWall.scrollWidth;
+                const barWidth = Math.max(visibleRatio * 100, 20); // min 20%
+                scrollProgress.style.width = `${barWidth}%`;
+                
+                const maxTranslate = 100 - barWidth;
+                const currentTranslate = (cinemaWall.scrollLeft / maxScroll) * maxTranslate;
+                scrollProgress.style.transform = `translateX(${currentTranslate}%)`;
+            }
+
+            cinemaWall.addEventListener('scroll', updateProgress);
+            window.addEventListener('resize', updateProgress);
+            
+            updateProgress();
+            setTimeout(updateProgress, 300);
+        }
+
+        // Custom Cursor Logic
+        const cursor = document.querySelector('.custom-cursor');
+        const cursorOutline = document.querySelector('.custom-cursor-outline');
+
+        window.addEventListener('mousemove', (e) => {
+            if (window.matchMedia("(hover: none)").matches) return;
+            
+            const posX = e.clientX;
+            const posY = e.clientY;
+
+            cursor.style.transform = `translate3d(${posX}px, ${posY}px, 0)`;
+            
+            cursorOutline.animate({
+                left: `${posX}px`,
+                top: `${posY}px`
+            }, { duration: 500, fill: "forwards" });
+        });
+
+        // Hover Effect on Links/Buttons
+        document.body.addEventListener('mouseover', (e) => {
+            if (e.target.closest('a, button, .cinema-item-compact')) {
+                cursor.style.transform += ' scale(2.5)';
+                cursor.style.backgroundColor = 'var(--color-gold)';
+                cursor.style.opacity = '0.3';
+                cursorOutline.style.opacity = '0';
+            }
+        });
+
+        document.body.addEventListener('mouseout', (e) => {
+            if (e.target.closest('a, button, .cinema-item-compact')) {
+                cursor.style.transform = cursor.style.transform.replace(' scale(2.5)', '');
+                cursor.style.backgroundColor = 'transparent';
+                cursor.style.opacity = '1';
+                cursorOutline.style.opacity = '1';
+            }
+        });
+
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.querySelector('.hero-title').classList.add('active');
+            }, 500);
+        });
+
+        function smoothScroll(e, id) {
+            e.preventDefault();
+            const el = document.getElementById(id);
+            if (el) {
+                const offset = 100; // Desconto da altura do menu fixo
+                const bodyRect = document.body.getBoundingClientRect().top;
+                const elementRect = el.getBoundingClientRect().top;
+                const elementPosition = elementRect - bodyRect;
+                const offsetPosition = elementPosition - offset;
+
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: 'smooth'
+                });
+            }
+        }
+
+        loadContent();
+
+        // --- Booking Modal Logic ---
+        let bookingData = {
+            service: '',
+            date: '',
+            time: ''
+        };
+
+        function openBooking() {
+            document.getElementById('booking-modal').classList.add('active');
+            renderCalendar();
+        }
+
+        function closeBooking() {
+            document.getElementById('booking-modal').classList.remove('active');
+        }
+
+        function nextBookingStep(step, val) {
+            if (val) bookingData.service = val;
+            document.querySelectorAll('.booking-step').forEach(s => s.classList.remove('active'));
+            document.getElementById(`booking-step-${step}`).classList.add('active');
+        }
+
+        function finalizeBooking() {
+            const name = document.getElementById('client-name').value.trim();
+            const phone = document.getElementById('client-phone').value.trim();
+            if (!name || !phone) { showAlert('Por favor, preencha seu nome e WhatsApp.'); return; }
+            bookingData.client = name;
+            bookingData.phone = phone;
+
+            // Save booking to Supabase
+            const payload = {
+                client_name: name,
+                phone: phone,
+                service: bookingData.service,
+                date: bookingData.date || 'A definir',
+                time: bookingData.time || 'A definir',
+                status: 'Agendado'
+            };
+            sb.from('bookings').insert([payload]).then(({ error }) => {
+                if (error) console.error('Booking save error:', error);
+            });
+
+            nextBookingStep(4);
+            playBookingChime();
+            incrementGestaoNotif();
+        }
+
+        function prevBookingStep(step) {
+            document.querySelectorAll('.booking-step').forEach(s => s.classList.remove('active'));
+            document.getElementById(`booking-step-${step}`).classList.add('active');
+        }
+
+        function selectDate(day, el) {
+            document.querySelectorAll('.calendar-days .day').forEach(d => d.classList.remove('selected'));
+            el.classList.add('selected');
+            bookingData.date = `${day} de Junho`;
+        }
+
+        function selectTime(time) {
+            if (!bookingData.date) return alert('Selecione uma data primeiro.');
+            bookingData.time = time;
+            nextBookingStep(3);
+        }
+
+        function renderCalendar() {
+            const container = document.getElementById('calendar-days');
+            container.innerHTML = '';
+            for(let i=1; i<=30; i++) {
+                const isBusy = [2, 5, 8, 12, 15, 19, 22, 26].includes(i);
+                container.innerHTML += `<div class="day ${isBusy ? 'busy' : ''}" onclick="${isBusy ? '' : `selectDate(${i}, this)`}">${i}</div>`;
+            }
+        }
+
+        function showAlert(msg) {
+            document.getElementById('alert-msg').innerText = msg;
+            document.getElementById('custom-alert').classList.add('active');
+        }
+
+        // Final Icon Creation for FAB and Nav
+        if (window.lucide) lucide.createIcons();
+
+        // --- E-Commerce Cart & Checkout Logic ---
+        window.cart = [];
+        let paymentMethod = 'pix';
+
+        function openCart() {
+            document.getElementById('cart-drawer').classList.add('active');
+            document.getElementById('cart-drawer-overlay').classList.add('active');
+        }
+
+        function closeCart() {
+            document.getElementById('cart-drawer').classList.remove('active');
+            document.getElementById('cart-drawer-overlay').classList.remove('active');
+        }
+
+        function addToCart(name, price, image) {
+            const existing = window.cart.find(item => item.name === name);
+            if (existing) {
+                existing.quantity += 1;
+            } else {
+                window.cart.push({ name, price: parseFloat(price), image, quantity: 1 });
+            }
+            renderCart();
+            updateCartBadge();
+            openCart();
+        }
+
+        function buyNow(name, price, image) {
+            window.cart = [{ name, price: parseFloat(price), image, quantity: 1 }];
+            renderCart();
+            updateCartBadge();
+            openCheckout();
+        }
+
+        function updateQty(name, change) {
+            const item = window.cart.find(item => item.name === name);
+            if (item) {
+                item.quantity += change;
+                if (item.quantity <= 0) {
+                    removeFromCart(name);
+                    return;
+                }
+            }
+            renderCart();
+            updateCartBadge();
+        }
+
+        function removeFromCart(name) {
+            window.cart = window.cart.filter(item => item.name !== name);
+            renderCart();
+            updateCartBadge();
+        }
+
+        function updateCartBadge() {
+            const totalQty = window.cart.reduce((acc, item) => acc + item.quantity, 0);
+            const badge = document.getElementById('cart-badge');
+            const badgeMobile = document.getElementById('cart-badge-mobile');
+            
+            if (badge) {
+                if (totalQty > 0) {
+                    badge.innerText = totalQty;
+                    badge.style.opacity = '1';
+                } else {
+                    badge.style.opacity = '0';
+                }
+            }
+            if (badgeMobile) {
+                if (totalQty > 0) {
+                    badgeMobile.innerText = totalQty;
+                    badgeMobile.style.opacity = '1';
+                } else {
+                    badgeMobile.style.opacity = '0';
+                }
+            }
+        }
+
+        function renderCart() {
+            const container = document.getElementById('cart-items-container');
+            const subtotalVal = document.getElementById('cart-subtotal-val');
+            
+            if (!container) return;
+            
+            if (window.cart.length === 0) {
+                container.innerHTML = `<div style="text-align: center; padding: 4rem 1rem; opacity: 0.5; font-size: 0.85rem;">Sua sacola está vazia.</div>`;
+                subtotalVal.innerText = 'R$ 0,00';
+                return;
+            }
+            
+            let total = 0;
+            container.innerHTML = window.cart.map(item => {
+                const itemTotal = item.price * item.quantity;
+                total += itemTotal;
+                return `
+                    <div class="cart-item">
+                        <img src="${item.image}" alt="${item.name}" class="cart-item-img">
+                        <div class="cart-item-info">
+                            <h4 class="cart-item-name">${item.name}</h4>
+                            <span class="cart-item-price">R$ ${item.price.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</span>
+                            <div class="cart-item-qty-actions">
+                                <button class="qty-btn" onclick="updateQty('${item.name}', -1)">-</button>
+                                <span class="qty-val">${item.quantity}</span>
+                                <button class="qty-btn" onclick="updateQty('${item.name}', 1)">+</button>
+                            </div>
+                            <button class="remove-item" onclick="removeFromCart('${item.name}')">Remover</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            subtotalVal.innerText = `R$ ${total.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+        }
+
+        function openCheckout() {
+            closeCart();
+            if (window.cart.length === 0) {
+                showAlert('Sua sacola está vazia.');
+                return;
+            }
+            document.getElementById('checkout-modal').classList.add('active');
+            nextCheckoutStep(1);
+        }
+
+        function closeCheckout() {
+            document.getElementById('checkout-modal').classList.remove('active');
+        }
+
+        function nextCheckoutStep(step) {
+            if (step === 2) {
+                const name = document.getElementById('checkout-name').value;
+                const email = document.getElementById('checkout-email').value;
+                if (!name || !email) {
+                    showAlert('Por favor, preencha seu nome e e-mail.');
+                    return;
+                }
+            }
+            document.querySelectorAll('.checkout-step').forEach(s => s.classList.remove('active'));
+            document.getElementById(`checkout-step-${step}`).classList.add('active');
+        }
+
+        function prevCheckoutStep(step) {
+            document.querySelectorAll('.checkout-step').forEach(s => s.classList.remove('active'));
+            document.getElementById(`checkout-step-${step}`).classList.add('active');
+        }
+
+        function selectPaymentMethod(method) {
+            paymentMethod = method;
+            document.getElementById('btn-pay-pix').classList.toggle('active', method === 'pix');
+            document.getElementById('btn-pay-card').classList.toggle('active', method === 'card');
+            document.getElementById('payment-pix-details').style.display = method === 'pix' ? 'block' : 'none';
+            document.getElementById('payment-card-details').style.display = method === 'card' ? 'block' : 'none';
+        }
+
+        function copyPixKey() {
+            const dummyKey = "00020101021226830014br.gov.bcb.pix2561pix.isabellalumiere.com.br/pay-104953920";
+            navigator.clipboard.writeText(dummyKey).then(() => {
+                showAlert('Código Pix copiado com sucesso!');
+            }).catch(() => {
+                showAlert('Não foi possível copiar o código. Tente selecionar e copiar manualmente.');
             });
         }
 
-        loadHomeContent();
+        function finalizePurchase() {
+            if (paymentMethod === 'card') {
+                const cardNum = document.getElementById('card-number').value;
+                const cardExp = document.getElementById('card-expiry').value;
+                const cardCvv = document.getElementById('card-cvv').value;
+                const cardName = document.getElementById('card-name').value;
+                
+                if (!cardNum || !cardExp || !cardCvv || !cardName) {
+                    showAlert('Por favor, preencha todos os dados do cartão de crédito.');
+                    return;
+                }
+            }
+            
+            // Generate order number
+            const orderNum = '#LUMI-' + Math.floor(10000 + Math.random() * 90000);
+            document.getElementById('order-number').innerText = orderNum;
+            
+            // Clear cart
+            window.cart = [];
+            renderCart();
+            updateCartBadge();
+            
+            // Move to success step
+            nextCheckoutStep(3);
+        }
+
+        function resetToHome() {
+            closeCheckout();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        function closeAlert() {
+            document.getElementById('custom-alert').classList.remove('active');
+        }
+
+        // --- Notificação de Gestão ---
+        function playBookingChime() {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const notes = [523.25, 659.25, 783.99, 1046.50]; // C5 E5 G5 C6
+                notes.forEach((freq, i) => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(freq, ctx.currentTime + i * 0.18);
+                    gain.gain.setValueAtTime(0, ctx.currentTime + i * 0.18);
+                    gain.gain.linearRampToValueAtTime(0.18, ctx.currentTime + i * 0.18 + 0.05);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.18 + 0.45);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(ctx.currentTime + i * 0.18);
+                    osc.stop(ctx.currentTime + i * 0.18 + 0.5);
+                });
+            } catch(e) { console.warn('Audio indisponível:', e); }
+        }
+
+        function incrementGestaoNotif() {
+            const stored = parseInt(localStorage.getItem('gestao_notif') || '0') + 1;
+            localStorage.setItem('gestao_notif', stored);
+            const badge = document.getElementById('gestao-notif-badge');
+            if (badge) {
+                badge.textContent = stored;
+                badge.style.display = 'inline-flex';
+            }
+        }
+
+        function initGestaoNotifBadge() {
+            const stored = parseInt(localStorage.getItem('gestao_notif') || '0');
+            const badge = document.getElementById('gestao-notif-badge');
+            if (badge && stored > 0) {
+                badge.textContent = stored;
+                badge.style.display = 'inline-flex';
+            }
+        }
+        initGestaoNotifBadge();
     </script>
-
-    <!-- Sovereign Switcher (Only for Presentation) -->
-    <div id="sovereign-switcher" style="position: fixed; bottom: 20px; right: 20px; z-index: 9999; display: flex; gap: 10px;">
-        <a href="index-minimalist.html" style="background: #F9F7F2; color: #000; padding: 10px 15px; border-radius: 5px; font-size: 10px; text-decoration: none; border: 1px solid #000; font-family: 'Montserrat'; letter-spacing: 2px;">MINIMALIST</a>
-        <a href="index-v1-red.html" style="background: #cc0022; color: #fff; padding: 10px 15px; border-radius: 5px; font-size: 10px; text-decoration: none; border: 1px solid #fff; font-family: 'Montserrat'; letter-spacing: 2px;">LUXURY RED</a>
-    </div>
 </body>
-
 </html>

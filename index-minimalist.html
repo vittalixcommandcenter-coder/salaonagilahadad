@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nágila Hadad | L'Atelier Muse</title>
+    <title>Isabella Lumière | L'Atelier Muse</title>
     
     <link rel="stylesheet" href="style-minimalist.css">
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -38,7 +38,7 @@
                     </div>
                     <div class="service-option" onclick="nextBookingStep(2, 'Coloração Premium')">
                         <h3>Coloração Premium</h3>
-                        <p>Técnicas exclusivas Wella.</p>
+                        <p>Técnicas exclusivas L'Oréal.</p>
                     </div>
                 </div>
             </div>
@@ -85,7 +85,7 @@
                     <i data-lucide="check-circle" style="width: 80px; height: 80px; color: var(--color-gold); margin: 0 auto 2rem;"></i>
                 </div>
                 <h2 class="booking-step-title">Agendamento <i>Confirmado</i></h2>
-                <p class="text-center opacity-60 mb-8">Sua experiência foi registrada com sucesso em nosso sistema. Nágila já recebeu sua solicitação.</p>
+                <p class="text-center opacity-60 mb-8">Sua experiência foi registrada com sucesso em nosso sistema. Isabella já recebeu sua solicitação.</p>
                 <button class="btn-finalize" id="whatsapp-trigger" style="margin-bottom: 1rem;">Enviar Lembrete via WhatsApp</button>
                 <button class="btn-back" style="width: 100%; border: 1px solid rgba(0,0,0,0.1); padding: 1.2rem; opacity: 1; font-weight: 700;" onclick="window.location.reload()">Voltar ao Início</button>
             </div>
@@ -102,10 +102,47 @@
                 <a href="#atelier" onclick="smoothScroll(event, 'atelier')">Atelier</a>
                 <a href="#obras" onclick="smoothScroll(event, 'obras')">Acervo</a>
                 <a href="#cinema" onclick="smoothScroll(event, 'cinema')">Cinema</a>
+                <a href="boutique.html">Boutique</a>
+                <a href="javascript:void(0)" onclick="openCart()" class="nav-cart-btn" style="display: inline-flex; align-items: center; gap: 0.3rem; position: relative;">
+                    <i data-lucide="shopping-bag" style="width: 16px; height: 16px;"></i>
+                    <span id="cart-badge" style="position: absolute; top: -8px; right: -8px; background: var(--color-gold); color: #fff; border-radius: 50%; width: 14px; height: 14px; font-size: 8px; display: flex; align-items: center; justify-content: center; font-weight: bold; opacity: 0; transition: opacity 0.3s;">0</span>
+                </a>
+                <a href="admin-minimalist.html" class="nav-cta-admin">Gestão</a>
                 <a href="javascript:void(0)" onclick="openBooking()" class="nav-cta-gold">Agendar</a>
             </div>
         </div>
     </nav>
+
+    <!-- Mobile Navigation Bar (Bottom) -->
+    <nav class="mobile-nav-bottom">
+        <a href="#atelier" onclick="smoothScroll(event, 'atelier')" class="mobile-nav-item">
+            <i data-lucide="home"></i>
+            <span>Atelier</span>
+        </a>
+        <a href="#obras" onclick="smoothScroll(event, 'obras')" class="mobile-nav-item">
+            <i data-lucide="image"></i>
+            <span>Acervo</span>
+        </a>
+        <a href="boutique.html" class="mobile-nav-item">
+            <i data-lucide="store"></i>
+            <span>Boutique</span>
+        </a>
+        <a href="admin-minimalist.html" class="mobile-nav-item">
+            <i data-lucide="layout-dashboard"></i>
+            <span>Painel</span>
+        </a>
+        <a href="javascript:void(0)" onclick="openCart()" class="mobile-nav-item" style="position: relative;">
+            <i data-lucide="shopping-bag"></i>
+            <span>Sacola</span>
+            <span id="cart-badge-mobile" style="position: absolute; top: 2px; right: 18px; background: var(--color-gold); color: #fff; border-radius: 50%; width: 12px; height: 12px; font-size: 7px; display: flex; align-items: center; justify-content: center; font-weight: bold; opacity: 0; transition: opacity 0.3s;">0</span>
+        </a>
+        <a href="javascript:void(0)" onclick="openBooking()" class="mobile-nav-item nav-cta-gold">
+            <i data-lucide="calendar"></i>
+            <span>Agendar</span>
+        </a>
+    </nav>
+
+
 
     <main>
         <!-- Hero: Full-Bleed Editorial -->
@@ -113,22 +150,22 @@
             <div class="hero-canvas-wrapper">
                 <div class="hero-content">
                     <h1 class="hero-title">
-                        <span class="word">Nágila</span>
-                        <span class="word">Hadad</span>
+                        <span class="word">Isabella</span>
+                        <span class="word">Lumière</span>
                     </h1>
                     <p class="hero-slogan-editorial">A ARTE DE TRANSFORMAR SUA AUTOESTIMA</p>
                 </div>
                 <div class="hero-portrait-canvas">
-                    <img src="assets/nagila_portrait_new.jpg" alt="Nagila Hadad" class="hero-portrait-img">
+                    <img src="assets/isabella_lumiere.png" alt="Isabella Lumière" class="hero-portrait-img">
                 </div>
             </div>
         </section>
 
         <!-- Section: Authority Strip -->
         <div class="authority-strip">
-            <span class="logo-item">WELLA PROFESSIONALS ARTIST</span>
+            <span class="logo-item">L'Oréal Professionnel Expert</span>
             <span class="dot"></span>
-            <span class="logo-item">DESTAQUE BEAUTY FAIR 2024</span>
+            <span class="logo-item">DESTAQUE Fashion Week 2024</span>
             <span class="dot"></span>
             <span class="logo-item">THE HAIR CONGRESS SPEAKER</span>
         </div>
@@ -140,7 +177,7 @@
                     <span class="category">Reconhecimento Global</span>
                     <h2 class="font-['Cormorant_Garamond'] text-6xl italic mb-8">No Palco do <i>The Hair</i></h2>
                     <p class="text-lg font-light leading-relaxed opacity-70 mb-8">
-                        Destaque na <b>Beauty Fair 2024</b>, Nágila Hadad subiu ao palco do maior congresso de cabeleireiros das Américas como Artista Oficial Wella Professionals. Sua trajetória é marcada pela inovação e pelo compromisso em elevar o padrão da educação na beleza brasileira.
+                        Destaque na <b>Fashion Week 2024</b>, Isabella Lumière subiu ao palco do maior congresso de cabeleireiros das Américas como Artista Oficial L'Oréal Professionals. Sua trajetória é marcada pela inovação e pelo compromisso em elevar o padrão da educação na beleza brasileira.
                     </p>
                     <blockquote class="border-l-2 border-[#C5A059] pl-8 italic opacity-80 text-xl font-light">
                         "Para crescer, é preciso que a equipe tenha o mesmo propósito que você. A educação é o que transforma o nosso mercado."
@@ -149,7 +186,7 @@
                 <div class="stage-image reveal">
                     <div class="image-wrapper">
                         <div class="image-border"></div>
-                        <img src="assets/nagila_beauty_fair_ultra.png" alt="Nagila Hadad no Palco Beauty Fair 2024" class="w-full shadow-2xl" style="image-rendering: high-quality;">
+                        <img src="assets/isabella_stage.png" alt="Fashion Week 2024" class="w-full shadow-2xl" style="image-rendering: high-quality;">
                     </div>
                 </div>
             </div>
@@ -174,7 +211,7 @@
                     </p>
                     <div class="atelier-stats">
                         <div class="stat-item">
-                            <span class="stat-num">Wella Artist</span>
+                            <span class="stat-num">L'Oréal Artist</span>
                             <span class="stat-label">Global Partner</span>
                         </div>
                     </div>
@@ -206,6 +243,27 @@
             <div id="cinema-wall" class="cinema-strip-container">
                 <!-- Vídeos compactos -->
             </div>
+            
+            <!-- Scroll Indicator -->
+            <div class="cinema-scroll-indicator">
+                <div class="cinema-scroll-progress" id="cinema-scroll-progress"></div>
+            </div>
+        </section>
+
+        <!-- Section 4: Boutique (Minimalist Shop) -->
+        <section id="boutique" class="section-magazine">
+            <div class="mb-20">
+                <span class="category">Curadoria L'Oréal Professionals</span>
+                <h2 class="font-['Cormorant_Garamond'] text-6xl font-light">L'Atelier <i>Boutique</i></h2>
+            </div>
+            
+            <div id="product-grid" class="shop-grid">
+                <!-- Produtos dinâmicos -->
+            </div>
+
+            <div class="mt-20 text-center" style="margin-top: 5rem; text-align: center;">
+                <a href="boutique.html" target="_blank" class="btn-outline-minimal" style="display: inline-block;">Ver Loja Completa</a>
+            </div>
         </section>
         <!-- Section: Voices of Excellence (Testimonials) -->
         <section class="section-magazine bg-white">
@@ -215,7 +273,7 @@
             </div>
             <div class="testimonial-magazine-grid">
                 <div class="testimonial-card reveal">
-                    <p>"O olhar da Nágila sobre o meu cabelo mudou a forma como eu me vejo no espelho. Uma artista do visagismo."</p>
+                    <p>"O olhar da Isabella sobre o meu cabelo mudou a forma como eu me vejo no espelho. Uma artista do visagismo."</p>
                     <cite>— Helena S.</cite>
                 </div>
                 <div class="testimonial-card reveal delay-1">
@@ -239,57 +297,246 @@
             
             <div class="footer-bottom">
                 <div class="footer-links">
-                    <a href="https://instagram.com/nagilahadad">Instagram</a>
-                    <a href="#">Wella Academy</a>
+                    <a href="https://instagram.com/isabellalumiere">Instagram</a>
+                    <a href="#">L'Oréal Academy</a>
                     <a href="#">Privacy</a>
                 </div>
-                <p class="copyright">&copy; 2026 Nágila Hadad Atelier. Design by Vittalix.</p>
+                <p class="copyright">&copy; 2026 Isabella Lumière Atelier. Design by Vittalix.</p>
             </div>
         </div>
     </footer>
 
 
-    <!-- Switcher -->
-    <div id="sovereign-switcher" class="fixed bottom-6 right-6 z-[2000] flex gap-2">
-        <a href="index-minimalist.html" class="bg-black text-white px-4 py-2 text-[8px] tracking-[0.2em] uppercase font-bold shadow-sm">Minimalist</a>
-        <a href="index-v1-red.html" class="bg-white text-black px-4 py-2 text-[8px] tracking-[0.2em] uppercase border border-black/10 shadow-lg">Red</a>
+    <!-- Cart Drawer -->
+    <div id="cart-drawer-overlay" class="cart-drawer-overlay" onclick="closeCart()"></div>
+    <div id="cart-drawer" class="cart-drawer">
+        <div class="cart-header">
+            <h2 class="cart-title">Sacola de <i>Compras</i></h2>
+            <button class="close-cart" onclick="closeCart()">
+                <i data-lucide="x" style="width: 24px; height: 24px;"></i>
+            </button>
+        </div>
+        <div id="cart-items-container" class="cart-items-container">
+            <!-- Items rendered dynamically -->
+        </div>
+        <div class="cart-footer">
+            <div class="cart-subtotal">
+                <span>Subtotal:</span>
+                <span id="cart-subtotal-val" class="cart-subtotal-val">R$ 0,00</span>
+            </div>
+            <button class="btn-checkout" onclick="openCheckout()">Finalizar Compra</button>
+        </div>
     </div>
+
+    <!-- Checkout Modal -->
+    <div id="checkout-modal" class="checkout-modal-overlay" onclick="closeCheckout()">
+        <div class="checkout-modal-box" onclick="event.stopPropagation()">
+            <button class="close-checkout-btn" onclick="closeCheckout()">
+                <i data-lucide="x" style="width: 24px; height: 24px;"></i>
+            </button>
+
+            <!-- Step 1: Identificação -->
+            <div id="checkout-step-1" class="checkout-step active">
+                <span class="category" style="font-size: 0.55rem; letter-spacing: 0.5em; text-transform: uppercase; color: var(--color-gold); display: block; margin-bottom: 1.5rem;">Passo 01 / 03</span>
+                <h2 class="checkout-title">Identificação</h2>
+                <div class="checkout-input-group">
+                    <label for="checkout-name">Nome Completo</label>
+                    <input type="text" id="checkout-name" placeholder="Seu nome">
+                </div>
+                <div class="checkout-input-group">
+                    <label for="checkout-email">E-mail</label>
+                    <input type="email" id="checkout-email" placeholder="seuemail@exemplo.com">
+                </div>
+                <div class="checkout-input-group">
+                    <label for="checkout-phone">WhatsApp</label>
+                    <input type="tel" id="checkout-phone" placeholder="(11) 99999-9999" value="+55 (11) 99999-9999">
+                </div>
+                <div class="checkout-nav-buttons" style="margin-top: 2rem;">
+                    <button class="btn-checkout" onclick="nextCheckoutStep(2)">Continuar para Pagamento</button>
+                </div>
+            </div>
+
+            <!-- Step 2: Pagamento -->
+            <div id="checkout-step-2" class="checkout-step">
+                <span class="category" style="font-size: 0.55rem; letter-spacing: 0.5em; text-transform: uppercase; color: var(--color-gold); display: block; margin-bottom: 1.5rem;">Passo 02 / 03</span>
+                <h2 class="checkout-title">Pagamento</h2>
+                
+                <div class="payment-methods">
+                    <button id="btn-pay-pix" class="payment-method-btn active" onclick="selectPaymentMethod('pix')">Pix</button>
+                    <button id="btn-pay-card" class="payment-method-btn" onclick="selectPaymentMethod('card')">Cartão</button>
+                </div>
+
+                <!-- Pix Layout -->
+                <div id="payment-pix-details" class="pix-payment-details">
+                    <div class="pix-qr-container">
+                        <div class="pix-qr-code">
+                            <svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <rect width="120" height="120" rx="4" fill="white"/>
+                                <path d="M10 10H40V20H20V40H10V10Z" fill="#C5A059"/>
+                                <path d="M80 10H110V40H100V20H80V10Z" fill="#C5A059"/>
+                                <path d="M10 80V110H40V100H20V80H10Z" fill="#C5A059"/>
+                                <path d="M110 80V110H80V100H100V80H110Z" fill="#C5A059"/>
+                                <rect x="30" y="30" width="15" height="15" fill="#1A1A1A"/>
+                                <rect x="75" y="30" width="15" height="15" fill="#1A1A1A"/>
+                                <rect x="30" y="75" width="15" height="15" fill="#1A1A1A"/>
+                                <rect x="52" y="52" width="16" height="16" fill="#C5A059"/>
+                                <rect x="75" y="75" width="6" height="6" fill="#1A1A1A"/>
+                                <rect x="85" y="85" width="6" height="6" fill="#1A1A1A"/>
+                                <rect x="85" y="75" width="6" height="6" fill="#1A1A1A"/>
+                                <rect x="75" y="85" width="6" height="6" fill="#1A1A1A"/>
+                            </svg>
+                        </div>
+                        <p style="font-size: 0.7rem; opacity: 0.6; margin-bottom: 1rem;">Escaneie o código acima ou copie a chave Pix abaixo.</p>
+                        <button class="btn-copy-pix" onclick="copyPixKey()">Copiar Código Pix</button>
+                    </div>
+                </div>
+
+                <!-- Card Layout -->
+                <div id="payment-card-details" class="card-payment-details" style="display: none;">
+                    <div class="checkout-input-group">
+                        <label for="card-number">Número do Cartão</label>
+                        <input type="text" id="card-number" placeholder="0000 0000 0000 0000" maxlength="19">
+                    </div>
+                    <div style="display: flex; gap: 1rem;">
+                        <div class="checkout-input-group" style="flex: 1;">
+                            <label for="card-expiry">Validade</label>
+                            <input type="text" id="card-expiry" placeholder="MM/AA" maxlength="5">
+                        </div>
+                        <div class="checkout-input-group" style="flex: 1;">
+                            <label for="card-cvv">CVV</label>
+                            <input type="text" id="card-cvv" placeholder="000" maxlength="4">
+                        </div>
+                    </div>
+                    <div class="checkout-input-group">
+                        <label for="card-name">Nome Impresso</label>
+                        <input type="text" id="card-name" placeholder="Como no cartão">
+                    </div>
+                </div>
+
+                <div class="checkout-nav-buttons" style="margin-top: 2rem;">
+                    <button class="btn-copy-pix" style="border: 1px solid rgba(0,0,0,0.1); opacity: 0.6;" onclick="prevCheckoutStep(1)">Voltar</button>
+                    <button class="btn-buy-now" style="width: auto; padding: 0.8rem 2rem;" onclick="finalizePurchase()">Confirmar Pedido</button>
+                </div>
+            </div>
+
+            <!-- Step 3: Sucesso -->
+            <div id="checkout-step-3" class="checkout-step">
+                <div style="text-align: center;">
+                    <i data-lucide="check-circle" style="width: 70px; height: 70px; color: var(--color-gold); margin: 0 auto 1.5rem;"></i>
+                    <h2 class="checkout-title" style="margin-bottom: 1rem;">Pedido <i>Confirmado</i></h2>
+                    <p style="font-size: 0.85rem; opacity: 0.6; line-height: 1.6; margin-bottom: 2rem;">
+                        Sua compra foi processada com sucesso! O número do seu pedido é <strong id="order-number">#LUMI-12345</strong>. Em breve você receberá as atualizações no e-mail cadastrado.
+                    </p>
+                    <button class="btn-checkout" onclick="resetToHome()">Voltar ao Início</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="vittalix-player.js"></script>
     <script>
-        const SUPABASE_URL = 'https://fjuiiivmsfdwsrqiobdu.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZqdWlpaXZtc2Zkd3NycWlvYmR1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2ODIyNjAsImV4cCI6MjA5MTI1ODI2MH0.-FyHmwxUJsloYRD6Wl6fjYrOHGf5CiFcaVgTT89bGMo';
-        const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const SUPABASE_URL = 'https://cypatfudsresohfznqij.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN5cGF0ZnVkc3Jlc29oZnpucWlqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ5OTk5MjIsImV4cCI6MjA5MDU3NTkyMn0.3So1sNl7jANqg0t4lwvD06A2qdHjvJQD7weMjBFVX5g';
+        const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, { db: { schema: 'salao' } });
 
         async function loadContent() {
-            // Photos
-            const { data: photos } = await sb.from('gallery').select('*').eq('media_type', 'IMAGE').eq('is_featured', true).order('created_at', { ascending: false }).limit(6);
-            if (photos) {
-                const classes = ['item-large', 'item-tall', 'item-wide', 'item-wide', 'item-tall', 'item-large'];
-                document.getElementById('asymmetric-grid').innerHTML = photos.map((p, i) => `
-                    <div class="grid-item ${classes[i % classes.length]} reveal" onclick="location.href='portfolio-minimalist.html'">
-                        <img src="/api/v1/stream?fileId=${p.telegram_file_id}" alt="Editorial">
+            // Photos (Hardcoded Unsplash)
+            const classes = ['item-large', 'item-tall', 'item-wide', 'item-wide', 'item-tall', 'item-large'];
+            const portfolioPhotos = [
+                { url: 'https://images.unsplash.com/photo-1562322140-8baeececf3df?auto=format&fit=crop&q=80&w=600' },
+                { url: 'https://images.unsplash.com/photo-1519699047748-de8e457a634e?auto=format&fit=crop&q=80&w=600' },
+                { url: 'https://images.unsplash.com/photo-1600948836101-f9ffda59d250?auto=format&fit=crop&q=80&w=600' },
+                { url: 'assets/isabella_lumiere.png' },
+                { url: 'https://images.unsplash.com/photo-1620331311520-246422fd82f9?auto=format&fit=crop&q=80&w=600' },
+                { url: 'https://images.unsplash.com/photo-1527799820374-dcf8d9d4a388?auto=format&fit=crop&q=80&w=600' }
+            ];
+            
+            document.getElementById('asymmetric-grid').innerHTML = portfolioPhotos.map((p, i) => `
+                <div class="grid-item ${classes[i % classes.length]} reveal">
+                    <img src="${p.url}" alt="Editorial">
+                </div>
+            `).join('');
+
+            // Products (Hardcoded Unsplash)
+            const portfolioProducts = [
+                { name: 'Shampoo & Condicionador Nutritivo', description: 'Limpeza suave e nutrição lipídica profunda para cabelos secos.', price: '120.00', image: 'https://images.unsplash.com/photo-1535585209827-a15fcdbc4c2d?auto=format&fit=crop&q=80&w=600' },
+                { name: 'Máscara de Reconstrução Intensa', description: 'Restauração lipídica profunda para fios fragilizados e pós-química.', price: '185.00', image: 'https://images.unsplash.com/photo-1526947425960-945c6e72858f?auto=format&fit=crop&q=80&w=600' },
+                { name: 'Elixir Nutritivo & Protetor Térmico', description: 'Selagem instantânea de cutículas e proteção térmica até 230°C.', price: '95.00', image: 'https://images.unsplash.com/photo-1617897903246-719242758050?auto=format&fit=crop&q=80&w=600' }
+            ];
+
+            document.getElementById('product-grid').innerHTML = portfolioProducts.map(p => `
+                <div class="product-card reveal">
+                    <div class="product-image">
+                        <img src="${p.image}" alt="${p.name}">
                     </div>
-                `).join('');
+                    <div class="product-info">
+                        <h3 class="product-name">${p.name}</h3>
+                        <p class="product-desc">${p.description}</p>
+                        <span class="product-price">R$ ${parseFloat(p.price).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</span>
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 1.5rem;">
+                            <button class="btn-add-to-cart" onclick="addToCart('${p.name}', ${p.price}, '${p.image}')">Adicionar à Sacola</button>
+                            <button class="btn-buy-now" onclick="buyNow('${p.name}', ${p.price}, '${p.image}')">Comprar Agora</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            // Videos (Dynamic load from Supabase with Vimeo fallback)
+            const fallbackVideos = [
+                { url: 'https://vimeo.com/493392058', title: 'Cabelo & Estilo 1' },
+                { url: 'https://vimeo.com/1004772080', title: 'Cabelo & Estilo 2' },
+                { url: 'https://vimeo.com/121708849', title: 'Cabelo & Estilo 3' },
+                { url: 'https://vimeo.com/891062829', title: 'Cabelo & Estilo 4' }
+            ];
+
+            let dbVideos = [];
+            try {
+                const { data, error } = await sb
+                    .from('gallery')
+                    .select('*')
+                    .eq('media_type', 'VIDEO')
+                    .order('order', { ascending: true });
+                if (!error && data && data.length > 0) {
+                    dbVideos = data.map(v => {
+                        const fileIds = (v.telegram_file_ids && v.telegram_file_ids.length > 0) 
+                            ? v.telegram_file_ids 
+                            : (v.telegram_file_id ? [v.telegram_file_id] : []);
+                        const url = (fileIds[0] && fileIds[0].startsWith('http')) ? fileIds[0] : `/api/v1/stream?fileId=${fileIds[0]}#t=1`;
+                        return {
+                            url: url,
+                            title: v.title && v.title !== 'EMPTY' ? v.title : 'Obra Cinematográfica'
+                        };
+                    });
+                }
+            } catch (e) {
+                console.error("Error loading videos from Supabase:", e);
             }
 
-            // Videos
-            const { data: videos } = await sb.from('gallery').select('*').eq('media_type', 'VIDEO').eq('is_featured', true).order('created_at', { ascending: false }).limit(8);
-            if (videos) {
-                window.allGalleryVideos = videos;
-                document.getElementById('cinema-wall').innerHTML = videos.map((v, i) => {
-                    const ids = (v.telegram_file_ids && v.telegram_file_ids.length > 0) ? v.telegram_file_ids : (v.telegram_file_id ? [v.telegram_file_id] : []);
-                    return `
-                        <div class="cinema-item-compact reveal group cursor-pointer" onclick='VittalixPlayer.openGallery(window.allGalleryVideos, ${i})'>
-                            <video src="/api/v1/stream?fileId=${ids[0]}#t=1" class="w-full h-full object-cover" playsinline muted loop autoplay></video>
-                        </div>
-                    `;
-                }).join('');
-            }
+            window.portfolioVideos = dbVideos.length > 0 ? dbVideos : fallbackVideos;
+
+            document.getElementById('cinema-wall').innerHTML = window.portfolioVideos.map((v, i) => {
+                const isVimeo = v.url.includes('vimeo.com') && !v.url.includes('player.vimeo.com/external');
+                let mediaHtml = '';
+                if (isVimeo) {
+                    const match = v.url.match(/vimeo\.com\/(\d+)/);
+                    const id = match ? match[1] : '';
+                    mediaHtml = `<iframe src="https://player.vimeo.com/video/${id}?background=1&autoplay=1&loop=1&muted=1&autopause=0&quality=1080p&playlist=${id}" class="w-full h-full object-cover pointer-events-none" style="width: 100%; height: 100%; border: none;" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
+                } else {
+                    mediaHtml = `<video src="${v.url}" class="w-full h-full object-cover" muted loop playsinline autoplay></video>`;
+                }
+                return `
+                    <div class="cinema-item-compact reveal group cursor-pointer" onclick="VittalixPlayer.openGallery(window.portfolioVideos, ${i})">
+                        ${mediaHtml}
+                    </div>
+                `;
+            }).join('');
 
             if (window.lucide) lucide.createIcons();
             initReveal();
+            initCinemaScroll();
         }
 
         function initReveal() {
@@ -297,11 +544,40 @@
             document.querySelectorAll('.reveal').forEach(r => obs.observe(r));
         }
 
+        function initCinemaScroll() {
+            const cinemaWall = document.getElementById('cinema-wall');
+            const scrollProgress = document.getElementById('cinema-scroll-progress');
+            if (!cinemaWall || !scrollProgress) return;
+
+            function updateProgress() {
+                const maxScroll = cinemaWall.scrollWidth - cinemaWall.clientWidth;
+                if (maxScroll <= 0) {
+                    scrollProgress.style.width = '0%';
+                    return;
+                }
+                const visibleRatio = cinemaWall.clientWidth / cinemaWall.scrollWidth;
+                const barWidth = Math.max(visibleRatio * 100, 20); // min 20%
+                scrollProgress.style.width = `${barWidth}%`;
+                
+                const maxTranslate = 100 - barWidth;
+                const currentTranslate = (cinemaWall.scrollLeft / maxScroll) * maxTranslate;
+                scrollProgress.style.transform = `translateX(${currentTranslate}%)`;
+            }
+
+            cinemaWall.addEventListener('scroll', updateProgress);
+            window.addEventListener('resize', updateProgress);
+            
+            updateProgress();
+            setTimeout(updateProgress, 300);
+        }
+
         // Custom Cursor Logic
         const cursor = document.querySelector('.custom-cursor');
         const cursorOutline = document.querySelector('.custom-cursor-outline');
 
         window.addEventListener('mousemove', (e) => {
+            if (window.matchMedia("(hover: none)").matches) return;
+            
             const posX = e.clientX;
             const posY = e.clientY;
 
@@ -315,7 +591,7 @@
 
         // Hover Effect on Links/Buttons
         document.body.addEventListener('mouseover', (e) => {
-            if (e.target.closest('a, button, .grid-item, .cinema-item-compact')) {
+            if (e.target.closest('a, button, .cinema-item-compact')) {
                 cursor.style.transform += ' scale(2.5)';
                 cursor.style.backgroundColor = 'var(--color-gold)';
                 cursor.style.opacity = '0.3';
@@ -324,7 +600,7 @@
         });
 
         document.body.addEventListener('mouseout', (e) => {
-            if (e.target.closest('a, button, .grid-item, .cinema-item-compact')) {
+            if (e.target.closest('a, button, .cinema-item-compact')) {
                 cursor.style.transform = cursor.style.transform.replace(' scale(2.5)', '');
                 cursor.style.backgroundColor = 'transparent';
                 cursor.style.opacity = '1';
@@ -444,10 +720,225 @@
             nextBookingStep(4);
             
             // Prepare WhatsApp Trigger
-            const text = `Olá Nágila! Acabo de agendar: *${bookingData.service}* para o dia *${bookingData.date}* às *${bookingData.time}*. Meu nome é ${name}.`;
+            const text = `Olá Isabella! Acabo de agendar: *${bookingData.service}* para o dia *${bookingData.date}* às *${bookingData.time}*. Meu nome é ${name}.`;
             document.getElementById('whatsapp-trigger').onclick = () => {
-                window.open(`https://wa.me/5518997055954?text=${encodeURIComponent(text)}`);
+                window.open(`https://wa.me/5511999999999?text=${encodeURIComponent(text)}`);
             };
+        }
+
+        // Mobile Nav Active State on Scroll
+        window.addEventListener('scroll', () => {
+            const sections = ['atelier', 'obras', 'cinema', 'boutique'];
+            let current = '';
+
+            sections.forEach(section => {
+                const el = document.getElementById(section);
+                if (el) {
+                    const rect = el.getBoundingClientRect();
+                    if (rect.top <= 150) current = section;
+                }
+            });
+
+            document.querySelectorAll('.mobile-nav-item').forEach(item => {
+                item.classList.remove('active');
+                if (item.getAttribute('href') === `#${current}`) {
+                    item.classList.add('active');
+                }
+            });
+        });
+        
+        // Final Icon Creation for FAB and Nav
+        if (window.lucide) lucide.createIcons();
+
+        // --- E-Commerce Cart & Checkout Logic ---
+        window.cart = [];
+        let paymentMethod = 'pix';
+
+        function openCart() {
+            document.getElementById('cart-drawer').classList.add('active');
+            document.getElementById('cart-drawer-overlay').classList.add('active');
+        }
+
+        function closeCart() {
+            document.getElementById('cart-drawer').classList.remove('active');
+            document.getElementById('cart-drawer-overlay').classList.remove('active');
+        }
+
+        function addToCart(name, price, image) {
+            const existing = window.cart.find(item => item.name === name);
+            if (existing) {
+                existing.quantity += 1;
+            } else {
+                window.cart.push({ name, price: parseFloat(price), image, quantity: 1 });
+            }
+            renderCart();
+            updateCartBadge();
+            openCart();
+        }
+
+        function buyNow(name, price, image) {
+            window.cart = [{ name, price: parseFloat(price), image, quantity: 1 }];
+            renderCart();
+            updateCartBadge();
+            openCheckout();
+        }
+
+        function updateQty(name, change) {
+            const item = window.cart.find(item => item.name === name);
+            if (item) {
+                item.quantity += change;
+                if (item.quantity <= 0) {
+                    removeFromCart(name);
+                    return;
+                }
+            }
+            renderCart();
+            updateCartBadge();
+        }
+
+        function removeFromCart(name) {
+            window.cart = window.cart.filter(item => item.name !== name);
+            renderCart();
+            updateCartBadge();
+        }
+
+        function updateCartBadge() {
+            const totalQty = window.cart.reduce((acc, item) => acc + item.quantity, 0);
+            const badge = document.getElementById('cart-badge');
+            const badgeMobile = document.getElementById('cart-badge-mobile');
+            
+            if (badge) {
+                if (totalQty > 0) {
+                    badge.innerText = totalQty;
+                    badge.style.opacity = '1';
+                } else {
+                    badge.style.opacity = '0';
+                }
+            }
+            if (badgeMobile) {
+                if (totalQty > 0) {
+                    badgeMobile.innerText = totalQty;
+                    badgeMobile.style.opacity = '1';
+                } else {
+                    badgeMobile.style.opacity = '0';
+                }
+            }
+        }
+
+        function renderCart() {
+            const container = document.getElementById('cart-items-container');
+            const subtotalVal = document.getElementById('cart-subtotal-val');
+            
+            if (!container) return;
+            
+            if (window.cart.length === 0) {
+                container.innerHTML = `<div style="text-align: center; padding: 4rem 1rem; opacity: 0.5; font-size: 0.85rem;">Sua sacola está vazia.</div>`;
+                subtotalVal.innerText = 'R$ 0,00';
+                return;
+            }
+            
+            let total = 0;
+            container.innerHTML = window.cart.map(item => {
+                const itemTotal = item.price * item.quantity;
+                total += itemTotal;
+                return `
+                    <div class="cart-item">
+                        <img src="${item.image}" alt="${item.name}" class="cart-item-img">
+                        <div class="cart-item-info">
+                            <h4 class="cart-item-name">${item.name}</h4>
+                            <span class="cart-item-price">R$ ${item.price.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</span>
+                            <div class="cart-item-qty-actions">
+                                <button class="qty-btn" onclick="updateQty('${item.name}', -1)">-</button>
+                                <span class="qty-val">${item.quantity}</span>
+                                <button class="qty-btn" onclick="updateQty('${item.name}', 1)">+</button>
+                            </div>
+                            <button class="remove-item" onclick="removeFromCart('${item.name}')">Remover</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            subtotalVal.innerText = `R$ ${total.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+        }
+
+        function openCheckout() {
+            closeCart();
+            if (window.cart.length === 0) {
+                showAlert('Sua sacola está vazia.');
+                return;
+            }
+            document.getElementById('checkout-modal').classList.add('active');
+            nextCheckoutStep(1);
+        }
+
+        function closeCheckout() {
+            document.getElementById('checkout-modal').classList.remove('active');
+        }
+
+        function nextCheckoutStep(step) {
+            if (step === 2) {
+                const name = document.getElementById('checkout-name').value;
+                const email = document.getElementById('checkout-email').value;
+                if (!name || !email) {
+                    showAlert('Por favor, preencha seu nome e e-mail.');
+                    return;
+                }
+            }
+            document.querySelectorAll('.checkout-step').forEach(s => s.classList.remove('active'));
+            document.getElementById(`checkout-step-${step}`).classList.add('active');
+        }
+
+        function prevCheckoutStep(step) {
+            document.querySelectorAll('.checkout-step').forEach(s => s.classList.remove('active'));
+            document.getElementById(`checkout-step-${step}`).classList.add('active');
+        }
+
+        function selectPaymentMethod(method) {
+            paymentMethod = method;
+            document.getElementById('btn-pay-pix').classList.toggle('active', method === 'pix');
+            document.getElementById('btn-pay-card').classList.toggle('active', method === 'card');
+            document.getElementById('payment-pix-details').style.display = method === 'pix' ? 'block' : 'none';
+            document.getElementById('payment-card-details').style.display = method === 'card' ? 'block' : 'none';
+        }
+
+        function copyPixKey() {
+            const dummyKey = "00020101021226830014br.gov.bcb.pix2561pix.isabellalumiere.com.br/pay-104953920";
+            navigator.clipboard.writeText(dummyKey).then(() => {
+                showAlert('Código Pix copiado com sucesso!');
+            }).catch(() => {
+                showAlert('Não foi possível copiar o código. Tente selecionar e copiar manualmente.');
+            });
+        }
+
+        function finalizePurchase() {
+            if (paymentMethod === 'card') {
+                const cardNum = document.getElementById('card-number').value;
+                const cardExp = document.getElementById('card-expiry').value;
+                const cardCvv = document.getElementById('card-cvv').value;
+                const cardName = document.getElementById('card-name').value;
+                
+                if (!cardNum || !cardExp || !cardCvv || !cardName) {
+                    showAlert('Por favor, preencha todos os dados do cartão de crédito.');
+                    return;
+                }
+            }
+            
+            // Generate order number
+            const orderNum = '#LUMI-' + Math.floor(10000 + Math.random() * 90000);
+            document.getElementById('order-number').innerText = orderNum;
+            
+            // Clear cart
+            window.cart = [];
+            renderCart();
+            updateCartBadge();
+            
+            // Move to success step
+            nextCheckoutStep(3);
+        }
+
+        function resetToHome() {
+            closeCheckout();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     </script>
 </body>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Acervo Editorial | Nagila Hadad</title>
+    <title>Acervo Editorial | Isabella Lumière</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;1,300&family=Inter:wght@100;300;400&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -145,14 +145,78 @@
             color: var(--color-text);
             opacity: 0.2;
             transition: all 0.4s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10002;
         }
         .nav-arrow:hover { opacity: 1; color: var(--color-gold); }
         .nav-arrow.left { left: -80px; }
         .nav-arrow.right { right: -80px; }
         .nav-arrow i { width: 48px; height: 48px; stroke-width: 1px; }
 
+        .modal-pagination {
+            position: absolute;
+            bottom: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: var(--font-body);
+            font-size: 0.72rem;
+            letter-spacing: 0.2em;
+            color: var(--color-text);
+            opacity: 0.5;
+            font-weight: 500;
+        }
+
+        .modal-swipe-tip {
+            display: none;
+            position: absolute;
+            bottom: 0.8rem;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: var(--font-body);
+            font-size: 0.6rem;
+            letter-spacing: 0.1em;
+            color: var(--color-text);
+            opacity: 0.3;
+            text-transform: uppercase;
+        }
+
         @media (max-width: 1200px) {
-            .nav-arrow { display: none; }
+            .nav-arrow {
+                display: flex;
+                opacity: 0.7;
+                background: rgba(255, 255, 255, 0.85);
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                border-radius: 50%;
+                width: 44px;
+                height: 44px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+                border: 1px solid rgba(0,0,0,0.05);
+            }
+            .nav-arrow.left { left: 1rem; }
+            .nav-arrow.right { right: 1rem; }
+            .nav-arrow i { width: 24px; height: 24px; stroke-width: 1.5px; }
+
+            .modal-pagination {
+                bottom: 2.2rem;
+                background: rgba(255, 255, 255, 0.85);
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                padding: 0.4rem 1rem;
+                border-radius: 20px;
+                border: 1px solid rgba(0,0,0,0.05);
+                box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+                opacity: 0.8;
+                color: #1A1A1A;
+                z-index: 10001;
+            }
+
+            .modal-swipe-tip {
+                display: block;
+                z-index: 10001;
+            }
         }
     </style>
 </head>
@@ -161,7 +225,7 @@
     <div class="marble-texture"></div>
 
     <header>
-        <a href="index-minimalist.html" class="back-link"><i data-lucide="arrow-left" style="width:14px; margin-right:8px;"></i> Voltar ao Atelier</a>
+        <a href="index.html" class="back-link"><i data-lucide="arrow-left" style="width:14px; margin-right:8px;"></i> Voltar ao Atelier</a>
         <h1 class="section-title">Acervo <i>Editorial</i></h1>
     </header>
 
@@ -184,42 +248,48 @@
             </button>
 
             <img id="modal-img-target" src="" alt="Obra">
+            
+            <div class="modal-pagination" id="modal-pagination"></div>
+            <div class="modal-swipe-tip">Deslize para navegar</div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         lucide.createIcons();
-        const sb = supabase.createClient('https://fjuiiivmsfdwsrqiobdu.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZqdWlpaXZtc2Zkd3NycWlvYmR1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2ODIyNjAsImV4cCI6MjA5MTI1ODI2MH0.-FyHmwxUJsloYRD6Wl6fjYrOHGf5CiFcaVgTT89bGMo');
+        const sb = supabase.createClient('https://cypatfudsresohfznqij.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN5cGF0ZnVkc3Jlc29oZnpucWlqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ5OTk5MjIsImV4cCI6MjA5MDU3NTkyMn0.3So1sNl7jANqg0t4lwvD06A2qdHjvJQD7weMjBFVX5g', { db: { schema: 'salao' } });
 
-        let allPhotos = [];
+        const allPhotos = [
+            { url: 'https://images.unsplash.com/photo-1562322140-8baeececf3df?auto=format&fit=crop&q=80&w=800' },
+            { url: 'https://images.unsplash.com/photo-1519699047748-de8e457a634e?auto=format&fit=crop&q=80&w=800' },
+            { url: 'https://images.unsplash.com/photo-1600948836101-f9ffda59d250?auto=format&fit=crop&q=80&w=800' },
+            { url: 'assets/isabella_lumiere.png' },
+            { url: 'https://images.unsplash.com/photo-1620331311520-246422fd82f9?auto=format&fit=crop&q=80&w=800' },
+            { url: 'https://images.unsplash.com/photo-1527799820374-dcf8d9d4a388?auto=format&fit=crop&q=80&w=800' }
+        ];
         let currentIndex = 0;
 
-        async function loadPortfolio() {
+        function loadPortfolio() {
             const grid = document.getElementById('portfolio-grid');
-            const { data, error } = await sb.from('gallery').select('*').eq('media_type', 'IMAGE').order('order');
-
-            if (error || !data) return;
-            allPhotos = data;
-
-            grid.innerHTML = data.map((p, idx) => {
-                const src = p.thumbnail_url || `/api/v1/stream?fileId=${p.telegram_file_id}`;
-                return `
-                    <div class="photo-card-full" onclick="openImageModal(${idx})">
-                        <img src="${src}" alt="Obra">
-                    </div>
-                `;
-            }).join('');
+            grid.innerHTML = allPhotos.map((p, idx) => `
+                <div class="photo-card-full" onclick="openImageModal(${idx})">
+                    <img src="${p.url}" alt="Obra">
+                </div>
+            `).join('');
         }
 
         function openImageModal(index) {
             currentIndex = index;
             const modal = document.getElementById('image-modal');
             const img = document.getElementById('modal-img-target');
+            const pagination = document.getElementById('modal-pagination');
             const photo = allPhotos[currentIndex];
-            img.src = photo.thumbnail_url || `/api/v1/stream?fileId=${photo.telegram_file_id}`;
+            img.src = photo.url;
             modal.classList.add('active');
             document.body.style.overflow = 'hidden';
+            if (pagination) {
+                pagination.innerText = `${currentIndex + 1} / ${allPhotos.length}`;
+            }
             if(window.lucide) lucide.createIcons();
         }
 
@@ -244,6 +314,31 @@
             if (e.key === 'ArrowLeft') prevImage();
             if (e.key === 'Escape') closeImageModal();
         });
+
+        // Touch Swipe Navigation for Mobile
+        let touchStartX = 0;
+        let touchEndX = 0;
+        
+        const modalContent = document.querySelector('.image-modal-content');
+        if (modalContent) {
+            modalContent.addEventListener('touchstart', (e) => {
+                touchStartX = e.changedTouches[0].screenX;
+            }, { passive: true });
+            
+            modalContent.addEventListener('touchend', (e) => {
+                touchEndX = e.changedTouches[0].screenX;
+                handleSwipe();
+            }, { passive: true });
+        }
+        
+        function handleSwipe() {
+            const swipeThreshold = 50;
+            if (touchEndX < touchStartX - swipeThreshold) {
+                nextImage(); // Swipe left -> next
+            } else if (touchEndX > touchStartX + swipeThreshold) {
+                prevImage(); // Swipe right -> prev
+            }
+        }
 
         loadPortfolio();
     </script>

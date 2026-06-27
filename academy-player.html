@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Área do Aluno | Nagila Academy</title>
+    <title>Área do Aluno | Isabella Academy</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -188,9 +188,9 @@
     </div>
 
     <script>
-        const SUPABASE_URL = 'https://fjuiiivmsfdwsrqiobdu.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZqdWlpaXZtc2Zkd3NycWlvYmR1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2ODIyNjAsImV4cCI6MjA5MTI1ODI2MH0.-FyHmwxUJsloYRD6Wl6fjYrOHGf5CiFcaVgTT89bGMo';
-        const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const SUPABASE_URL = 'https://cypatfudsresohfznqij.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN5cGF0ZnVkc3Jlc29oZnpucWlqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ5OTk5MjIsImV4cCI6MjA5MDU3NTkyMn0.3So1sNl7jANqg0t4lwvD06A2qdHjvJQD7weMjBFVX5g';
+        const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, { db: { schema: 'salao' } });
 
         const urlParams = new URLSearchParams(window.location.search);
         const courseId = urlParams.get('id');

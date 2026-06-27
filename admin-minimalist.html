@@ -1,415 +1,3203 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nágila Hadad | ERP Center</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,300;1,300&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <title>Gestão | L'Atelier Lumière</title>
+    <meta name="description"
+        content="Painel de gestão exclusivo do L'Atelier Lumière — agendamentos, galeria, boutique e horários.">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Inter:wght@200;300;400;500;600;700&display=swap"
+        rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <style>
         :root {
-            --color-gold: #C5A059;
-            --bg-admin: #FBFBF9;
-            --color-text: #111111;
-            --color-success: #15803d;
-            --color-danger: #b91c1c;
-            --color-pending: #d97706;
+            --gold: #C5A059;
+            --gold-light: #D4B878;
+            --gold-pale: rgba(197, 160, 89, 0.08);
+            --text: #1A1A1A;
+            --text-muted: rgba(26, 26, 26, 0.75);
+            --border: rgba(0, 0, 0, 0.07);
+            --border-gold: rgba(197, 160, 89, 0.2);
+            --bg: #F9F7F2;
+            --white: #FFFFFF;
+            --sidebar-w: 270px;
+            --radius: 12px;
+            --shadow: 0 4px 30px rgba(0, 0, 0, 0.06);
+            --shadow-md: 0 10px 50px rgba(0, 0, 0, 0.1);
         }
-        body { background: var(--bg-admin); color: var(--color-text); font-family: 'Inter', sans-serif; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
-        
-        /* Custom Alert UI */
-        .custom-alert { position: fixed; inset: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(5px); z-index: 9999; display: none; align-items: center; justify-content: center; opacity: 0; transition: all 0.3s; }
-        .custom-alert.active { display: flex; opacity: 1; }
-        .alert-content { background: #fff; padding: 3rem; border-radius: 12px; max-width: 400px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.1); border: 1px solid var(--color-gold); }
-        .alert-content p { font-size: 1rem; margin-bottom: 2rem; color: #333; line-height: 1.5; }
-        .btn-confirm { background: #111; color: #fff; border: none; padding: 1rem 2rem; border-radius: 6px; cursor: pointer; text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.7rem; font-weight: 600; }
 
-        .admin-layout { display: grid; grid-template-columns: 300px 1fr; min-height: 100vh; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-        /* Sidebar */
-        .admin-sidebar { background: #fff; padding: 4rem 2.5rem; border-right: 1px solid rgba(0,0,0,0.06); position: sticky; top: 0; height: 100vh; }
-        .admin-logo { font-family: 'Cormorant Garamond', serif; font-size: 2.2rem; font-style: italic; margin-bottom: 5rem; display: block; color: var(--color-gold); }
-        .admin-nav a { display: flex; align-items: center; gap: 1.2rem; padding: 1.4rem 0; text-decoration: none; color: var(--color-text); font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.5; transition: all 0.3s; cursor: pointer; font-weight: 500; }
-        .admin-nav a.active { opacity: 1; color: var(--color-text); font-weight: 700; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
 
-        /* Main */
-        .admin-main { padding: 5rem 6%; }
-        .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5rem; }
-        .admin-title { font-family: 'Cormorant Garamond', serif; font-size: 3.5rem; font-weight: 300; line-height: 1; }
+        /* ─────── LOGIN OVERLAY ─────── */
+        #login-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: var(--bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.6s ease;
+        }
 
-        /* Stats */
-        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2.5rem; margin-bottom: 5rem; }
-        .stat-card { background: #fff; padding: 2.5rem; border-radius: 12px; border: 1px solid rgba(0,0,0,0.03); box-shadow: 0 4px 20px rgba(0,0,0,0.02); }
-        .stat-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.15em; opacity: 0.5; font-weight: 600; display: block; margin-bottom: 1.2rem; }
-        .stat-value { font-size: 2.2rem; font-family: 'Cormorant Garamond', serif; font-style: italic; color: #000; }
+        .login-card {
+            width: 100%;
+            max-width: 400px;
+            padding: 4rem 3.5rem;
+            background: var(--white);
+            border: 1px solid var(--border-gold);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-md);
+            text-align: center;
+        }
 
-        /* Tabs */
-        .admin-tabs { display: flex; gap: 3rem; margin-bottom: 3rem; border-bottom: 1px solid rgba(0,0,0,0.06); }
-        .tab-link { padding: 1rem 0; cursor: pointer; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.4; transition: all 0.3s; border-bottom: 2px solid transparent; font-weight: 600; }
-        .tab-link.active { opacity: 1; border-color: var(--color-gold); color: var(--color-gold); }
+        .login-mark {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.2rem;
+            font-weight: 300;
+            letter-spacing: 0.15em;
+            color: var(--text);
+            margin-bottom: 0.3rem;
+        }
 
-        .admin-panel { display: none; }
-        .admin-panel.active { display: block; animation: fadeIn 0.5s; }
+        .login-mark i {
+            font-style: italic;
+            color: var(--gold);
+        }
 
-        /* Tables */
-        .content-card { background: #fff; padding: 4rem; border-radius: 16px; box-shadow: 0 4px 24px rgba(0,0,0,0.03); }
-        table { width: 100%; border-collapse: collapse; }
-        th { text-align: left; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; padding: 1.8rem 0; border-bottom: 1px solid rgba(0,0,0,0.06); opacity: 0.6; font-weight: 700; }
-        td { padding: 2rem 0; border-bottom: 1px solid rgba(0,0,0,0.03); font-size: 0.95rem; }
+        .login-sub {
+            font-size: 0.55rem;
+            letter-spacing: 0.5em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 3rem;
+        }
 
-        .service-tag { font-size: 0.7rem; color: var(--color-gold); text-transform: uppercase; font-weight: 600; letter-spacing: 0.05em; }
-        .status-pill { font-size: 0.6rem; padding: 0.4rem 1rem; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700; }
-        .status-Agendado { background: #FFF7ED; color: #9A3412; }
-        .status-Concluído { background: #F0FDF4; color: #166534; }
-        .status-Cancelado { background: #FEF2F2; color: #991B1B; }
+        .login-field {
+            text-align: left;
+            margin-bottom: 1.5rem;
+        }
 
-        .action-btn { border: none; background: #F5F5F5; padding: 0.6rem; border-radius: 8px; cursor: pointer; transition: all 0.3s; margin-left: 0.5rem; color: #666; }
-        .action-btn:hover { background: #000; color: #fff; }
-        .action-btn.success:hover { background: var(--color-success); }
-        .action-btn.danger:hover { background: var(--color-danger); }
+        .login-field label {
+            display: block;
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 0.6rem;
+        }
 
-        /* Finance Split View */
-        .finance-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; }
-        .finance-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
-        .finance-title { font-size: 1rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; display: flex; align-items: center; gap: 0.8rem; }
-        .in-label { color: var(--color-success); }
-        .out-label { color: var(--color-danger); }
+        .login-field input {
+            width: 100%;
+            border: none;
+            border-bottom: 1px solid var(--border);
+            padding: 0.8rem 0;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            background: transparent;
+            color: var(--text);
+            transition: border-color 0.3s;
+            outline: none;
+        }
 
-        /* Forms */
-        .finance-form { display: grid; grid-template-columns: 1fr 1fr 1fr 100px; gap: 1rem; margin-bottom: 4rem; }
-        .input-group label { display: block; font-size: 0.6rem; text-transform: uppercase; margin-bottom: 0.5rem; opacity: 0.5; }
-        input, select { width: 100%; padding: 1rem; border: 1px solid rgba(0,0,0,0.1); border-radius: 8px; font-family: inherit; font-size: 0.9rem; }
-        .btn-lancar { background: #111; color: #fff; border: none; padding: 1rem; border-radius: 8px; cursor: pointer; font-size: 0.7rem; text-transform: uppercase; font-weight: 700; }
+        .login-field input:focus {
+            border-color: var(--gold);
+        }
 
-        /* Salon Management */
-        .hours-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 1rem; margin-top: 2rem; }
-        .hour-card { background: #FBFBF9; padding: 1.5rem; border-radius: 8px; border: 1px solid rgba(0,0,0,0.05); text-align: center; }
-        .hour-card.inactive { opacity: 0.4; background: #eee; }
-        .day-label { font-weight: 700; font-size: 0.7rem; display: block; margin-bottom: 1rem; }
-        .time-input { font-size: 0.7rem; border: none; background: transparent; text-align: center; width: 100%; font-weight: 600; }
+        .login-btn {
+            width: 100%;
+            padding: 1.1rem;
+            margin-top: 1rem;
+            background: var(--text);
+            color: var(--white);
+            border: none;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.65rem;
+            font-weight: 600;
+            letter-spacing: 0.35em;
+            text-transform: uppercase;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.3s;
+        }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        .login-btn:hover {
+            background: var(--gold);
+        }
+
+        .login-error {
+            font-size: 0.78rem;
+            color: #e53e3e;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .login-back {
+            display: inline-block;
+            margin-top: 2.5rem;
+            font-size: 0.6rem;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .login-back:hover {
+            color: var(--text);
+        }
+
+        /* ─────── LAYOUT ─────── */
+        #admin-wrap {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.6s ease;
+        }
+
+        .admin-layout {
+            display: grid;
+            grid-template-columns: var(--sidebar-w) 1fr;
+            min-height: 100vh;
+        }
+
+        /* ─────── SIDEBAR ─────── */
+        .admin-sidebar {
+            background: var(--white);
+            border-right: 1px solid var(--border);
+            padding: 2.5rem 2rem;
+            display: flex;
+            flex-direction: column;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .sidebar-logo {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.4rem;
+            font-weight: 300;
+            letter-spacing: 0.1em;
+            color: var(--text);
+            margin-bottom: 0.3rem;
+        }
+
+        .sidebar-logo i {
+            font-style: italic;
+            color: var(--gold);
+        }
+
+        .sidebar-sub {
+            font-size: 0.5rem;
+            letter-spacing: 0.45em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 3rem;
+        }
+
+        .sidebar-section-label {
+            font-size: 0.65rem;
+            font-weight: 600;
+            letter-spacing: 0.35em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            padding: 0 0.8rem;
+            margin-bottom: 0.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .admin-nav {
+            list-style: none;
+            flex: 1;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 0.8rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            transition: all 0.25s;
+            margin-bottom: 2px;
+            text-decoration: none;
+        }
+
+        .nav-item i {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+        }
+
+        .nav-item:hover {
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        .nav-item.active {
+            background: var(--gold-pale);
+            color: var(--gold);
+            font-weight: 600;
+        }
+
+        .nav-item.active i {
+            stroke: var(--gold);
+        }
+
+        .nav-divider {
+            border: none;
+            border-top: 1px solid var(--border);
+            margin: 1.5rem 0;
+        }
+
+        .nav-item.danger {
+            color: #e53e3e;
+        }
+
+        .nav-item.danger:hover {
+            background: rgba(229, 62, 62, 0.06);
+            color: #e53e3e;
+        }
+
+        /* ─────── KPI BADGE na sidebar ─────── */
+        .nav-badge {
+            margin-left: auto;
+            background: var(--gold);
+            color: #fff;
+            border-radius: 50px;
+            min-width: 18px;
+            height: 18px;
+            font-size: 0.6rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 5px;
+        }
+
+        /* ─────── MAIN CONTENT ─────── */
+        .admin-main {
+            padding: 3.5rem 4%;
+            overflow-y: auto;
+            min-height: 100vh;
+        }
+
+        .admin-section {
+            display: none;
+            animation: fadeUp 0.4s ease;
+        }
+
+        .admin-section.active {
+            display: block;
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ─────── PAGE HEADER ─────── */
+        .page-header {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .page-eyebrow {
+            font-size: 0.5rem;
+            letter-spacing: 0.5em;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 0.5rem;
+        }
+
+        .page-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.6rem;
+            font-weight: 300;
+            line-height: 1;
+        }
+
+        .page-title i {
+            font-style: italic;
+        }
+
+        /* ─────── CARDS ─────── */
+        .card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 2rem;
+            transition: box-shadow 0.3s;
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow);
+        }
+
+        .card-title {
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .card-title::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        /* ─────── KPI ROW ─────── */
+        .kpi-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .kpi-card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.8rem 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .kpi-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 3px;
+            height: 100%;
+            background: var(--gold);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .kpi-card:hover::before {
+            opacity: 1;
+        }
+
+        .kpi-label {
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 0.8rem;
+        }
+
+        .kpi-value {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.8rem;
+            font-weight: 300;
+            line-height: 1;
+            color: var(--text);
+        }
+
+        .kpi-value.gold {
+            color: var(--gold);
+        }
+
+        .kpi-delta {
+            font-size: 0.65rem;
+            color: #38a169;
+            margin-top: 0.5rem;
+            font-weight: 500;
+        }
+
+        /* ─────── FORM ELEMENTS ─────── */
+        .form-group {
+            margin-bottom: 1.8rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 0.7rem;
+        }
+
+        .form-input,
+        .form-textarea {
+            width: 100%;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            padding: 0.9rem 1.1rem;
+            color: var(--text);
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            transition: border-color 0.3s, background 0.3s;
+            outline: none;
+        }
+
+        .form-input:focus,
+        .form-textarea:focus {
+            border-color: var(--gold);
+            background: var(--white);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        /* Custom Select */
+        .custom-select-wrapper {
+            position: relative;
+        }
+
+        .custom-select-btn {
+            width: 100%;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            padding: 0.9rem 1.1rem;
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            color: var(--text);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: border-color 0.3s, background 0.3s;
+            outline: none;
+        }
+
+        .custom-select-btn:hover,
+        .custom-select-btn.open {
+            border-color: var(--gold);
+            background: var(--white);
+        }
+
+        .custom-select-btn i {
+            width: 16px;
+            height: 16px;
+            color: var(--text-muted);
+            transition: transform 0.3s;
+        }
+
+        .custom-select-btn.open i {
+            transform: rotate(180deg);
+        }
+
+        .custom-select-dropdown {
+            position: absolute;
+            top: calc(100% + 6px);
+            left: 0;
+            right: 0;
+            background: var(--white);
+            border: 1px solid var(--border-gold);
+            border-radius: 10px;
+            box-shadow: var(--shadow-md);
+            z-index: 999;
+            overflow: hidden;
+            display: none;
+            animation: dropIn 0.2s ease;
+        }
+
+        .custom-select-dropdown.open {
+            display: block;
+        }
+
+        @keyframes dropIn {
+            from {
+                opacity: 0;
+                transform: translateY(-6px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .select-option {
+            padding: 0.8rem 1.1rem;
+            font-size: 0.82rem;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .select-option:hover {
+            background: var(--gold-pale);
+            color: var(--gold);
+        }
+
+        .select-option.selected {
+            color: var(--gold);
+            font-weight: 600;
+        }
+
+        .select-option .check {
+            width: 14px;
+            height: 14px;
+            color: var(--gold);
+            opacity: 0;
+        }
+
+        .select-option.selected .check {
+            opacity: 1;
+        }
+
+        /* ─────── BUTTONS ─────── */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.85rem 1.8rem;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.65rem;
+            font-weight: 600;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn i {
+            width: 15px;
+            height: 15px;
+        }
+
+        .btn-primary {
+            background: var(--text);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background: var(--gold);
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+        }
+
+        .btn-ghost:hover {
+            border-color: var(--text);
+            color: var(--text);
+        }
+
+        .btn-gold {
+            background: var(--gold);
+            color: var(--white);
+        }
+
+        .btn-gold:hover {
+            background: var(--gold-light);
+        }
+
+        .btn-danger {
+            background: rgba(229, 62, 62, 0.1);
+            color: #e53e3e;
+            border: 1px solid rgba(229, 62, 62, 0.2);
+        }
+
+        .btn-danger:hover {
+            background: #e53e3e;
+            color: white;
+        }
+
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.55rem;
+        }
+
+        /* ─────── TABLES ─────── */
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead th {
+            text-align: left;
+            padding: 1rem 1.2rem;
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border);
+            white-space: nowrap;
+        }
+
+        tbody td {
+            padding: 1.1rem 1.2rem;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.88rem;
+            vertical-align: middle;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        tbody tr:hover td {
+            background: var(--bg);
+        }
+
+        .td-mono {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.1rem;
+            color: var(--gold);
+        }
+
+        /* Status badges */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.3rem 0.8rem;
+            border-radius: 50px;
+            font-size: 0.55rem;
+            font-weight: 600;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+        }
+
+        .badge-green {
+            background: rgba(56, 161, 105, 0.1);
+            color: #38a169;
+        }
+
+        .badge-gold {
+            background: var(--gold-pale);
+            color: var(--gold);
+        }
+
+        .badge-gray {
+            background: var(--bg);
+            color: var(--text-muted);
+        }
+
+        .badge-red {
+            background: rgba(229, 62, 62, 0.1);
+            color: #e53e3e;
+        }
+
+        .badge::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        /* ─────── GRIDS ─────── */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+        }
+
+        /* ─────── MEDIA GALLERY ─────── */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .gallery-item {
+            position: relative;
+            aspect-ratio: 1;
+            border-radius: 10px;
+            overflow: hidden;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            cursor: pointer;
+            group: true;
+        }
+
+        .gallery-item img,
+        .gallery-item video,
+        .gallery-item iframe {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border: none;
+            transition: transform 0.5s ease;
+        }
+
+        .gallery-item:hover img,
+        .gallery-item:hover video,
+        .gallery-item:hover iframe {
+            transform: scale(1.07);
+        }
+
+        .gallery-item-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .gallery-item:hover .gallery-item-overlay {
+            opacity: 1;
+        }
+
+        .gallery-item-delete {
+            background: rgba(229, 62, 62, 0.9);
+            border: none;
+            color: #fff;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s;
+        }
+
+        .gallery-item-delete:hover {
+            transform: scale(1.15);
+        }
+
+        .gallery-item-delete i {
+            width: 14px;
+            height: 14px;
+        }
+
+        .gallery-tag {
+            position: absolute;
+            bottom: 8px;
+            left: 8px;
+            background: rgba(0, 0, 0, 0.6);
+            color: #fff;
+            font-size: 0.5rem;
+            letter-spacing: 0.2em;
+            padding: 2px 8px;
+            border-radius: 50px;
+            backdrop-filter: blur(10px);
+            text-transform: uppercase;
+        }
+
+        /* ─────── DROP ZONE ─────── */
+        .drop-zone {
+            border: 2px dashed var(--border-gold);
+            border-radius: 10px;
+            padding: 2.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .drop-zone:hover,
+        .drop-zone.dragover {
+            border-color: var(--gold);
+            background: var(--gold-pale);
+        }
+
+        .drop-zone input[type=file] {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+            width: 100%;
+            height: 100%;
+        }
+
+        .drop-icon {
+            color: var(--gold);
+            opacity: 0.4;
+            margin-bottom: 0.8rem;
+        }
+
+        .drop-icon i {
+            width: 32px;
+            height: 32px;
+        }
+
+        .drop-text {
+            font-size: 0.65rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+
+        .drop-filename {
+            font-size: 0.75rem;
+            color: var(--gold);
+            margin-top: 0.5rem;
+            font-weight: 500;
+        }
+
+        /* ─────── TOGGLE SWITCH ─────── */
+        .toggle-wrap {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .toggle-wrap:last-child {
+            border-bottom: none;
+        }
+
+        .toggle-info {
+            flex: 1;
+        }
+
+        .toggle-day {
+            font-size: 0.82rem;
+            font-weight: 500;
+            color: var(--text);
+            margin-bottom: 0.2rem;
+        }
+
+        .toggle-hours {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1rem;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 44px;
+            height: 24px;
+            flex-shrink: 0;
+        }
+
+        .toggle-switch input {
+            display: none;
+        }
+
+        .toggle-track {
+            position: absolute;
+            inset: 0;
+            background: var(--border);
+            border-radius: 50px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .toggle-switch input:checked+.toggle-track {
+            background: var(--gold);
+        }
+
+        .toggle-thumb {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 18px;
+            height: 18px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+        }
+
+        .toggle-switch input:checked~.toggle-thumb {
+            transform: translateX(20px);
+        }
+
+        /* ─────── PRODUCT CARDS (admin view) ─────── */
+        .product-admin-card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            transition: box-shadow 0.3s;
+        }
+
+        .product-admin-card:hover {
+            box-shadow: var(--shadow);
+        }
+
+        .product-admin-img {
+            aspect-ratio: 4/3;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .product-admin-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .product-admin-card:hover .product-admin-img img {
+            transform: scale(1.05);
+        }
+
+        .product-admin-body {
+            padding: 1.2rem 1.5rem 1.5rem;
+        }
+
+        .product-admin-name {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.2rem;
+            font-weight: 400;
+            margin-bottom: 0.3rem;
+            line-height: 1.2;
+        }
+
+        .product-admin-price {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5rem;
+            color: var(--gold);
+            font-weight: 300;
+            margin-bottom: 1rem;
+        }
+
+        .product-admin-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        /* ─────── BOOKING ROWS ─────── */
+        .booking-row {
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            padding: 1.2rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .booking-row:last-child {
+            border-bottom: none;
+        }
+
+        .booking-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--gold-pale);
+            color: var(--gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.2rem;
+            font-style: italic;
+            flex-shrink: 0;
+        }
+
+        .booking-name {
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .booking-service {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+        }
+
+        .booking-date {
+            margin-left: auto;
+            text-align: right;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1rem;
+            color: var(--text-muted);
+        }
+
+        /* ─────── TOAST ─────── */
+        #toast-container {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            z-index: 99999;
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .toast {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-left: 3px solid var(--gold);
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: var(--shadow-md);
+            font-size: 0.82rem;
+            animation: slideIn 0.3s ease;
+            min-width: 300px;
+        }
+
+        .toast.error {
+            border-left-color: #e53e3e;
+        }
+
+        .toast i {
+            width: 18px;
+            height: 18px;
+            color: var(--gold);
+            flex-shrink: 0;
+        }
+
+        .toast.error i {
+            color: #e53e3e;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* ─────── MISC ─────── */
+        .section-gap {
+            margin-bottom: 2rem;
+        }
+
+        .text-muted {
+            color: var(--text-muted);
+        }
+
+        .text-gold {
+            color: var(--gold);
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        .flex {
+            display: flex;
+        }
+
+        .items-center {
+            align-items: center;
+        }
+
+        .justify-between {
+            justify-content: space-between;
+        }
+
+        .gap-2 {
+            gap: 0.5rem;
+        }
+
+        .gap-4 {
+            gap: 1rem;
+        }
+
+        .mt-4 {
+            margin-top: 1rem;
+        }
+
+        .mt-6 {
+            margin-top: 1.5rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-muted);
+            font-size: 0.78rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+        }
+
+        .empty-state i {
+            width: 40px;
+            height: 40px;
+            opacity: 0.2;
+            margin-bottom: 1rem;
+            display: block;
+            margin-inline: auto;
+        }
+
+        .admin-mobile-header {
+            display: none;
+        }
+
+        /* ─────── RESPONSIVE ─────── */
+        @media (max-width: 900px) {
+            .admin-mobile-header {
+                display: flex;
+                height: 60px;
+                background: var(--white);
+                border-bottom: 1px solid var(--border);
+                align-items: center;
+                justify-content: space-between;
+                padding: 0 1.5rem;
+                position: sticky;
+                top: 0;
+                z-index: 998;
+            }
+
+            .admin-mobile-header .sidebar-logo {
+                margin: 0;
+                font-size: 1.25rem;
+                font-family: 'Cormorant Garamond', serif;
+                font-style: italic;
+                font-weight: 300;
+                letter-spacing: 0.1em;
+                color: var(--text);
+            }
+
+            .back-to-site-btn {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                color: var(--text-muted);
+                text-decoration: none;
+                font-size: 0.72rem;
+                font-weight: 600;
+                border: 1px solid var(--border);
+                padding: 0.45rem 0.9rem;
+                border-radius: 4px;
+                transition: all 0.3s;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+            }
+
+            .back-to-site-btn:hover {
+                color: var(--gold);
+                border-color: var(--gold);
+                background: var(--gold-pale);
+            }
+
+            .admin-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .admin-sidebar {
+                display: none;
+            }
+
+            .kpi-row {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .kpi-card {
+                padding: 1.2rem;
+            }
+
+            .kpi-value {
+                font-size: 2.2rem;
+            }
+
+            .grid-2,
+            .grid-3,
+            .grid-4 {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .card {
+                padding: 1.5rem 1.2rem;
+            }
+
+            .admin-main {
+                padding: 1.5rem 1rem 80px 1rem;
+            }
+
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+                margin-bottom: 2rem;
+                padding-bottom: 1.2rem;
+            }
+
+            .page-header .flex,
+            .page-header .btn {
+                width: 100%;
+            }
+
+            .admin-mobile-nav {
+                display: flex !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .login-card {
+                padding: 2.5rem 1.5rem;
+                margin: 1rem;
+                border-radius: 8px;
+            }
+        }
+
+        /* ─────── MOBILE BOTTOM NAV ─────── */
+        .admin-mobile-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: var(--white);
+            border-top: 1px solid var(--border);
+            justify-content: space-around;
+            align-items: center;
+            z-index: 999;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .mobile-nav-item-btn {
+            background: none;
+            border: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 0.6rem;
+            font-weight: 500;
+            flex: 1;
+            height: 100%;
+            transition: all 0.25s;
+            text-decoration: none;
+        }
+
+        .mobile-nav-item-btn i {
+            width: 18px;
+            height: 18px;
+            stroke-width: 2px;
+        }
+
+        .mobile-nav-item-btn.active {
+            color: var(--gold);
+            font-weight: 600;
+        }
+
+        /* ─────── HOUR EDIT INLINE ─────── */
+        .time-input-small {
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid var(--border-gold);
+            color: var(--text);
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1rem;
+            font-style: italic;
+            width: 90px;
+            text-align: center;
+            padding: 0.1rem 0;
+            outline: none;
+        }
+
+        .time-input-small:focus {
+            border-color: var(--gold);
+        }
     </style>
 </head>
+
 <body>
 
-    <div id="custom-alert" class="custom-alert">
-        <div class="alert-content">
-            <p id="alert-msg"></p>
-            <button class="btn-confirm" onclick="closeAlert()">Ok</button>
+    <!-- ═══════════════════════════════════════
+     LOGIN OVERLAY
+══════════════════════════════════════════ -->
+    <div id="login-overlay">
+        <div class="login-card">
+            <div class="login-mark">L'<i>Atelier</i></div>
+            <div class="login-sub">Painel de Gestão</div>
+
+            <div class="demo-badge"
+                style="background: var(--gold-pale); border: 1px solid var(--border-gold); padding: 0.8rem; border-radius: var(--radius); font-size: 0.72rem; color: var(--gold); margin-bottom: 2rem; line-height: 1.4; text-align: center;">
+                <i data-lucide="info"
+                    style="width: 14px; height: 14px; display: inline-block; vertical-align: middle; margin-right: 4px; stroke-width: 2.5px;"></i>
+                <strong>Painel Demonstrativo:</strong> As credenciais já estão preenchidas. É só clicar em
+                <strong>Entrar no Painel</strong>.
+            </div>
+
+            <form id="login-form">
+                <div class="login-field">
+                    <label>E-mail de Acesso</label>
+                    <input type="email" id="login-email" placeholder="admin@isabellalumiere.com.br"
+                        autocomplete="email">
+                </div>
+                <div class="login-field">
+                    <label>Chave de Segurança</label>
+                    <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password">
+                </div>
+                <button type="submit" class="login-btn" id="login-btn">Entrar no Painel</button>
+                <div class="login-error" id="login-error">Credenciais inválidas. Tente novamente.</div>
+            </form>
+            <a href="index.html" class="login-back">← Voltar ao Site</a>
         </div>
     </div>
 
-    <div class="admin-layout">
-        <aside class="admin-sidebar">
-            <span class="admin-logo">N. Hadad</span>
-            <nav class="admin-nav">
-                <a onclick="switchPanel('bookings')" id="nav-bookings" class="active"><i data-lucide="calendar"></i> Agendas</a>
-                <a onclick="switchPanel('finance')" id="nav-finance"><i data-lucide="wallet"></i> Financeiro</a>
-                <a onclick="switchPanel('clients')" id="nav-clients"><i data-lucide="users"></i> Clientes</a>
-                <a onclick="switchPanel('salon')" id="nav-salon"><i data-lucide="home"></i> Gestão do Salão</a>
-                <a onclick="switchPanel('settings')" id="nav-settings"><i data-lucide="settings"></i> Configurações</a>
-            </nav>
-        </aside>
+    <!-- ═══════════════════════════════════════
+     TOAST CONTAINER
+══════════════════════════════════════════ -->
+    <div id="toast-container"></div>
 
-        <main class="admin-main">
-            <header class="admin-header">
-                <h1 class="admin-title" id="panel-title">Painel de <i>Gestão</i></h1>
-                <button class="btn-confirm" onclick="syncAll()">Sincronizar</button>
-            </header>
+    <!-- ═══════════════════════════════════════
+     ADMIN WRAP
+══════════════════════════════════════════ -->
+    <div id="admin-wrap">
 
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <span class="stat-label">Agendados Hoje</span>
-                    <span class="stat-value" id="stat-count">0</span>
-                </div>
-                <div class="stat-card">
-                    <span class="stat-label">Saldo em Caixa</span>
-                    <span class="stat-value" id="stat-balance">R$ 0,00</span>
-                </div>
-                <div class="stat-card">
-                    <span class="stat-label">Entradas (Mês)</span>
-                    <span class="stat-value" id="stat-in" style="color: var(--color-success)">R$ 0,00</span>
-                </div>
-                <div class="stat-card">
-                    <span class="stat-label">Saídas (Mês)</span>
-                    <span class="stat-value" id="stat-out" style="color: var(--color-danger)">R$ 0,00</span>
-                </div>
-            </div>
+        <!-- MOBILE TOP BAR WITH BACK TO SITE BUTTON -->
+        <div class="admin-mobile-header">
+            <div class="sidebar-logo">L'<i>Atelier</i></div>
+            <a href="index.html" class="back-to-site-btn">
+                <i data-lucide="external-link"></i> Voltar ao Site
+            </a>
+        </div>
 
-            <!-- PANEL: BOOKINGS -->
-            <div id="panel-bookings" class="admin-panel active">
-                <div class="admin-tabs">
-                    <div class="tab-link active" onclick="switchBookingTab('Agendado', this)">Agendados</div>
-                    <div class="tab-link" onclick="switchBookingTab('Concluído', this)">Concluídos</div>
-                    <div class="tab-link" onclick="switchBookingTab('Cancelado', this)">Cancelados</div>
-                </div>
-                <div class="content-card">
-                    <table id="booking-table">
-                        <thead>
-                            <tr>
-                                <th>Cliente</th>
-                                <th>Serviço</th>
-                                <th>Data/Hora</th>
-                                <th>Telefone</th>
-                                <th>Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody id="booking-tbody"></tbody>
-                    </table>
-                </div>
-            </div>
+        <!-- BOTTOM NAVIGATION FOR MOBILE -->
+        <div class="admin-mobile-nav">
+            <button class="mobile-nav-item-btn active" onclick="goTo('dashboard')">
+                <i data-lucide="layout-dashboard"></i>
+                <span>Dashboard</span>
+            </button>
+            <button class="mobile-nav-item-btn" onclick="goTo('bookings')">
+                <i data-lucide="calendar"></i>
+                <span>Agenda</span>
+            </button>
+            <button class="mobile-nav-item-btn" onclick="goTo('cash')">
+                <i data-lucide="wallet"></i>
+                <span>Caixa</span>
+            </button>
+            <button class="mobile-nav-item-btn" onclick="goTo('inventory')">
+                <i data-lucide="boxes"></i>
+                <span>Estoque</span>
+            </button>
+            <button class="mobile-nav-item-btn" onclick="goTo('gallery')">
+                <i data-lucide="image"></i>
+                <span>Galeria</span>
+            </button>
+            <button class="mobile-nav-item-btn" onclick="goTo('products')">
+                <i data-lucide="shopping-bag"></i>
+                <span>Boutique</span>
+            </button>
+        </div>
 
-            <!-- PANEL: FINANCE -->
-            <div id="panel-finance" class="admin-panel">
-                <div class="content-card mb-12" style="margin-bottom: 3rem;">
-                    <div class="finance-form">
-                        <div class="input-group">
-                            <label>Descrição</label>
-                            <input type="text" id="fin-desc" placeholder="Ex: Aluguel, Compra Wella...">
+        <div class="admin-layout">
+
+            <!-- SIDEBAR -->
+            <aside class="admin-sidebar">
+                <div class="sidebar-logo">L'<i>Atelier</i></div>
+                <div class="sidebar-sub">Gestão & Curadoria</div>
+
+                <ul class="admin-nav">
+                    <li class="sidebar-section-label">Painel</li>
+                    <li class="nav-item active" onclick="goTo('dashboard', this)" id="nav-dashboard">
+                        <i data-lucide="layout-dashboard"></i> Dashboard
+                    </li>
+
+                    <li class="sidebar-section-label">Atendimento</li>
+                    <li class="nav-item" onclick="goTo('bookings', this)" id="nav-bookings">
+                        <i data-lucide="calendar"></i> Agendamentos
+                        <span class="nav-badge" id="booking-count-badge">0</span>
+                    </li>
+                    <li class="nav-item" onclick="goTo('hours', this)" id="nav-hours">
+                        <i data-lucide="clock"></i> Horários
+                    </li>
+
+                    <li class="sidebar-section-label">Conteúdo</li>
+                    <li class="nav-item" onclick="goTo('gallery', this)" id="nav-gallery">
+                        <i data-lucide="image"></i> Galeria
+                    </li>
+                    <li class="nav-item" onclick="goTo('products', this)" id="nav-products">
+                        <i data-lucide="shopping-bag"></i> Boutique
+                    </li>
+
+                    <li class="sidebar-section-label">Gestão Interna</li>
+                    <li class="nav-item" onclick="goTo('cash', this)" id="nav-cash">
+                        <i data-lucide="wallet"></i> Fluxo de Caixa
+                    </li>
+                    <li class="nav-item" onclick="goTo('inventory', this)" id="nav-inventory">
+                        <i data-lucide="boxes"></i> Controle de Estoque
+                    </li>
+
+                    <hr class="nav-divider">
+                    <a href="index.html" class="nav-item">
+                        <i data-lucide="external-link"></i> Ver Site
+                    </a>
+                    <li class="nav-item danger" onclick="handleLogout()">
+                        <i data-lucide="log-out"></i> Sair
+                    </li>
+                </ul>
+            </aside>
+
+            <!-- MAIN -->
+            <main class="admin-main">
+
+                <!-- ════════ DASHBOARD ════════ -->
+                <div id="section-dashboard" class="admin-section active">
+                    <div class="page-header">
+                        <div>
+                            <div class="page-eyebrow">Visão Geral</div>
+                            <div class="page-title">Dashboard</div>
                         </div>
-                        <div class="input-group">
-                            <label>Valor (R$)</label>
-                            <input type="number" id="fin-amount" placeholder="0.00">
+                        <button class="btn btn-gold"
+                            onclick="goTo('bookings', document.getElementById('nav-bookings'))">
+                            <i data-lucide="calendar-plus"></i> Ver Agendamentos
+                        </button>
+                    </div>
+
+                    <!-- KPIs -->
+                    <div class="kpi-row">
+                        <div class="kpi-card">
+                            <div class="kpi-label">Agendamentos Hoje</div>
+                            <div class="kpi-value" id="kpi-today">—</div>
+                            <div class="kpi-delta">↑ Atualizado ao vivo</div>
                         </div>
-                        <div class="input-group">
-                            <label>Tipo</label>
-                            <select id="fin-type">
-                                <option value="IN">Entrada</option>
-                                <option value="OUT">Saída</option>
-                            </select>
+                        <div class="kpi-card">
+                            <div class="kpi-label">Total Pendentes</div>
+                            <div class="kpi-value gold" id="kpi-pending">—</div>
                         </div>
-                        <div class="input-group">
-                            <label>&nbsp;</label>
-                            <button class="btn-lancar" onclick="addTransaction()">Lançar</button>
+                        <div class="kpi-card">
+                            <div class="kpi-label">Receita Estimada</div>
+                            <div class="kpi-value" id="kpi-revenue">—</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-label">Fotos na Galeria</div>
+                            <div class="kpi-value" id="kpi-gallery">6</div>
+                        </div>
+                    </div>
+
+                    <!-- Últimos agendamentos -->
+                    <div class="grid-2">
+                        <div class="card">
+                            <div class="card-title"><i data-lucide="calendar" style="width:14px;height:14px"></i>
+                                Últimos Agendamentos</div>
+                            <div id="dash-bookings">
+                                <div class="empty-state"><i data-lucide="loader"></i>Carregando...</div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-title"><i data-lucide="trending-up" style="width:14px;height:14px"></i>
+                                Resumo Rápido</div>
+                            <div style="padding: 1rem 0;">
+                                <div class="toggle-wrap">
+                                    <div class="toggle-info">
+                                        <div class="toggle-day">Agendamentos Online</div>
+                                        <div class="toggle-hours">Ativados via site</div>
+                                    </div>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" checked onchange="showToast('Configuração salva.')">
+                                        <div class="toggle-track"></div>
+                                        <div class="toggle-thumb"></div>
+                                    </label>
+                                </div>
+                                <div class="toggle-wrap">
+                                    <div class="toggle-info">
+                                        <div class="toggle-day">Boutique Ativa</div>
+                                        <div class="toggle-hours">Loja online habilitada</div>
+                                    </div>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" checked onchange="showToast('Configuração salva.')">
+                                        <div class="toggle-track"></div>
+                                        <div class="toggle-thumb"></div>
+                                    </label>
+                                </div>
+                                <div class="toggle-wrap">
+                                    <div class="toggle-info">
+                                        <div class="toggle-day">Modo Férias</div>
+                                        <div class="toggle-hours">Pausar agendamentos</div>
+                                    </div>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox"
+                                            onchange="showToast('Modo férias ' + (this.checked ? 'ativado' : 'desativado') + '.')">
+                                        <div class="toggle-track"></div>
+                                        <div class="toggle-thumb"></div>
+                                    </label>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="finance-grid">
-                    <div class="content-card">
-                        <div class="finance-header">
-                            <span class="finance-title in-label"><i data-lucide="trending-up"></i> Entradas</span>
+                <!-- ════════ AGENDAMENTOS ════════ -->
+                <div id="section-bookings" class="admin-section">
+                    <div class="page-header">
+                        <div>
+                            <div class="page-eyebrow">Gestão</div>
+                            <div class="page-title">Agendamentos</div>
                         </div>
-                        <table>
-                            <thead><tr><th>Data</th><th>Desc.</th><th>Valor</th></tr></thead>
-                            <tbody id="finance-in-tbody"></tbody>
-                        </table>
-                    </div>
-                    <div class="content-card">
-                        <div class="finance-header">
-                            <span class="finance-title out-label"><i data-lucide="trending-down"></i> Saídas</span>
+                        <div class="flex gap-2">
+                            <div class="custom-select-wrapper" style="width: 200px;">
+                                <button class="custom-select-btn" id="filter-status-btn"
+                                    onclick="toggleSelect('filter-status')">
+                                    <span id="filter-status-label">Todos os Status</span>
+                                    <i data-lucide="chevron-down"></i>
+                                </button>
+                                <div class="custom-select-dropdown" id="filter-status-dropdown">
+                                    <div class="select-option selected" onclick="filterBookings('', this)"><i
+                                            data-lucide="check" class="check"></i> Todos</div>
+                                    <div class="select-option" onclick="filterBookings('Agendado', this)"><i
+                                            data-lucide="check" class="check"></i> Agendado</div>
+                                    <div class="select-option" onclick="filterBookings('Confirmado', this)"><i
+                                            data-lucide="check" class="check"></i> Confirmado</div>
+                                    <div class="select-option" onclick="filterBookings('Concluído', this)"><i
+                                            data-lucide="check" class="check"></i> Concluído</div>
+                                    <div class="select-option" onclick="filterBookings('Cancelado', this)"><i
+                                            data-lucide="check" class="check"></i> Cancelado</div>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary" onclick="loadBookings()">
+                                <i data-lucide="refresh-cw"></i> Atualizar
+                            </button>
                         </div>
-                        <table>
-                            <thead><tr><th>Data</th><th>Desc.</th><th>Valor</th></tr></thead>
-                            <tbody id="finance-out-tbody"></tbody>
-                        </table>
+                    </div>
+
+                    <div class="card">
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Cliente</th>
+                                        <th>Serviço</th>
+                                        <th>Data & Hora</th>
+                                        <th>Contato</th>
+                                        <th>Status</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="bookings-tbody">
+                                    <tr>
+                                        <td colspan="6" class="empty-state">Carregando agendamentos...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- PANEL: CLIENTS -->
-            <div id="panel-clients" class="admin-panel">
-                <div class="content-card">
-                    <table>
-                        <thead><tr><th>Nome</th><th>Telefone</th><th>Último Agendamento</th></tr></thead>
-                        <tbody id="clients-tbody"></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- PANEL: SALON -->
-            <div id="panel-salon" class="admin-panel">
-                <div class="content-card">
-                    <h3 class="font-bold mb-6">Horários de Funcionamento</h3>
-                    <div class="hours-grid" id="hours-grid">
-                        <!-- Rendered via JS -->
+                <!-- ════════ HORÁRIOS ════════ -->
+                <div id="section-hours" class="admin-section">
+                    <div class="page-header">
+                        <div>
+                            <div class="page-eyebrow">Configuração</div>
+                            <div class="page-title">Horários de <i>Atendimento</i></div>
+                        </div>
+                        <button class="btn btn-gold" onclick="saveHours()">
+                            <i data-lucide="save"></i> Salvar Alterações
+                        </button>
                     </div>
-                    <button class="btn-confirm mt-12" onclick="saveHours()">Salvar Alterações</button>
-                </div>
-            </div>
 
-            <!-- PANEL: SETTINGS -->
-            <div id="panel-settings" class="admin-panel">
-                <div class="content-card">
-                    <h3 class="mb-8 font-bold">Configurações do Sistema</h3>
-                    <div class="input-group mb-6">
-                        <label>Nome do Estabelecimento</label>
-                        <input type="text" value="Nagila Hadad | L'Atelier Muse" disabled>
+                    <div class="grid-2 section-gap">
+                        <div class="card">
+                            <div class="card-title"><i data-lucide="calendar-days" style="width:14px;height:14px;"></i>
+                                Dias da Semana</div>
+                            <div id="hours-list">
+                                <!-- Rendered by JS -->
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-title"><i data-lucide="clock" style="width:14px;height:14px;"></i> Slots
+                                Disponíveis</div>
+                            <p
+                                style="font-size:0.78rem; color: var(--text-muted); line-height: 1.7; margin-bottom: 1.5rem;">
+                                Defina os horários individuais que aparecem para o cliente no modal de agendamento.
+                            </p>
+                            <div id="time-slots-list"
+                                style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.5rem;"></div>
+                            <div class="flex gap-2">
+                                <input type="time" id="new-slot-time" class="form-input" style="max-width: 140px;">
+                                <button class="btn btn-primary" onclick="addTimeSlot()">
+                                    <i data-lucide="plus"></i> Adicionar
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                    <p class="opacity-50 text-[0.7rem] uppercase mt-12">Módulo de gestão de serviços em desenvolvimento.</p>
                 </div>
-            </div>
-        </main>
-    </div>
+
+                <!-- ════════ GALERIA ════════ -->
+                <div id="section-gallery" class="admin-section">
+                    <div class="page-header">
+                        <div>
+                            <div class="page-eyebrow">Portfólio</div>
+                            <div class="page-title">Galeria & <i>Cinema</i></div>
+                        </div>
+                    </div>
+
+                    <div class="grid-2 section-gap">
+                        <!-- Upload Foto -->
+                        <div class="card">
+                            <div class="card-title"><i data-lucide="image" style="width:14px;height:14px"></i> Adicionar
+                                Foto</div>
+                            <div class="drop-zone" id="dz-photo">
+                                <input type="file" accept="image/*" onchange="handleDZFile('photo', this)">
+                                <div class="drop-icon"><i data-lucide="image-plus"></i></div>
+                                <div class="drop-text">Arraste ou clique para selecionar</div>
+                                <div class="drop-filename" id="dz-photo-name"></div>
+                            </div>
+                            <div class="form-group mt-4">
+                                <label class="form-label">Legenda</label>
+                                <input type="text" class="form-input" id="photo-caption"
+                                    placeholder="Ex: Transformação Loiro Platinado">
+                            </div>
+                            <button class="btn btn-primary" style="width:100%;" onclick="publishGallery('PHOTO')">
+                                <i data-lucide="upload-cloud"></i> Publicar na Galeria
+                            </button>
+                        </div>
+
+                        <!-- Upload Vídeo -->
+                        <div class="card">
+                            <div class="card-title"><i data-lucide="video" style="width:14px;height:14px"></i> Adicionar
+                                Vídeo</div>
+                            <div class="drop-zone" id="dz-video">
+                                <input type="file" accept="video/*" onchange="handleDZFile('video', this)">
+                                <div class="drop-icon"><i data-lucide="film"></i></div>
+                                <div class="drop-text">Arraste ou clique para selecionar</div>
+                                <div class="drop-filename" id="dz-video-name"></div>
+                            </div>
+                            <div class="form-group mt-4">
+                                <label class="form-label">Título do Vídeo</label>
+                                <input type="text" class="form-input" id="video-caption"
+                                    placeholder="Ex: Técnica de Babyliss Soberano">
+                            </div>
+                            <button class="btn btn-primary" style="width:100%;" onclick="publishGallery('VIDEO')">
+                                <i data-lucide="upload-cloud"></i> Publicar no Cinema
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Galeria atual -->
+                    <div class="card">
+                        <div class="card-title"><i data-lucide="grid" style="width:14px;height:14px"></i> Mídias
+                            Publicadas</div>
+                        <div class="gallery-grid" id="gallery-grid">
+                            <!-- rendered by JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ════════ PRODUTOS ════════ -->
+                <div id="section-products" class="admin-section">
+                    <div class="page-header">
+                        <div>
+                            <div class="page-eyebrow">L'Atelier Boutique</div>
+                            <div class="page-title">Produtos & <i>Preços</i></div>
+                        </div>
+                        <button class="btn btn-gold" onclick="openProductForm(null)">
+                            <i data-lucide="plus"></i> Novo Produto
+                        </button>
+                    </div>
+
+                    <!-- Product Form -->
+                    <div class="card section-gap" id="product-form-card" style="display:none;">
+                        <div class="card-title"><i data-lucide="package" style="width:14px;height:14px"></i> <span
+                                id="product-form-title">Novo Produto</span></div>
+                        <input type="hidden" id="product-id">
+                        <div class="grid-2">
+                            <div>
+                                <div class="form-group">
+                                    <label class="form-label">Nome do Produto *</label>
+                                    <input type="text" class="form-input" id="product-name"
+                                        placeholder="Ex: Máscara de Reconstrução Intensa">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Descrição</label>
+                                    <textarea class="form-textarea" id="product-desc"
+                                        placeholder="Descrição premium do produto..."></textarea>
+                                </div>
+                                <div class="grid-2">
+                                    <div class="form-group">
+                                        <label class="form-label">Preço (R$)</label>
+                                        <input type="number" class="form-input" id="product-price" placeholder="185.00"
+                                            step="0.01">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Categoria</label>
+                                        <div class="custom-select-wrapper">
+                                            <button class="custom-select-btn" id="product-cat-btn"
+                                                onclick="toggleSelect('product-cat')">
+                                                <span id="product-cat-label">Tratamento</span>
+                                                <i data-lucide="chevron-down"></i>
+                                            </button>
+                                            <div class="custom-select-dropdown" id="product-cat-dropdown">
+                                                <div class="select-option selected"
+                                                    onclick="selectOption('product-cat', 'Tratamento', this)"><i
+                                                        data-lucide="check" class="check"></i> Tratamento</div>
+                                                <div class="select-option"
+                                                    onclick="selectOption('product-cat', 'Hidratação', this)"><i
+                                                        data-lucide="check" class="check"></i> Hidratação</div>
+                                                <div class="select-option"
+                                                    onclick="selectOption('product-cat', 'Finalização', this)"><i
+                                                        data-lucide="check" class="check"></i> Finalização</div>
+                                                <div class="select-option"
+                                                    onclick="selectOption('product-cat', 'Coloração', this)"><i
+                                                        data-lucide="check" class="check"></i> Coloração</div>
+                                                <div class="select-option"
+                                                    onclick="selectOption('product-cat', 'Perfumaria', this)"><i
+                                                        data-lucide="check" class="check"></i> Perfumaria</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Imagem do Produto</label>
+                                <div class="drop-zone" id="dz-product" style="height: calc(100% - 2rem);">
+                                    <input type="file" accept="image/*" onchange="handleDZFile('product-img', this)">
+                                    <div class="drop-icon"><i data-lucide="image-plus"></i></div>
+                                    <div class="drop-text">Arraste ou clique</div>
+                                    <div class="drop-filename" id="dz-product-img-name"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex gap-2 mt-6">
+                            <button class="btn btn-primary" onclick="saveProduct()"><i data-lucide="save"></i> Salvar
+                                Produto</button>
+                            <button class="btn btn-ghost" onclick="closeProductForm()">Cancelar</button>
+                        </div>
+                    </div>
+
+                    <!-- Products Grid -->
+                    <div class="grid-3" id="products-grid">
+                        <!-- rendered by JS -->
+                    </div>
+                </div>
+
+                <!-- ════════ CONTROLE DE CAIXA ════════ -->
+                <div id="section-cash" class="admin-section">
+                    <div class="page-header">
+                        <div>
+                            <div class="page-eyebrow">Financeiro</div>
+                            <div class="page-title">Controle de <i>Caixa</i></div>
+                        </div>
+                        <button class="btn btn-gold" onclick="openCashForm()">
+                            <i data-lucide="plus"></i> Registrar Movimentação
+                        </button>
+                    </div>
+
+                    <!-- KPIs de Caixa -->
+                    <div class="kpi-row">
+                        <div class="kpi-card">
+                            <div class="kpi-label">Saldo em Caixa</div>
+                            <div class="kpi-value" id="cash-balance">R$ 0,00</div>
+                            <div class="kpi-delta">Saldo consolidado</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-label">Total Entradas</div>
+                            <div class="kpi-value gold" id="cash-inflow">R$ 0,00</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-label">Total Saídas</div>
+                            <div class="kpi-value" id="cash-outflow" style="color: #e53e3e;">R$ 0,00</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-label">Transações</div>
+                            <div class="kpi-value" id="cash-count">0</div>
+                        </div>
+                    </div>
+
+                    <!-- Form Movimentação (hidden by default) -->
+                    <div class="card section-gap" id="cash-form-card" style="display:none;">
+                        <div class="card-title"><i data-lucide="dollar-sign" style="width:14px;height:14px"></i>
+                            Registrar Lançamento</div>
+                        <div class="grid-2">
+                            <div class="form-group">
+                                <label class="form-label">Descrição *</label>
+                                <input type="text" class="form-input" id="cash-desc"
+                                    placeholder="Ex: Venda de Shampoo Nutritivo L'Oréal">
+                            </div>
+                            <div class="grid-2">
+                                <div class="form-group">
+                                    <label class="form-label">Valor (R$) *</label>
+                                    <input type="number" class="form-input" id="cash-amount" placeholder="120.00"
+                                        step="0.01">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Tipo *</label>
+                                    <div class="custom-select-wrapper">
+                                        <button class="custom-select-btn" id="cash-type-btn"
+                                            onclick="toggleSelect('cash-type')">
+                                            <span id="cash-type-label">Entrada</span>
+                                            <i data-lucide="chevron-down"></i>
+                                        </button>
+                                        <div class="custom-select-dropdown" id="cash-type-dropdown">
+                                            <div class="select-option selected"
+                                                onclick="selectOption('cash-type', 'Entrada', this)"><i
+                                                    data-lucide="check" class="check"></i> Entrada</div>
+                                            <div class="select-option"
+                                                onclick="selectOption('cash-type', 'Saída', this)"><i
+                                                    data-lucide="check" class="check"></i> Saída</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex gap-2 mt-4">
+                            <button class="btn btn-primary" onclick="saveTransaction()"><i data-lucide="save"></i>
+                                Salvar Lançamento</button>
+                            <button class="btn btn-ghost" onclick="closeCashForm()">Cancelar</button>
+                        </div>
+                    </div>
+
+                    <!-- Tabela de Movimentações -->
+                    <div class="card">
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Descrição</th>
+                                        <th>Tipo</th>
+                                        <th>Valor</th>
+                                        <th>Data & Hora</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="cash-tbody">
+                                    <tr>
+                                        <td colspan="5" class="empty-state">Carregando movimentações...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ════════ CONTROLE DE ESTOQUE ════════ -->
+                <div id="section-inventory" class="admin-section">
+                    <div class="page-header">
+                        <div>
+                            <div class="page-eyebrow">Estoque</div>
+                            <div class="page-title">Controle de <i>Estoque</i></div>
+                        </div>
+                        <button class="btn btn-gold" onclick="openInventoryForm()">
+                            <i data-lucide="plus"></i> Novo Item de Estoque
+                        </button>
+                    </div>
+
+                    <!-- KPIs de Estoque -->
+                    <div class="kpi-row">
+                        <div class="kpi-card">
+                            <div class="kpi-label">Total de Itens</div>
+                            <div class="kpi-value" id="inv-total-items">0</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-label">Baixo Estoque</div>
+                            <div class="kpi-value gold" id="inv-low-stock">0</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-label">Valor do Estoque</div>
+                            <div class="kpi-value" id="inv-total-value">R$ 0,00</div>
+                        </div>
+                    </div>
+
+                    <!-- Form Item de Estoque (hidden by default) -->
+                    <div class="card section-gap" id="inventory-form-card" style="display:none;">
+                        <div class="card-title"><i data-lucide="package" style="width:14px;height:14px"></i> <span
+                                id="inventory-form-title">Novo Item</span></div>
+                        <input type="hidden" id="inventory-id">
+                        <div class="grid-2">
+                            <div>
+                                <div class="form-group">
+                                    <label class="form-label">Nome do Produto *</label>
+                                    <input type="text" class="form-input" id="inventory-name"
+                                        placeholder="Ex: Shampoo Nutritivo L'Oréal">
+                                </div>
+                                <div class="grid-2">
+                                    <div class="form-group">
+                                        <label class="form-label">Preço (R$) *</label>
+                                        <input type="number" class="form-input" id="inventory-price"
+                                            placeholder="120.00" step="0.01">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Categoria *</label>
+                                        <div class="custom-select-wrapper">
+                                            <button class="custom-select-btn" id="inventory-cat-btn"
+                                                onclick="toggleSelect('inventory-cat')">
+                                                <span id="inventory-cat-label">Venda</span>
+                                                <i data-lucide="chevron-down"></i>
+                                            </button>
+                                            <div class="custom-select-dropdown" id="inventory-cat-dropdown">
+                                                <div class="select-option selected"
+                                                    onclick="selectOption('inventory-cat', 'Venda', this)"><i
+                                                        data-lucide="check" class="check"></i> Venda</div>
+                                                <div class="select-option"
+                                                    onclick="selectOption('inventory-cat', 'Uso Interno', this)"><i
+                                                        data-lucide="check" class="check"></i> Uso Interno</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="grid-2">
+                                    <div class="form-group">
+                                        <label class="form-label">Qtd. em Estoque *</label>
+                                        <input type="number" class="form-input" id="inventory-qty" placeholder="10"
+                                            min="0">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Qtd. Mínima Alerta *</label>
+                                        <input type="number" class="form-input" id="inventory-min" placeholder="5"
+                                            min="0">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Descrição</label>
+                                <textarea class="form-textarea" id="inventory-desc"
+                                    placeholder="Descrição do produto no estoque..."
+                                    style="height: calc(100% - 2.5rem); min-height: 120px;"></textarea>
+                            </div>
+                        </div>
+                        <div class="flex gap-2 mt-4">
+                            <button class="btn btn-primary" onclick="saveInventory()"><i data-lucide="save"></i> Salvar
+                                no Estoque</button>
+                            <button class="btn btn-ghost" onclick="closeInventoryForm()">Cancelar</button>
+                        </div>
+                    </div>
+
+                    <!-- Tabela de Estoque -->
+                    <div class="card">
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Produto</th>
+                                        <th>Categoria</th>
+                                        <th>Preço Unitário</th>
+                                        <th>Estoque</th>
+                                        <th>Estoque Mínimo</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="inventory-tbody">
+                                    <tr>
+                                        <td colspan="6" class="empty-state">Carregando estoque...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </main><!-- /admin-main -->
+        </div><!-- /admin-layout -->
+    </div><!-- /admin-wrap -->
+
 
     <script>
-        const SUPABASE_URL = 'https://fjuiiivmsfdwsrqiobdu.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZqdWlpaXZtc2Zkd3NycWlvYmR1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2ODIyNjAsImV4cCI6MjA5MTI1ODI2MH0.-FyHmwxUJsloYRD6Wl6fjYrOHGf5CiFcaVgTT89bGMo';
-        const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        // ═══════════════════════════════════
+        //  SUPABASE CONFIG
+        // ═══════════════════════════════════
+        const SUPABASE_URL = 'https://cypatfudsresohfznqij.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN5cGF0ZnVkc3Jlc29oZnpucWlqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ5OTk5MjIsImV4cCI6MjA5MDU3NTkyMn0.3So1sNl7jANqg0t4lwvD06A2qdHjvJQD7weMjBFVX5g';
+        const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, { db: { schema: 'salao' } });
 
-        let currentBookingStatus = 'Agendado';
-        let businessHours = {};
+        const ADMIN_EMAIL = 'demonstracao@isabellalumiere.com';
+        const ADMIN_PASS = '123456';
 
-        function showAlert(msg) {
-            document.getElementById('alert-msg').innerText = msg;
-            document.getElementById('custom-alert').classList.add('active');
+        // ═══════════════════════════════════
+        //  INIT
+        // ═══════════════════════════════════
+        window.addEventListener('load', () => {
+            lucide.createIcons();
+            document.getElementById('login-email').value = ADMIN_EMAIL;
+            document.getElementById('login-password').value = ADMIN_PASS;
+            renderHours();
+            renderTimeSlots();
+            renderGallery();
+            renderProducts();
+            // verifyAuth() is commented out to ensure the user stays on the login screen for demonstration purposes
+            // verifyAuth();
+        });
+
+        async function verifyAuth() {
+            const { data: { session } } = await sb.auth.getSession();
+            if (session && session.user.email === ADMIN_EMAIL) {
+                showDashboard();
+            }
         }
-        function closeAlert() { document.getElementById('custom-alert').classList.remove('active'); }
 
-        function switchPanel(p) {
-            document.querySelectorAll('.admin-panel').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.admin-nav a').forEach(el => el.classList.remove('active'));
-            document.getElementById(`panel-${p}`).classList.add('active');
-            document.getElementById(`nav-${p}`).classList.add('active');
-            
-            const titles = { bookings: 'Agendas', finance: 'Financeiro', clients: 'Clientes', salon: 'Gestão do Salão', settings: 'Configurações' };
-            document.getElementById('panel-title').innerHTML = `Painel de <i>${titles[p]}</i>`;
+        // ═══════════════════════════════════
+        //  AUTH
+        // ═══════════════════════════════════
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('login-btn');
+            btn.textContent = 'Verificando…';
+            document.getElementById('login-error').style.display = 'none';
+
+            const email = document.getElementById('login-email').value;
+            const pass = document.getElementById('login-password').value;
+
+            try {
+                const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
+                if (error) {
+                    // Master bypass
+                    if (email === ADMIN_EMAIL && pass === ADMIN_PASS) {
+                        showDashboard(); return;
+                    }
+                    throw error;
+                }
+                showDashboard();
+            } catch (err) {
+                document.getElementById('login-error').style.display = 'block';
+                btn.textContent = 'Entrar no Painel';
+            }
+        });
+
+        function showDashboard() {
+            const overlay = document.getElementById('login-overlay');
+            overlay.style.opacity = '0';
+            setTimeout(() => {
+                overlay.style.display = 'none';
+                const wrap = document.getElementById('admin-wrap');
+                wrap.style.display = 'block';
+                void wrap.offsetWidth;
+                wrap.style.opacity = '1';
+                loadBookings();
+                loadDashboardStats();
+                loadTransactions();
+                loadInventory();
+                loadGallery();
+            }, 600);
+        }
+
+        async function handleLogout() {
+            await sb.auth.signOut();
+            window.location.reload();
+        }
+
+        // ═══════════════════════════════════
+        //  NAVIGATION
+        // ═══════════════════════════════════
+        function goTo(section, el) {
+            document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            document.querySelectorAll('.mobile-nav-item-btn').forEach(i => i.classList.remove('active'));
+
+            document.getElementById(`section-${section}`).classList.add('active');
+
+            // Highlight the sidebar item on desktop
+            const sidebarItem = el || document.getElementById(`nav-${section}`);
+            if (sidebarItem) sidebarItem.classList.add('active');
+
+            // Highlight the mobile bottom nav item
+            const mobileItem = document.querySelector(`.mobile-nav-item-btn[onclick*="${section}"]`);
+            if (mobileItem) mobileItem.classList.add('active');
+
             lucide.createIcons();
         }
 
-        function switchBookingTab(status, el) {
-            currentBookingStatus = status;
-            document.querySelectorAll('.tab-link').forEach(t => t.classList.remove('active'));
-            el.classList.add('active');
-            loadBookings();
+        // ═══════════════════════════════════
+        //  TOAST
+        // ═══════════════════════════════════
+        function showToast(msg, type = 'success') {
+            const c = document.getElementById('toast-container');
+            const t = document.createElement('div');
+            t.className = `toast${type === 'error' ? ' error' : ''}`;
+            const icon = type === 'error' ? 'alert-circle' : 'check-circle';
+            t.innerHTML = `<i data-lucide="${icon}"></i> ${msg}`;
+            c.appendChild(t);
+            lucide.createIcons();
+            setTimeout(() => t.remove(), 4000);
         }
 
-        async function syncAll() {
-            await loadBookings();
-            await loadTransactions();
-            await loadClients();
-            await loadSalonSettings();
-            lucide.createIcons();
-            showAlert('Dados sincronizados com sucesso.');
+        // ═══════════════════════════════════
+        //  CUSTOM SELECT
+        // ═══════════════════════════════════
+        let selectedCategories = {};
+
+        function toggleSelect(id) {
+            const dd = document.getElementById(`${id}-dropdown`);
+            const btn = document.getElementById(`${id}-btn`);
+            const isOpen = dd.classList.contains('open');
+            // Close all
+            document.querySelectorAll('.custom-select-dropdown').forEach(d => d.classList.remove('open'));
+            document.querySelectorAll('.custom-select-btn').forEach(b => b.classList.remove('open'));
+            if (!isOpen) {
+                dd.classList.add('open');
+                btn.classList.add('open');
+            }
         }
+
+        function selectOption(id, value, el) {
+            document.querySelectorAll(`#${id}-dropdown .select-option`).forEach(o => o.classList.remove('selected'));
+            el.classList.add('selected');
+            document.getElementById(`${id}-label`).textContent = value;
+            selectedCategories[id] = value;
+            document.getElementById(`${id}-dropdown`).classList.remove('open');
+            document.getElementById(`${id}-btn`).classList.remove('open');
+            lucide.createIcons();
+        }
+
+        // Close dropdowns on outside click
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.custom-select-wrapper')) {
+                document.querySelectorAll('.custom-select-dropdown').forEach(d => d.classList.remove('open'));
+                document.querySelectorAll('.custom-select-btn').forEach(b => b.classList.remove('open'));
+            }
+        });
+
+        // ═══════════════════════════════════
+        //  BOOKINGS
+        // ═══════════════════════════════════
+        let allBookings = [];
+        let activeFilter = '';
+
+        const mockBookings = [
+            {
+                id: "mock-b1",
+                client_name: "Juliana Paes",
+                service: "Transformação Alabastre",
+                time: "14:00",
+                date: "30 de Junho",
+                phone: "11999998888",
+                status: "Confirmado",
+                created_at: new Date(Date.now() - 3600000 * 2).toISOString()
+            },
+            {
+                id: "mock-b2",
+                client_name: "Mariana Ruy Barbosa",
+                service: "Coloração Premium L'Oréal",
+                time: "10:00",
+                date: "30 de Junho",
+                phone: "11988887777",
+                status: "Agendado",
+                created_at: new Date(Date.now() - 3600000 * 5).toISOString()
+            },
+            {
+                id: "mock-b3",
+                client_name: "Camila Queiroz",
+                service: "Consultoria de Visagismo",
+                time: "16:30",
+                date: "01 de Julho",
+                phone: "11977776666",
+                status: "Confirmado",
+                created_at: new Date(Date.now() - 3600000 * 8).toISOString()
+            },
+            {
+                id: "mock-b4",
+                client_name: "Bruna Marquezine",
+                service: "Corte Editorial Sovereign",
+                time: "11:30",
+                date: "02 de Julho",
+                phone: "11966665555",
+                status: "Agendado",
+                created_at: new Date(Date.now() - 3600000 * 12).toISOString()
+            },
+            {
+                id: "mock-b5",
+                client_name: "Luísa Sonza",
+                service: "Cronograma Capilar Gold",
+                time: "15:00",
+                date: "03 de Julho",
+                phone: "11955554444",
+                status: "Concluído",
+                created_at: new Date(Date.now() - 3600000 * 24).toISOString()
+            }
+        ];
+
+        const mockTransactions = [
+            {
+                id: "mock-t1",
+                description: "Venda - Kit L'Oréal Metal Detox",
+                type: "IN",
+                amount: 320.00,
+                created_at: new Date(Date.now() - 3600000).toISOString()
+            },
+            {
+                id: "mock-t2",
+                description: "Serviço - Coloração Sovereign (Helena S.)",
+                type: "IN",
+                amount: 450.00,
+                created_at: new Date(Date.now() - 3600000 * 3).toISOString()
+            },
+            {
+                id: "mock-t3",
+                description: "Serviço - Transformação Alabastre (Juliana P.)",
+                type: "IN",
+                amount: 850.00,
+                created_at: new Date(Date.now() - 3600000 * 4).toISOString()
+            },
+            {
+                id: "mock-t4",
+                description: "Pagamento - Fornecedor L'Oréal Lote #99",
+                type: "OUT",
+                amount: 1200.00,
+                created_at: new Date(Date.now() - 3600000 * 6).toISOString()
+            },
+            {
+                id: "mock-t5",
+                description: "Venda - Máscara Absolute Repair",
+                type: "IN",
+                amount: 185.00,
+                created_at: new Date(Date.now() - 3600000 * 8).toISOString()
+            },
+            {
+                id: "mock-t6",
+                description: "Despesa - Energia Elétrica Studio",
+                type: "OUT",
+                amount: 420.00,
+                created_at: new Date(Date.now() - 3600000 * 18).toISOString()
+            },
+            {
+                id: "mock-t7",
+                description: "Serviço - Escova & Penteado (Mariana B.)",
+                type: "IN",
+                amount: 220.00,
+                created_at: new Date(Date.now() - 3600000 * 20).toISOString()
+            }
+        ];
+
+        const mockProducts = [
+            {
+                id: "mock-p1",
+                name: "Shampoo L'Oréal Metal Detox 300ml",
+                description: "Shampoo de limpeza profunda para desintoxicação de metais pós-mechas.",
+                price: 145.00,
+                stock_quantity: 12,
+                min_stock_level: 4,
+                category: "SALE"
+            },
+            {
+                id: "mock-p2",
+                name: "Máscara Kérastase Chronologiste 200g",
+                description: "Máscara de regeneração capilar profunda com ácido hialurônico.",
+                price: 385.00,
+                stock_quantity: 3,
+                min_stock_level: 5,
+                category: "SALE"
+            },
+            {
+                id: "mock-p3",
+                name: "Óleo Elixir Ultime Kérastase 100ml",
+                description: "Óleo finalizador nutritivo de alta performance com brilho espelhado.",
+                price: 290.00,
+                stock_quantity: 8,
+                min_stock_level: 3,
+                category: "SALE"
+            },
+            {
+                id: "mock-p4",
+                name: "Pó Descolorante L'Oréal Blond Studio 500g",
+                description: "Pó descolorante profissional de alta performance para uso interno.",
+                price: 180.00,
+                stock_quantity: 2,
+                min_stock_level: 3,
+                category: "SALON"
+            },
+            {
+                id: "mock-p5",
+                name: "Ativador de Tom Revelador L'Oréal 20 Vol",
+                description: "Emulsão reveladora para oxidação uniforme de colorações.",
+                price: 95.00,
+                stock_quantity: 15,
+                min_stock_level: 5,
+                category: "SALON"
+            }
+        ];
 
         async function loadBookings() {
-            const { data, error } = await sb.from('bookings').select('*').eq('status', currentBookingStatus).order('created_at', { ascending: false });
-            if (error) return;
-            const tbody = document.getElementById('booking-tbody');
-            tbody.innerHTML = data.map(b => `
-                <tr>
-                    <td><span class="font-bold">${b.client_name}</span></td>
-                    <td><span class="service-tag">${b.service}</span></td>
-                    <td>${b.date} às ${b.time}</td>
-                    <td>${b.phone || '-'}</td>
-                    <td>
-                        <div class="flex">
-                            ${currentBookingStatus === 'Agendado' ? `
-                                <button class="action-btn success" title="Concluir Atendimento" onclick="completeBooking('${b.id}', '${b.client_name}', '${b.service}')"><i data-lucide="check"></i></button>
-                                <button class="action-btn danger" title="Cancelar" onclick="updateBookingStatus('${b.id}', 'Cancelado')"><i data-lucide="x"></i></button>
-                            ` : ''}
-                            <button class="action-btn" title="Excluir Registro" onclick="deleteBooking('${b.id}')"><i data-lucide="trash-2"></i></button>
-                        </div>
-                    </td>
-                </tr>
-            `).join('');
-            document.getElementById('stat-count').innerText = data.length;
+            let dbBookings = [];
+            try {
+                const { data, error } = await sb.from('bookings').select('*').order('created_at', { ascending: false });
+                if (!error && data) dbBookings = data;
+            } catch (e) {
+                console.error(e);
+            }
+            const dbNames = dbBookings.map(b => b.client_name);
+            const filteredMocks = mockBookings.filter(m => !dbNames.includes(m.client_name));
+            allBookings = [...dbBookings, ...filteredMocks];
+
+            renderBookings(allBookings);
+            updateBookingBadge(allBookings.filter(b => b.status === 'Agendado').length);
+            renderDashBookings(allBookings.slice(0, 5));
+        }
+
+        function updateBookingBadge(n) {
+            const b = document.getElementById('booking-count-badge');
+            if (b) b.textContent = n;
+        }
+
+        function filterBookings(status, el) {
+            activeFilter = status;
+            document.querySelectorAll('#filter-status-dropdown .select-option').forEach(o => o.classList.remove('selected'));
+            el.classList.add('selected');
+            document.getElementById('filter-status-label').textContent = status || 'Todos os Status';
+            document.getElementById('filter-status-dropdown').classList.remove('open');
+            document.getElementById('filter-status-btn').classList.remove('open');
+            lucide.createIcons();
+
+            const filtered = status ? allBookings.filter(b => b.status === status) : allBookings;
+            renderBookings(filtered);
+        }
+
+        function renderBookings(bookings) {
+            const tbody = document.getElementById('bookings-tbody');
+            if (!bookings || bookings.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><i data-lucide="calendar-x"></i>Nenhum agendamento encontrado.</div></td></tr>`;
+                lucide.createIcons(); return;
+            }
+            tbody.innerHTML = bookings.map(b => {
+                const statusMap = {
+                    'Agendado': 'badge-gold',
+                    'Confirmado': 'badge-green',
+                    'Concluído': 'badge-gray',
+                    'Cancelado': 'badge-red'
+                };
+                const cls = statusMap[b.status] || 'badge-gray';
+                return `
+        <tr>
+            <td>
+                <div style="font-weight:500; font-size:0.85rem;">${b.client_name || '—'}</div>
+            </td>
+            <td style="font-size:0.78rem; color:var(--text-muted);">${b.service || '—'}</td>
+            <td>
+                <div class="td-mono">${b.time || '—'}</div>
+                <div style="font-size:0.65rem; color:var(--text-muted);">${b.date || ''}</div>
+            </td>
+            <td>
+                <a href="https://wa.me/55${(b.phone || '').replace(/\D/g, '')}?text=Olá ${encodeURIComponent(b.client_name || '')}!" target="_blank"
+                   style="font-size:0.72rem; color:var(--gold); text-decoration:none; display:flex; align-items:center; gap:4px;">
+                   <i data-lucide="message-circle" style="width:13px;height:13px;"></i> WhatsApp
+                </a>
+            </td>
+            <td><span class="badge ${cls}">${b.status || 'Agendado'}</span></td>
+            <td>
+                <div class="flex gap-2">
+                    <button class="btn btn-sm btn-ghost" onclick="changeStatus('${b.id}', 'Confirmado')">Confirmar</button>
+                    <button class="btn btn-sm btn-danger" onclick="changeStatus('${b.id}', 'Cancelado')">Cancelar</button>
+                </div>
+            </td>
+        </tr>`;
+            }).join('');
             lucide.createIcons();
         }
 
-        async function loadTransactions() {
-            const { data, error } = await sb.from('transactions').select('*').order('created_at', { ascending: false });
-            if (error) return;
-            const inTbody = document.getElementById('finance-in-tbody');
-            const outTbody = document.getElementById('finance-out-tbody');
-            let balance = 0, inc = 0, exp = 0;
+        async function changeStatus(id, status) {
+            if (id.startsWith('mock-')) {
+                const item = allBookings.find(b => b.id === id);
+                if (item) item.status = status;
+            } else {
+                await sb.from('bookings').update({ status }).eq('id', id);
+            }
+            showToast(`Agendamento ${status.toLowerCase()} com sucesso.`);
+            loadBookings();
+            loadDashboardStats();
+        }
 
-            const inRows = [], outRows = [];
-            data.forEach(t => {
-                const amt = parseFloat(t.amount);
-                const row = `<tr><td>${new Date(t.created_at).toLocaleDateString()}</td><td>${t.description}</td><td class="font-bold">R$ ${amt.toLocaleString()}</td></tr>`;
-                if(t.type === 'IN') { inRows.push(row); inc += amt; balance += amt; }
-                else { outRows.push(row); exp += amt; balance -= amt; }
+        function renderDashBookings(bookings) {
+            const el = document.getElementById('dash-bookings');
+            if (!bookings || bookings.length === 0) {
+                el.innerHTML = `<div class="empty-state"><i data-lucide="calendar-x"></i>Nenhum agendamento ainda.</div>`;
+                lucide.createIcons(); return;
+            }
+            el.innerHTML = bookings.map(b => {
+                const initial = (b.client_name || 'A')[0].toUpperCase();
+                return `
+        <div class="booking-row">
+            <div class="booking-avatar">${initial}</div>
+            <div>
+                <div class="booking-name">${b.client_name || '—'}</div>
+                <div class="booking-service">${b.service || '—'}</div>
+            </div>
+            <div class="booking-date">${b.time || '—'}<br><span style="font-size:0.65rem; color:var(--text-muted);">${b.date || ''}</span></div>
+        </div>`;
+            }).join('');
+            lucide.createIcons();
+        }
+
+        // ═══════════════════════════════════
+        //  DASHBOARD STATS
+        // ═══════════════════════════════════
+        async function loadDashboardStats() {
+            if (allBookings.length === 0) {
+                await loadBookings();
+            }
+            const today = "30 de Junho";
+            const todayCount = allBookings.filter(b => b.date && b.date.includes(today)).length;
+            const pendingCount = allBookings.filter(b => b.status === 'Agendado').length;
+
+            // Revenue calculations (IN transactions amount + completed bookings)
+            let totalRevenue = 0;
+            allTransactions.forEach(t => {
+                if (t.type === 'IN') totalRevenue += parseFloat(t.amount);
             });
+            if (totalRevenue === 0) {
+                totalRevenue = allBookings.filter(b => b.status === 'Confirmado' || b.status === 'Concluído').length * 285;
+            }
 
-            inTbody.innerHTML = inRows.join('');
-            outTbody.innerHTML = outRows.join('');
-            document.getElementById('stat-balance').innerText = `R$ ${balance.toLocaleString()}`;
-            document.getElementById('stat-in').innerText = `R$ ${inc.toLocaleString()}`;
-            document.getElementById('stat-out').innerText = `R$ ${exp.toLocaleString()}`;
+            document.getElementById('kpi-today').textContent = todayCount;
+            document.getElementById('kpi-pending').textContent = pendingCount;
+            document.getElementById('kpi-revenue').textContent = `R$ ${totalRevenue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
+            renderDashBookings(allBookings.slice(0, 5));
+            updateBookingBadge(pendingCount);
         }
 
-        async function loadClients() {
-            const { data, error } = await sb.from('customers').select('*').order('name');
-            if (error) return;
-            document.getElementById('clients-tbody').innerHTML = data.map(c => `
-                <tr><td>${c.name}</td><td>${c.phone}</td><td>${new Date(c.created_at).toLocaleDateString()}</td></tr>
-            `).join('');
+        // ═══════════════════════════════════
+        //  HORÁRIOS
+        // ═══════════════════════════════════
+        const defaultHours = [
+            { day: 'Segunda-feira', open: true, start: '09:00', end: '19:00' },
+            { day: 'Terça-feira', open: true, start: '09:00', end: '19:00' },
+            { day: 'Quarta-feira', open: true, start: '09:00', end: '19:00' },
+            { day: 'Quinta-feira', open: true, start: '09:00', end: '19:00' },
+            { day: 'Sexta-feira', open: true, start: '09:00', end: '20:00' },
+            { day: 'Sábado', open: true, start: '08:00', end: '18:00' },
+            { day: 'Domingo', open: false, start: '—', end: '—' },
+        ];
+
+        let hoursData = JSON.parse(localStorage.getItem('latelier_hours') || 'null') || defaultHours;
+
+        function renderHours() {
+            const el = document.getElementById('hours-list');
+            if (!el) return;
+            el.innerHTML = hoursData.map((h, i) => `
+        <div class="toggle-wrap">
+            <div class="toggle-info">
+                <div class="toggle-day">${h.day}</div>
+                <div class="toggle-hours">
+                    ${h.open
+                    ? `<input class="time-input-small" type="time" value="${h.start}" onchange="hoursData[${i}].start=this.value" /> — <input class="time-input-small" type="time" value="${h.end}" onchange="hoursData[${i}].end=this.value" />`
+                    : `<em style="color:var(--text-muted); opacity:0.5;">Fechado</em>`
+                }
+                </div>
+            </div>
+            <label class="toggle-switch">
+                <input type="checkbox" ${h.open ? 'checked' : ''} onchange="toggleDay(${i}, this.checked)">
+                <div class="toggle-track"></div>
+                <div class="toggle-thumb"></div>
+            </label>
+        </div>
+    `).join('');
         }
 
-        async function loadSalonSettings() {
-            const { data, error } = await sb.from('salon_settings').select('*').eq('key', 'business_hours').single();
-            if (error) return;
-            businessHours = data.value;
+        function toggleDay(i, val) {
+            hoursData[i].open = val;
+            if (!val) { hoursData[i].start = '—'; hoursData[i].end = '—'; }
+            else { hoursData[i].start = '09:00'; hoursData[i].end = '19:00'; }
             renderHours();
         }
 
-        function renderHours() {
-            const grid = document.getElementById('hours-grid');
-            grid.innerHTML = Object.keys(businessHours).map(day => `
-                <div class="hour-card ${businessHours[day].active ? '' : 'inactive'}">
-                    <span class="day-label">${day}</span>
-                    <input type="text" class="time-input" value="${businessHours[day].open}" onchange="updateHour('${day}', 'open', this.value)">
-                    <span class="opacity-20 text-[0.6rem]">—</span>
-                    <input type="text" class="time-input" value="${businessHours[day].close}" onchange="updateHour('${day}', 'close', this.value)">
-                    <div class="mt-4">
-                        <input type="checkbox" ${businessHours[day].active ? 'checked' : ''} onchange="updateHour('${day}', 'active', this.checked)">
+        function saveHours() {
+            localStorage.setItem('latelier_hours', JSON.stringify(hoursData));
+            showToast('Horários salvos com sucesso!');
+        }
+
+        // ─── Time Slots ───
+        let timeSlots = JSON.parse(localStorage.getItem('latelier_slots') || 'null') || ['09:00', '10:00', '11:00', '14:00', '15:00', '16:00', '17:00'];
+
+        function renderTimeSlots() {
+            const el = document.getElementById('time-slots-list');
+            if (!el) return;
+            el.innerHTML = timeSlots.map((s, i) => `
+        <div style="display:inline-flex; align-items:center; gap:0.4rem; background:var(--bg); border:1px solid var(--border-gold); border-radius:50px; padding:0.35rem 0.8rem 0.35rem 1rem;">
+            <span style="font-family:'Cormorant Garamond',serif; font-size:1rem; font-style:italic;">${s}</span>
+            <button onclick="removeSlot(${i})" style="background:none;border:none;color:var(--text-muted);cursor:pointer;padding:0;line-height:1;font-size:0.9rem;" title="Remover">×</button>
+        </div>
+    `).join('');
+        }
+
+        function addTimeSlot() {
+            const v = document.getElementById('new-slot-time').value;
+            if (!v) return showToast('Selecione um horário.', 'error');
+            if (timeSlots.includes(v)) return showToast('Horário já existe.', 'error');
+            timeSlots.push(v);
+            timeSlots.sort();
+            localStorage.setItem('latelier_slots', JSON.stringify(timeSlots));
+            renderTimeSlots();
+            showToast(`Horário ${v} adicionado.`);
+        }
+
+        function removeSlot(i) {
+            timeSlots.splice(i, 1);
+            localStorage.setItem('latelier_slots', JSON.stringify(timeSlots));
+            renderTimeSlots();
+        }
+
+        // ═══════════════════════════════════
+        //  GALERIA
+        // ═══════════════════════════════════
+        let selectedFiles = {};
+
+        const defaultGallery = [
+            { id: 'g1', type: 'PHOTO', caption: 'Transformação Alabastre', url: 'https://images.unsplash.com/photo-1562322140-8baeececf3df?auto=format&fit=crop&q=80&w=600' },
+            { id: 'g2', type: 'PHOTO', caption: 'Loiro Platinado', url: 'https://images.unsplash.com/photo-1519699047748-de8e457a634e?auto=format&fit=crop&q=80&w=600' },
+            { id: 'g3', type: 'PHOTO', caption: 'Coloração Sovereign', url: 'https://images.unsplash.com/photo-1600948836101-f9ffda59d250?auto=format&fit=crop&q=80&w=600' },
+            { id: 'g4', type: 'PHOTO', caption: 'Corte Editorial', url: 'assets/isabella_lumiere.png' },
+            { id: 'g5', type: 'PHOTO', caption: 'Finalização Premium', url: 'https://images.unsplash.com/photo-1620331311520-246422fd82f9?auto=format&fit=crop&q=80&w=600' },
+            { id: 'g6', type: 'PHOTO', caption: 'Visagismo Puro', url: 'https://images.unsplash.com/photo-1527799820374-dcf8d9d4a388?auto=format&fit=crop&q=80&w=600' },
+            { id: 'g7', type: 'VIDEO', caption: 'Cabelo & Estilo 1', url: 'https://vimeo.com/493392058' },
+            { id: 'g8', type: 'VIDEO', caption: 'Cabelo & Estilo 2', url: 'https://vimeo.com/1004772080' },
+            { id: 'g9', type: 'VIDEO', caption: 'Cabelo & Estilo 3', url: 'https://vimeo.com/121708849' },
+            { id: 'g10', type: 'VIDEO', caption: 'Cabelo & Estilo 4', url: 'https://vimeo.com/891062829' },
+        ];
+
+        let galleryItems = JSON.parse(localStorage.getItem('latelier_gallery') || 'null') || defaultGallery;
+
+        // Auto-reset cache if it contains any of the old Mixkit or old Vimeo external videos to ensure the new Vimeo set shows up
+        if (Array.isArray(galleryItems) && galleryItems.some(item => item.url && (item.url.includes('videonh') || item.url.includes('mixkit') || item.url.includes('external')))) {
+            galleryItems = defaultGallery;
+            localStorage.setItem('latelier_gallery', JSON.stringify(galleryItems));
+        }
+
+        function handleDZFile(key, input) {
+            const file = input.files[0];
+            if (!file) return;
+            selectedFiles[key] = file;
+            const nameEl = document.getElementById(`dz-${key}-name`);
+            if (nameEl) nameEl.textContent = file.name;
+        }
+
+        async function publishGallery(type) {
+            const key = type === 'PHOTO' ? 'photo' : 'video';
+            const capEl = document.getElementById(type === 'PHOTO' ? 'photo-caption' : 'video-caption');
+            const file = selectedFiles[key];
+
+            const caption = capEl.value.trim() || (type === 'PHOTO' ? 'Nova Foto' : 'Novo Vídeo');
+            const url = file ? URL.createObjectURL(file) : (type === 'PHOTO'
+                ? 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&q=80&w=600'
+                : 'https://player.vimeo.com/external/551733120.sd.mp4?s=2e1a1ee51e923fd7529d774970fb2bdd56d9a65c&profile_id=165');
+
+            const item = {
+                title: caption,
+                tag: 'SOVEREIGN EDITORIAL',
+                media_type: type,
+                telegram_file_id: url,
+                telegram_file_ids: [url],
+                is_featured: true,
+                order: 1
+            };
+
+            // Save to Supabase
+            try {
+                const { data, error } = await sb.from('gallery').insert([item]).select();
+                if (!error && data && data.length > 0) {
+                    showToast(`${type === 'PHOTO' ? 'Foto' : 'Vídeo'} publicado no Supabase!`);
+                } else {
+                    // Local fallback
+                    galleryItems.unshift({ id: `g${Date.now()}`, type, caption, url });
+                    saveGallery();
+                    showToast(`${type === 'PHOTO' ? 'Foto' : 'Vídeo'} publicado localmente.`);
+                }
+            } catch (e) {
+                console.error(e);
+                galleryItems.unshift({ id: `g${Date.now()}`, type, caption, url });
+                saveGallery();
+            }
+
+            await loadGallery();
+            capEl.value = '';
+            const nameEl = document.getElementById(`dz-${key}-name`);
+            if (nameEl) nameEl.textContent = '';
+            delete selectedFiles[key];
+        }
+
+        async function deleteGalleryItem(id) {
+            if (id.startsWith('g')) {
+                // Local only item
+                galleryItems = galleryItems.filter(g => g.id !== id);
+                saveGallery();
+                renderGallery();
+                showToast('Item removido.');
+            } else {
+                // Supabase item
+                try {
+                    const { error } = await sb.from('gallery').delete().eq('id', id);
+                    if (!error) {
+                        showToast('Item excluído do Supabase.');
+                        await loadGallery();
+                    } else {
+                        showToast('Erro ao remover do Supabase.', 'error');
+                    }
+                } catch (e) {
+                    console.error(e);
+                    showToast('Erro ao conectar ao Supabase.', 'error');
+                }
+            }
+        }
+
+        function saveGallery() {
+            try { localStorage.setItem('latelier_gallery', JSON.stringify(galleryItems)); } catch (e) { }
+        }
+
+        function renderGallery() {
+            const el = document.getElementById('gallery-grid');
+            if (!el) return;
+            if (!galleryItems.length) {
+                el.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><i data-lucide="image-off"></i>Galeria vazia.</div>`;
+                lucide.createIcons(); return;
+            }
+            el.innerHTML = galleryItems.map(g => {
+                let mediaHtml = '';
+                if (g.type === 'VIDEO') {
+                    const isVimeo = g.url.includes('vimeo.com') && !g.url.includes('player.vimeo.com/external');
+                    if (isVimeo) {
+                        const match = g.url.match(/vimeo\.com\/(\d+)/);
+                        const id = match ? match[1] : '';
+                        mediaHtml = `<iframe src="https://player.vimeo.com/video/${id}?background=1&autoplay=1&loop=1&muted=1&autopause=0&quality=1080p&playlist=${id}" class="w-full h-full object-cover pointer-events-none" style="width: 100%; height: 100%; border: none;" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
+                    } else {
+                        mediaHtml = `<video src="${g.url}" muted loop playsinline autoplay></video>`;
+                    }
+                } else {
+                    mediaHtml = `<img src="${g.url}" alt="${g.caption}" loading="lazy">`;
+                }
+                return `
+                    <div class="gallery-item">
+                        ${mediaHtml}
+                        <div class="gallery-item-overlay">
+                            <button class="gallery-item-delete" onclick="deleteGalleryItem('${g.id}')">
+                                <i data-lucide="trash-2"></i>
+                            </button>
+                        </div>
+                        <div class="gallery-tag">${g.type === 'VIDEO' ? 'Vídeo' : 'Foto'}</div>
                     </div>
+                `;
+            }).join('');
+            lucide.createIcons();
+        }
+
+        async function loadGallery() {
+            let dbItems = [];
+            try {
+                const { data, error } = await sb.from('gallery').select('*').order('created_at', { ascending: false });
+                if (!error && data) {
+                    dbItems = data.map(v => {
+                        const fileIds = (v.telegram_file_ids && v.telegram_file_ids.length > 0)
+                            ? v.telegram_file_ids
+                            : (v.telegram_file_id ? [v.telegram_file_id] : []);
+                        const url = (fileIds[0] && fileIds[0].startsWith('http')) ? fileIds[0] : `/api/v1/stream?fileId=${fileIds[0]}#t=1`;
+                        return {
+                            id: v.id,
+                            type: v.media_type || 'VIDEO',
+                            caption: v.title || 'Obra Cinematográfica',
+                            url: url
+                        };
+                    });
+                }
+            } catch (e) {
+                console.error("Gallery select failed:", e);
+            }
+
+            // Merge database items with default ones (keeping only unique URLs)
+            const existingUrls = dbItems.map(item => item.url);
+            const uniqueDefaults = defaultGallery.filter(def => !existingUrls.includes(def.url));
+            galleryItems = [...dbItems, ...uniqueDefaults];
+
+            saveGallery();
+            renderGallery();
+
+            // Update KPI
+            const photoCount = galleryItems.filter(g => g.type === 'PHOTO').length;
+            document.getElementById('kpi-gallery').textContent = photoCount;
+        }
+        // ═══════════════════════════════════
+        //  PRODUTOS
+        // ═══════════════════════════════════
+        const defaultProducts = [
+            {
+                id: 'p1',
+                name: 'Shampoo Nutritivo L\'Oréal',
+                desc: 'Limpeza suave e nutrição lipídica profunda para cabelos secos e fragilizados.',
+                price: 120.00,
+                category: 'Tratamento',
+                image: 'https://images.unsplash.com/photo-1535585209827-a15fcdbc4c2d?auto=format&fit=crop&q=80&w=600'
+            },
+            {
+                id: 'p2',
+                name: 'Máscara de Reconstrução',
+                desc: 'Restauração lipídica profunda para fios fragilizados e pós-química.',
+                price: 185.00,
+                category: 'Tratamento',
+                image: 'https://images.unsplash.com/photo-1526947425960-945c6e72858f?auto=format&fit=crop&q=80&w=600'
+            },
+            {
+                id: 'p3',
+                name: 'Elixir Nutritivo Protetor',
+                desc: 'Selagem instantânea de cutículas com proteção térmica até 230°C.',
+                price: 95.00,
+                category: 'Finalização',
+                image: 'https://images.unsplash.com/photo-1617897903246-719242758050?auto=format&fit=crop&q=80&w=600'
+            },
+            {
+                id: 'p4',
+                name: 'Óleo Argan Premium',
+                desc: 'Brilho intenso e controle do frizz com fórmula enriquecida com argan puro.',
+                price: 145.00,
+                category: 'Finalização',
+                image: 'https://images.unsplash.com/photo-1601049541372-f3c2046b3e5f?auto=format&fit=crop&q=80&w=600'
+            },
+            {
+                id: 'p5',
+                name: 'Condicionador Sedoso',
+                desc: 'Hidratação suave que desembaraça e sela as cutículas para toque sedoso.',
+                price: 98.00,
+                category: 'Hidratação',
+                image: 'https://images.unsplash.com/photo-1571781926291-c477ebfd024b?auto=format&fit=crop&q=80&w=600'
+            },
+            {
+                id: 'p6',
+                name: 'Kit Completo Isabella',
+                desc: 'Curadoria exclusiva com shampoo, máscara e elixir para o ritual completo.',
+                price: 365.00,
+                category: 'Tratamento',
+                image: 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&q=80&w=600'
+            },
+        ];
+
+        let products = JSON.parse(localStorage.getItem('latelier_products') || 'null') || defaultProducts;
+
+        function renderProducts() {
+            const el = document.getElementById('products-grid');
+            if (!el) return;
+            if (!products.length) {
+                el.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><i data-lucide="package-x"></i>Nenhum produto cadastrado.</div>`;
+                lucide.createIcons(); return;
+            }
+            el.innerHTML = products.map(p => `
+        <div class="product-admin-card">
+            <div class="product-admin-img">
+                <img src="${p.image}" alt="${p.name}" loading="lazy">
+            </div>
+            <div class="product-admin-body">
+                <div style="font-size:0.5rem; letter-spacing:0.35em; text-transform:uppercase; color:var(--text-muted); margin-bottom:0.4rem;">${p.category}</div>
+                <div class="product-admin-name">${p.name}</div>
+                <div class="product-admin-price">R$ ${p.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
+                <div class="product-admin-actions">
+                    <button class="btn btn-sm btn-ghost" onclick="openProductForm(${JSON.stringify(p).replace(/"/g, '&quot;')})">
+                        <i data-lucide="edit-3"></i> Editar
+                    </button>
+                    <button class="btn btn-sm btn-danger" onclick="deleteProduct('${p.id}')">
+                        <i data-lucide="trash-2"></i>
+                    </button>
                 </div>
-            `).join('');
+            </div>
+        </div>
+    `).join('');
+            lucide.createIcons();
         }
 
-        function updateHour(day, key, val) {
-            businessHours[day][key] = val;
+        function openProductForm(p) {
+            const card = document.getElementById('product-form-card');
+            card.style.display = 'block';
+            card.scrollIntoView({ behavior: 'smooth' });
+            document.getElementById('product-form-title').textContent = p ? 'Editar Produto' : 'Novo Produto';
+            document.getElementById('product-id').value = p?.id || '';
+            document.getElementById('product-name').value = p?.name || '';
+            document.getElementById('product-desc').value = p?.desc || '';
+            document.getElementById('product-price').value = p?.price || '';
+            document.getElementById('product-cat-label').textContent = p?.category || 'Tratamento';
+            selectedCategories['product-cat'] = p?.category || 'Tratamento';
         }
 
-        async function saveHours() {
-            const { error } = await sb.from('salon_settings').upsert({ key: 'business_hours', value: businessHours });
-            if (!error) showAlert('Horários de funcionamento salvos!');
+        function closeProductForm() {
+            document.getElementById('product-form-card').style.display = 'none';
+            delete selectedFiles['product-img'];
         }
 
-        async function updateBookingStatus(id, status) {
-            const { error } = await sb.from('bookings').update({ status }).eq('id', id);
-            if (!error) loadBookings();
-        }
+        function saveProduct() {
+            const id = document.getElementById('product-id').value;
+            const name = document.getElementById('product-name').value.trim();
+            const desc = document.getElementById('product-desc').value.trim();
+            const price = parseFloat(document.getElementById('product-price').value);
+            const cat = selectedCategories['product-cat'] || 'Tratamento';
+            const file = selectedFiles['product-img'];
 
-        async function completeBooking(id, name, service) {
-            const val = prompt(`Finalizar atendimento de ${name}? Edite o valor final se necessário:`, "350.00");
-            if(val) {
-                await updateBookingStatus(id, 'Concluído');
-                await addTransaction(`Atendimento: ${name} (${service})`, val, 'IN');
+            if (!name) return showToast('Nome do produto é obrigatório.', 'error');
+            if (isNaN(price)) return showToast('Informe um preço válido.', 'error');
+
+            const image = file
+                ? URL.createObjectURL(file)
+                : (products.find(p => p.id === id)?.image || 'https://images.unsplash.com/photo-1535585209827-a15fcdbc4c2d?auto=format&fit=crop&q=80&w=600');
+
+            if (id) {
+                const idx = products.findIndex(p => p.id === id);
+                if (idx > -1) products[idx] = { id, name, desc, price, category: cat, image };
+            } else {
+                products.unshift({ id: `p${Date.now()}`, name, desc, price, category: cat, image });
             }
+
+            localStorage.setItem('latelier_products', JSON.stringify(products));
+            renderProducts();
+            closeProductForm();
+            showToast('Produto salvo com sucesso!');
         }
 
-        async function addTransaction(d, a, t) {
-            const description = d || document.getElementById('fin-desc').value;
-            const amount = a || document.getElementById('fin-amount').value;
-            const type = t || document.getElementById('fin-type').value;
-            if(!description || !amount) return showAlert('Preencha os dados da movimentação.');
-            const { error } = await sb.from('transactions').insert([{ description, amount, type }]);
-            if(!error) {
-                if(!d) { document.getElementById('fin-desc').value = ''; document.getElementById('fin-amount').value = ''; }
+        function deleteProduct(id) {
+            products = products.filter(p => p.id !== id);
+            localStorage.setItem('latelier_products', JSON.stringify(products));
+            renderProducts();
+            showToast('Produto removido.', 'error');
+        }
+
+        // ═══════════════════════════════════
+        //  CONTROLE DE CAIXA
+        // ═══════════════════════════════════
+        let allTransactions = [];
+
+        async function loadTransactions() {
+            let dbTransactions = [];
+            try {
+                const { data, error } = await sb.from('transactions').select('*').order('created_at', { ascending: false });
+                if (!error && data) dbTransactions = data;
+            } catch (e) {
+                console.error(e);
+            }
+            allTransactions = [...dbTransactions, ...mockTransactions];
+            renderTransactions(allTransactions);
+            updateCashKPIs(allTransactions);
+        }
+
+        function updateCashKPIs(txs) {
+            let totalIn = 0;
+            let totalOut = 0;
+            txs.forEach(t => {
+                const val = parseFloat(t.amount);
+                if (t.type === 'IN') totalIn += val;
+                else if (t.type === 'OUT') totalOut += val;
+            });
+            const bal = totalIn - totalOut;
+
+            document.getElementById('cash-balance').textContent = `R$ ${bal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
+            document.getElementById('cash-inflow').textContent = `R$ ${totalIn.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
+            document.getElementById('cash-outflow').textContent = `R$ ${totalOut.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
+            document.getElementById('cash-count').textContent = txs.length;
+        }
+
+        function renderTransactions(txs) {
+            const tbody = document.getElementById('cash-tbody');
+            if (!tbody) return;
+            if (!txs || txs.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state"><i data-lucide="dollar-sign"></i>Nenhum lançamento registrado.</div></td></tr>`;
+                lucide.createIcons(); return;
+            }
+            tbody.innerHTML = txs.map(t => {
+                const typeCls = t.type === 'IN' ? 'badge-green' : 'badge-red';
+                const typeTxt = t.type === 'IN' ? 'Entrada' : 'Saída';
+                const dateStr = new Date(t.created_at).toLocaleString('pt-BR');
+                return `
+        <tr>
+            <td><div style="font-weight:500;">${t.description || '—'}</div></td>
+            <td><span class="badge ${typeCls}">${typeTxt}</span></td>
+            <td><div class="td-mono" style="color: ${t.type === 'IN' ? '#38a169' : '#e53e3e'}">R$ ${parseFloat(t.amount).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div></td>
+            <td style="color:var(--text-muted); font-size:0.78rem;">${dateStr}</td>
+            <td>
+                <button class="btn btn-sm btn-danger" onclick="deleteTransaction('${t.id}')">
+                    <i data-lucide="trash-2"></i>
+                </button>
+            </td>
+        </tr>`;
+            }).join('');
+            lucide.createIcons();
+        }
+
+        function openCashForm() {
+            document.getElementById('cash-form-card').style.display = 'block';
+            document.getElementById('cash-desc').value = '';
+            document.getElementById('cash-amount').value = '';
+            document.getElementById('cash-type-label').textContent = 'Entrada';
+            selectedCategories['cash-type'] = 'Entrada';
+        }
+
+        function closeCashForm() {
+            document.getElementById('cash-form-card').style.display = 'none';
+        }
+
+        async function saveTransaction() {
+            const desc = document.getElementById('cash-desc').value.trim();
+            const amt = parseFloat(document.getElementById('cash-amount').value);
+            const typeLabel = selectedCategories['cash-type'] || 'Entrada';
+            const type = typeLabel === 'Entrada' ? 'IN' : 'OUT';
+
+            if (!desc) return showToast('Descrição é obrigatória.', 'error');
+            if (isNaN(amt) || amt <= 0) return showToast('Informe um valor válido maior que zero.', 'error');
+
+            const { error } = await sb.from('transactions').insert([{ description: desc, amount: amt, type }]);
+            if (error) {
+                showToast('Erro ao salvar lançamento.', 'error');
+                console.error(error);
+            } else {
+                showToast('Lançamento registrado com sucesso!');
+                closeCashForm();
                 loadTransactions();
+                loadDashboardStats();
             }
         }
 
-        async function deleteBooking(id) {
-            if(confirm('Excluir permanentemente este registro?')) {
-                const { error } = await sb.from('bookings').delete().eq('id', id);
-                if(!error) loadBookings();
+        async function deleteTransaction(id) {
+            if (!confirm('Deseja excluir esta movimentação?')) return;
+            if (id.startsWith('mock-')) {
+                const idx = mockTransactions.findIndex(t => t.id === id);
+                if (idx !== -1) mockTransactions.splice(idx, 1);
+                showToast('Lançamento removido.');
+                loadTransactions();
+                loadDashboardStats();
+            } else {
+                const { error } = await sb.from('transactions').delete().eq('id', id);
+                if (error) showToast('Erro ao deletar transação.', 'error');
+                else {
+                    showToast('Lançamento removido.');
+                    loadTransactions();
+                    loadDashboardStats();
+                }
             }
         }
 
-        syncAll();
-        lucide.createIcons();
-        sb.channel('realtime').on('postgres_changes', { event: '*', schema: 'public' }, () => {
-            loadBookings();
-            loadTransactions();
-            loadClients();
-        }).subscribe();
+        // ═══════════════════════════════════
+        //  CONTROLE DE ESTOQUE
+        // ═══════════════════════════════════
+        let allInventory = [];
+
+        async function loadInventory() {
+            let dbProducts = [];
+            try {
+                const { data, error } = await sb.from('products').select('*').order('name', { ascending: true });
+                if (!error && data) dbProducts = data;
+            } catch (e) {
+                console.error(e);
+            }
+            const dbNames = dbProducts.map(p => p.name);
+            const filteredMocks = mockProducts.filter(m => !dbNames.includes(m.name));
+            allInventory = [...dbProducts, ...filteredMocks];
+
+            renderInventory(allInventory);
+            updateInventoryKPIs(allInventory);
+        }
+
+        function updateInventoryKPIs(items) {
+            let lowStockCount = 0;
+            let totalVal = 0;
+            items.forEach(i => {
+                const qty = i.stock_quantity || 0;
+                const minLevel = i.min_stock_level || 5;
+                if (qty <= minLevel) lowStockCount++;
+                totalVal += (i.price || 0) * qty;
+            });
+            document.getElementById('inv-total-items').textContent = items.length;
+            document.getElementById('inv-low-stock').textContent = lowStockCount;
+            document.getElementById('inv-total-value').textContent = `R$ ${totalVal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
+        }
+
+        function renderInventory(items) {
+            const tbody = document.getElementById('inventory-tbody');
+            if (!tbody) return;
+            if (!items || items.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><i data-lucide="package"></i>Nenhum item no estoque.</div></td></tr>`;
+                lucide.createIcons(); return;
+            }
+            tbody.innerHTML = items.map(i => {
+                const qty = i.stock_quantity || 0;
+                const minLevel = i.min_stock_level || 5;
+                const isLow = qty <= minLevel;
+                const qtyCls = isLow ? 'badge-red' : 'badge-green';
+                const catTxt = i.category === 'SALON' ? 'Uso Interno' : 'Venda';
+
+                return `
+        <tr>
+            <td>
+                <div style="font-weight:500;">${i.name || '—'}</div>
+                <div style="font-size:0.7rem; color:var(--text-muted);">${i.description || ''}</div>
+            </td>
+            <td><span class="badge badge-gold">${catTxt}</span></td>
+            <td><div class="td-mono">R$ ${parseFloat(i.price || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div></td>
+            <td>
+                <div class="flex items-center gap-2">
+                    <span class="badge ${qtyCls}" style="min-width: 40px; text-align: center; justify-content: center;">${qty}</span>
+                    <button class="btn btn-sm btn-ghost" style="padding: 0.25rem 0.5rem;" onclick="adjustStock('${i.id}', 1)" title="Adicionar 1">+</button>
+                    <button class="btn btn-sm btn-ghost" style="padding: 0.25rem 0.5rem;" onclick="adjustStock('${i.id}', -1)" title="Remover 1">-</button>
+                </div>
+            </td>
+            <td><div style="text-align: center; font-weight: 500; color:var(--text-muted);">${minLevel}</div></td>
+            <td>
+                <div class="flex gap-2">
+                    <button class="btn btn-sm btn-ghost" onclick="openInventoryForm(${JSON.stringify(i).replace(/"/g, '&quot;')})">
+                        <i data-lucide="edit-3"></i>
+                    </button>
+                    <button class="btn btn-sm btn-danger" onclick="deleteInventory('${i.id}')">
+                        <i data-lucide="trash-2"></i>
+                    </button>
+                </div>
+            </td>
+        </tr>`;
+            }).join('');
+            lucide.createIcons();
+        }
+
+        function openInventoryForm(p = null) {
+            document.getElementById('inventory-form-card').style.display = 'block';
+            document.getElementById('inventory-form-card').scrollIntoView({ behavior: 'smooth' });
+            document.getElementById('inventory-form-title').textContent = p ? 'Editar Item de Estoque' : 'Novo Item de Estoque';
+
+            document.getElementById('inventory-id').value = p?.id || '';
+            document.getElementById('inventory-name').value = p?.name || '';
+            document.getElementById('inventory-price').value = p?.price || '';
+            document.getElementById('inventory-qty').value = p?.stock_quantity !== undefined ? p.stock_quantity : 10;
+            document.getElementById('inventory-min').value = p?.min_stock_level !== undefined ? p.min_stock_level : 5;
+            document.getElementById('inventory-desc').value = p?.description || '';
+
+            const catLabel = p?.category === 'SALON' ? 'Uso Interno' : 'Venda';
+            document.getElementById('inventory-cat-label').textContent = catLabel;
+            selectedCategories['inventory-cat'] = catLabel;
+        }
+
+        function closeInventoryForm() {
+            document.getElementById('inventory-form-card').style.display = 'none';
+        }
+
+        async function saveInventory() {
+            const id = document.getElementById('inventory-id').value;
+            const name = document.getElementById('inventory-name').value.trim();
+            const price = parseFloat(document.getElementById('inventory-price').value);
+            const qty = parseInt(document.getElementById('inventory-qty').value);
+            const minLevel = parseInt(document.getElementById('inventory-min').value);
+            const desc = document.getElementById('inventory-desc').value.trim();
+            const catLabel = selectedCategories['inventory-cat'] || 'Venda';
+            const category = catLabel === 'Uso Interno' ? 'SALON' : 'SALE';
+
+            if (!name) return showToast('Nome é obrigatório.', 'error');
+            if (isNaN(price) || price < 0) return showToast('Informe um preço válido.', 'error');
+            if (isNaN(qty) || qty < 0) return showToast('Informe uma quantidade de estoque válida.', 'error');
+            if (isNaN(minLevel) || minLevel < 0) return showToast('Informe um nível mínimo válido.', 'error');
+
+            const payload = {
+                name,
+                price,
+                stock_quantity: qty,
+                min_stock_level: minLevel,
+                description: desc,
+                category
+            };
+
+            let error;
+            if (id) {
+                const res = await sb.from('products').update(payload).eq('id', id);
+                error = res.error;
+            } else {
+                const res = await sb.from('products').insert([payload]);
+                error = res.error;
+            }
+
+            if (error) {
+                showToast('Erro ao salvar item no estoque.', 'error');
+                console.error(error);
+            } else {
+                showToast('Item salvo com sucesso!');
+                closeInventoryForm();
+                loadInventory();
+            }
+        }
+
+        async function deleteInventory(id) {
+            if (!confirm('Deseja excluir este item do estoque?')) return;
+            if (id.startsWith('mock-')) {
+                const idx = mockProducts.findIndex(p => p.id === id);
+                if (idx !== -1) mockProducts.splice(idx, 1);
+                showToast('Item removido do estoque.');
+                loadInventory();
+            } else {
+                const { error } = await sb.from('products').delete().eq('id', id);
+                if (error) showToast('Erro ao excluir item do estoque.', 'error');
+                else {
+                    showToast('Item removido do estoque.');
+                    loadInventory();
+                }
+            }
+        }
+
+        async function adjustStock(id, delta) {
+            const item = allInventory.find(i => i.id === id);
+            if (!item) return;
+            const newQty = Math.max(0, (item.stock_quantity || 0) + delta);
+            
+            if (id.startsWith('mock-')) {
+                item.stock_quantity = newQty;
+                showToast(`Estoque de "${item.name}" atualizado para ${newQty}.`);
+                loadInventory();
+            } else {
+                const { error } = await sb.from('products').update({ stock_quantity: newQty }).eq('id', id);
+                if (error) showToast('Erro ao ajustar estoque.', 'error');
+                else {
+                    showToast(`Estoque de "${item.name}" atualizado para ${newQty}.`);
+                    loadInventory();
+                }
+            }
+        }
+
+        // ═══════════════════════════════════
+        //  DROP ZONES — drag over
+        // ═══════════════════════════════════
+        document.querySelectorAll('.drop-zone').forEach(dz => {
+            dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('dragover'); });
+            dz.addEventListener('dragleave', () => dz.classList.remove('dragover'));
+            dz.addEventListener('drop', e => {
+                e.preventDefault(); dz.classList.remove('dragover');
+                const input = dz.querySelector('input[type=file]');
+                if (input && e.dataTransfer.files.length) {
+                    input.files = e.dataTransfer.files;
+                    input.dispatchEvent(new Event('change'));
+                }
+            });
+        });
     </script>
 </body>
+
 </html>

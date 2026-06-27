@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ateliê Admin | Nagila Hadad CMS</title>
+    <title>Ateliê Admin | Isabella Lumière CMS</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400;0,700;1,400&family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -129,12 +129,12 @@
     <!-- Login Overlay -->
     <div id="login-overlay">
         <div class="login-card">
-            <div class="login-logo">NAGILA</div>
+            <div class="login-logo">Isabella</div>
             <div class="login-subtitle">Academy Portal</div>
             <form id="login-form">
                 <div class="form-group" style="text-align: left; margin-bottom: 2.5rem;">
                     <label style="color: #D4AF37; font-size: 0.65rem; letter-spacing: 3px; margin-bottom: 12px; opacity: 0.8;">E-mail de Acesso</label>
-                    <input type="email" id="login-email" required placeholder="admin@nagilahadad.com.br" style="background:transparent; border:none; border-bottom:1px solid rgba(255,255,255,0.1); padding:12px 0; border-radius:0;">
+                    <input type="email" id="login-email" required placeholder="admin@isabellalumiere.com.br" style="background:transparent; border:none; border-bottom:1px solid rgba(255,255,255,0.1); padding:12px 0; border-radius:0;">
                 </div>
                 <div class="form-group" style="text-align: left; margin-bottom: 2.5rem;">
                     <label style="color: #D4AF37; font-size: 0.65rem; letter-spacing: 3px; margin-bottom: 12px; opacity: 0.8;">Chave de Segurança</label>
@@ -153,7 +153,7 @@
     <div id="admin-content" style="display: none; opacity: 0; transition: opacity 0.8s ease;">
     <div class="admin-layout">
         <aside class="admin-sidebar">
-            <div class="admin-logo">NÁGILA ADMIN</div>
+            <div class="admin-logo">Isabella ADMIN</div>
             <ul class="admin-nav">
                 <li class="admin-nav-item active" onclick="switchSection('courses')"><i data-lucide="book-open"></i> GESTÃO DE CURSOS</li>
                 <li class="admin-nav-item" onclick="switchSection('gallery')"><i data-lucide="image"></i> GALERIA & VÍDEOS</li>
@@ -339,9 +339,9 @@
 
     <script>
         // ── Supabase Config (chaves diretas — sem process.env) ──
-        const SUPABASE_URL = 'https://fjuiiivmsfdwsrqiobdu.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZqdWlpaXZtc2Zkd3NycWlvYmR1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2ODIyNjAsImV4cCI6MjA5MTI1ODI2MH0.-FyHmwxUJsloYRD6Wl6fjYrOHGf5CiFcaVgTT89bGMo';
-        const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const SUPABASE_URL = 'https://cypatfudsresohfznqij.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN5cGF0ZnVkc3Jlc29oZnpucWlqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ5OTk5MjIsImV4cCI6MjA5MDU3NTkyMn0.3So1sNl7jANqg0t4lwvD06A2qdHjvJQD7weMjBFVX5g';
+        const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, { db: { schema: 'salao' } });
 
 
         // ── File state ──

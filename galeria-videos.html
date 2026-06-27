@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Acervo Cinematográfico | Nagila Hadad Luxury Studio</title>
+    <title>Acervo Cinematográfico | Isabella Lumière Luxury Studio</title>
     
     <!-- CSS Global -->
     <link rel="stylesheet" href="style.css">
@@ -95,10 +95,12 @@
             cursor: pointer;
         }
         
-        .video-card-premium video {
+        .video-card-premium video,
+        .video-card-premium iframe {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            border: none;
             transition: transform 1.2s ease, opacity 0.5s ease;
             opacity: 0.7;
         }
@@ -109,7 +111,8 @@
             transform: translateY(-5px);
         }
 
-        .video-card-premium:hover video {
+        .video-card-premium:hover video,
+        .video-card-premium:hover iframe {
             transform: scale(1.08);
             opacity: 1;
         }
@@ -180,7 +183,7 @@
         }
     </style>
 </head>
-<body class="lp-nagila-hadad">
+<body class="lp-isabella-lumiere">
 
     <header class="full-gallery-header">
         <a href="/inicio" class="back-link"><i data-lucide="arrow-left"></i> VOLTAR PARA O ATELIER</a>
@@ -200,11 +203,11 @@
 
     <footer style="padding: 6rem 5%; text-align: center; border-top: 1px solid rgba(212, 175, 55, 0.1);">
         <div style="margin-bottom: 2rem;">
-            <h2 class="footer-logo" style="margin-bottom: 0.5rem;">NAGILA HADAD</h2>
+            <h2 class="footer-logo" style="margin-bottom: 0.5rem;">Isabella Lumière</h2>
             <p style="font-size: 0.65rem; letter-spacing: 0.5em; opacity: 0.5; text-transform: uppercase;">The Art of Sovereign Beauty</p>
         </div>
         <div style="opacity: 0.4; font-size: 0.65rem; letter-spacing: 0.2em; line-height: 2;">
-            &copy; 2026 NAGILA HADAD LUXURY STUDIO.<br>
+            &copy; 2026 Isabella Lumière LUXURY STUDIO.<br>
             Desenvolvido por <a href="https://www.vittalix.com.br" target="_blank" style="color: inherit; text-decoration: none; border-bottom: 1px solid rgba(212,175,55,0.2);">www.vittalix.com.br</a>. TODOS OS DIREITOS RESERVADOS.
         </div>
     </footer>
@@ -215,7 +218,7 @@
     <script>
         lucide.createIcons();
 
-        const sb = supabase.createClient('https://fjuiiivmsfdwsrqiobdu.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZqdWlpaXZtc2Zkd3NycWlvYmR1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2ODIyNjAsImV4cCI6MjA5MTI1ODI2MH0.-FyHmwxUJsloYRD6Wl6fjYrOHGf5CiFcaVgTT89bGMo');
+        const sb = supabase.createClient('https://cypatfudsresohfznqij.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN5cGF0ZnVkc3Jlc29oZnpucWlqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ5OTk5MjIsImV4cCI6MjA5MDU3NTkyMn0.3So1sNl7jANqg0t4lwvD06A2qdHjvJQD7weMjBFVX5g', { db: { schema: 'salao' } });
 
         async function loadVideos() {
             const grid = document.getElementById('video-grid');
@@ -243,13 +246,23 @@
                 
                 if (fileIds.length === 0) return '';
 
-                const videoUrl = `/api/v1/stream?fileId=${fileIds[0]}#t=1`;
+                const videoUrl = fileIds[0].startsWith('http') ? fileIds[0] : `/api/v1/stream?fileId=${fileIds[0]}#t=1`;
                 const title = v.title && v.title !== 'EMPTY' ? v.title : 'OBRA CINEMATOGRÁFICA';
                 const tag = v.tag || 'SOVEREIGN EDITORIAL';
 
+                const isVimeo = videoUrl.includes('vimeo.com') && !videoUrl.includes('player.vimeo.com/external');
+                let mediaHtml = '';
+                if (isVimeo) {
+                    const match = videoUrl.match(/vimeo\.com\/(\d+)/);
+                    const id = match ? match[1] : '';
+                    mediaHtml = `<iframe src="https://player.vimeo.com/video/${id}?background=1&autoplay=1&loop=1&muted=1&autopause=0&quality=1080p&playlist=${id}" class="w-full h-full object-cover pointer-events-none" style="width: 100%; height: 100%; border: none;" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
+                } else {
+                    mediaHtml = `<video src="${videoUrl}" preload="auto" muted playsinline loop autoplay></video>`;
+                }
+
                 return `
                     <div class="video-card-premium group" onclick='VittalixPlayer.openGallery(window.allGalleryVideos, ${idx})'>
-                        <video src="${videoUrl}" preload="auto" muted playsinline loop autoplay></video>
+                        ${mediaHtml}
                         
                         <div class="play-overlay-premium">
                             <div class="play-icon-circle">

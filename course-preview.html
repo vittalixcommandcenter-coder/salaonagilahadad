@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prévia do Curso | Nagila Academy</title>
+    <title>Prévia do Curso | Isabella Academy</title>
     <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:wght@400;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -103,9 +103,9 @@
     </div>
 
     <script>
-        const SUPABASE_URL = 'https://fjuiiivmsfdwsrqiobdu.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZqdWlpaXZtc2Zkd3NycWlvYmR1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2ODIyNjAsImV4cCI6MjA5MTI1ODI2MH0.-FyHmwxUJsloYRD6Wl6fjYrOHGf5CiFcaVgTT89bGMo';
-        const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const SUPABASE_URL = 'https://cypatfudsresohfznqij.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN5cGF0ZnVkc3Jlc29oZnpucWlqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ5OTk5MjIsImV4cCI6MjA5MDU3NTkyMn0.3So1sNl7jANqg0t4lwvD06A2qdHjvJQD7weMjBFVX5g';
+        const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, { db: { schema: 'salao' } });
         const params = new URLSearchParams(window.location.search);
         const courseId = params.get('id');
 
@@ -141,7 +141,7 @@
             document.title = `${course.title} | Prévia`;
             document.getElementById('course-category').textContent = course.category || 'CURSO';
             document.getElementById('course-title').textContent = course.title;
-            document.getElementById('course-description').textContent = course.description || 'Formação premium com metodologia autoral Nagila Academy.';
+            document.getElementById('course-description').textContent = course.description || 'Formação premium com metodologia autoral Isabella Academy.';
             document.getElementById('kpi-lessons').textContent = String(list.length);
             document.getElementById('kpi-level').textContent = level;
             document.getElementById('kpi-price').textContent = course.price ? `R$ ${Number(course.price).toFixed(2)}` : 'R$ 0,00';
@@ -170,9 +170,9 @@
                     };
                     
                     // Verifica se já está no carrinho
-                    if (!nagilaCart.some(c => c.id === item.id)) {
-                        nagilaCart.push(item);
-                        localStorage.setItem('nagila_cart', JSON.stringify(nagilaCart));
+                    if (!IsabellaCart.some(c => c.id === item.id)) {
+                        IsabellaCart.push(item);
+                        localStorage.setItem('Isabella_cart', JSON.stringify(IsabellaCart));
                         updateCartCounter();
                     }
                     
@@ -199,14 +199,14 @@
         }
 
         // --- Carrinho de Compras (Sacola) ---
-        let nagilaCart = JSON.parse(localStorage.getItem('nagila_cart') || '[]');
+        let IsabellaCart = JSON.parse(localStorage.getItem('Isabella_cart') || '[]');
 
         function updateCartCounter() {
             const counter = document.getElementById('cart-counter');
             if (!counter) return;
-            if (nagilaCart.length > 0) {
+            if (IsabellaCart.length > 0) {
                 counter.style.display = 'block';
-                counter.textContent = nagilaCart.length;
+                counter.textContent = IsabellaCart.length;
             } else {
                 counter.style.display = 'none';
             }
@@ -217,14 +217,14 @@
             const totalEl = document.getElementById('cart-total');
             if (!itemsContainer || !totalEl) return;
             
-            if (nagilaCart.length === 0) {
+            if (IsabellaCart.length === 0) {
                 itemsContainer.innerHTML = '<div style="opacity: 0.5; font-size: 0.8rem; text-align: center; margin-top: 2rem;">Sua sacola está vazia.</div>';
                 totalEl.textContent = 'R$ 0,00';
                 return;
             }
 
             let total = 0;
-            itemsContainer.innerHTML = nagilaCart.map((item, idx) => {
+            itemsContainer.innerHTML = IsabellaCart.map((item, idx) => {
                 const itemPrice = Number(item.price || 0);
                 total += itemPrice;
                 return `
@@ -244,8 +244,8 @@
         }
 
         window.removeFromCart = function(index) {
-            nagilaCart.splice(index, 1);
-            localStorage.setItem('nagila_cart', JSON.stringify(nagilaCart));
+            IsabellaCart.splice(index, 1);
+            localStorage.setItem('Isabella_cart', JSON.stringify(IsabellaCart));
             updateCartCounter();
             renderCartDrawer();
         };
@@ -290,7 +290,7 @@
             }
 
             if (btnCheckout) {
-                if (nagilaCart.length === 0) return;
+                if (IsabellaCart.length === 0) return;
                 window.location.href = 'login-aluno.html?mode=signup&redirect=checkout.html';
             }
         });
